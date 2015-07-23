@@ -1,0 +1,98 @@
+<!--
+1、要用到CSS样式单词及解释
+position：绝对定位样式实现DIV定位布局其设置值absolute和relative应用
+width：宽度，设置对象宽度
+height：高度，设置对象高度
+line-height：行高，设置文本行高
+left：设置div对象靠左距离
+right：设置div对象靠左距离
+top：设置div对象靠左距离
+bottom：设置div对象靠左距离
+background：背景，设置背景图片和颜色
+color：设置字体颜色
+font-size：设置字体大小
+font-weight：设置字体加粗
+#box_relative {
+	position: relative;
+	left: 30px;
+	top: 20px;
+}
+通过绝对定位，元素可以放置到页面上的任何位置。
+绝对定位：absolute
+相对定位：relative
+样式 "left:-20px" 从元素的原始左侧位置减去 20 像素。
+样式 "left:20px" 向元素的原始左侧位置增加 20 像素。
+h1 {
+	padding-top: 10px;
+	padding-right: 0.25em;
+	padding-bottom: 2ex;
+	padding-left: 20%;
+}
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>DIV+CSS布局教程</title>
+<style type="text/css">
+#Container{
+	width:1000px;
+	margin:0 auto;/*设置整个容器在浏览器中水平居中*/
+	background:#CF3;
+}
+#Header{
+	height:80px;
+	background:#093;
+}
+#logo{
+	padding-left:50px;
+	padding-top:20px;
+	padding-bottom:50px;
+}
+#Content{
+	height:600px;
+	/*此处对容器设置了高度，一般不建议对容器设置高度，一般使用overflow:auto;属性设置容器根据内容自适应高度，如果不指定高度或不设置自适应高度，容器将默认为1个字符高度，容器下方的布局元素（footer）设置margin-top:属性将无效*/
+	margin-top:20px;/*此处讲解margin的用法，设置content与上面header元素之间的距离*/
+	background:#0FF;
+	 
+}
+#Content-Left{
+	height:400px;
+	width:200px;
+	margin:20px;/*设置元素跟其他元素的距离为20像素*/
+	float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+	background:#90C;
+}
+#Content-Main{
+	height:400px;
+	width:720px;
+	margin:20px;/*设置元素跟其他元素的距离为20像素*/
+	float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+	background:#90C;
+}
+/*注：Content-Left和Content-Main元素是Content元素的子元素，两个元素使用了float:left;设置成两列，这个两个元素的宽度和这个两个元素设置的padding、margin的和一定不能大于父层Content元素的宽度，否则设置列将失败*/
+#Footer{
+	height:40px;
+	background:#90C;
+	margin-top:20px;
+}
+.Clear{
+	clear:both;
+}
+</style>
+</head>
+ 
+<body>
+<div id="Container">
+	<div id="Header">
+		<div id="logo">这里设置了padding属性介绍一下padding的用法,padding将设置文本与边框的距离。</div>
+	</div>
+	<div id="Content">
+		<div id="Content-Left">Content-Left</div>
+		<div id="Content-Main">Content-Main</div>
+	</div>
+	<div class="Clear"><!--如何你上面用到float,下面布局开始前最好清除一下。--></div>
+	<div id="Footer">Footer</div>
+</div>
+</body>
+</html>

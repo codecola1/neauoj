@@ -1,0 +1,13 @@
+#helloworld {
+	margin-top:100px;
+}
+
+.panel {
+	height:200px;
+}
+
+#foot {
+	position: relative;
+	height: auto;
+	min-height: 100%;
+}

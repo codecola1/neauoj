@@ -16,7 +16,7 @@
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		{% bootstrap_javascript jquery=True %}
-		{% block bootstrap3_extra_head %}{% endblock %}
+		<link rel="stylesheet" href="{% static "css/base.css" %}" type="text/css" />
 	</head>
 	<body>
 		<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -46,14 +46,27 @@
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
-		{% block bodytext %}
-		<div class="jumbotron">
-			<div class="container">
-				<h1>Hello, world!</h1>
-				<p>This page is test page!!!</p>
-				<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+		<div class = "container">
+			{% block bodytext %}
+			<div id = "helloworld" class="jumbotron">
+				<div class="container">
+					<h1>Hello, world!</h1>
+					<p>This page is test page!!!</p>
+					<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+				</div>
 			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					Basic panel example
+				</div>
+			</div>
+			{% endblock %}
 		</div>
-		{% endblock %}
+		<div id = "foot" class = "container">
+			<hr></hr>
+			<footer>
+				<p class="text-center">Copyright© 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU ACM Team.</strong></a> All Rights Reserved.</p>
+			</footer>
+		</div>
 	</body>
 </html>
