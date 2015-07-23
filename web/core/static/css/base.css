@@ -11,3 +11,15 @@
 	height: auto;
 	min-height: 100%;
 }
+
+#button {
+	color:#fff;
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	margin-top: 10px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	margin-left: 10px;
+}
