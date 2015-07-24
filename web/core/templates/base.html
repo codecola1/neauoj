@@ -17,6 +17,7 @@
 		<![endif]-->
 		{% bootstrap_javascript jquery=True %}
 		<link rel="stylesheet" href="{% static "css/base.css" %}" type="text/css" />
+        {% block othercss %}{% endblock %}
 	</head>
 	<body>
 		<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -40,27 +41,31 @@
 						<li><a href="#">Tool</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="#" id = "button" class="btn btn-primary">Login</a></li>
+						<li><a href="{% url 'login' %}" id = "button" class="btn btn-primary">Login</a></li>
 						<li><a href="#" id = "button" class="btn btn-success">Register</a></li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
-		<div class = "container">
-			{% block bodytext %}
-			<div id = "helloworld" class="jumbotron">
-				<div class="container">
-					<h1>Hello, world!</h1>
-					<p>This page is test page!!!</p>
-					<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					Basic panel example
-				</div>
-			</div>
-			{% endblock %}
+		<div id = "bodydiv" class = "container">
+            {% block bodytext %}
+                <div id = "helloworld" class="jumbotron">
+                    <div class="container">
+                        <h1>Hello, world!</h1>
+                        <p>This page is test page!!!</p>
+                        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        {% if k %}
+                            <p>Welcome.</p>
+                        {% else %}
+                            <p>Please log in.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endblock %}
 		</div>
 		<div id = "foot" class = "container">
 			<hr></hr>
