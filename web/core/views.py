@@ -8,4 +8,4 @@ def index(req):
     k = False
     if req.user.is_authenticated():
         k = True
-    return render_to_response('base.html', {"k":k})
+    return render_to_response('base.html', {"k":k}, context_instance=RequestContext(req))

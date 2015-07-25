@@ -8,6 +8,6 @@ from django.template import Context, Template
 from django.contrib.auth.views import login, logout
 
 urlpatterns = [
-	url(r'^$', views.test, name = 'test'),
     url(r'^login/', login, {"template_name" : "login.html"}, name = "login"),
+    url(r'^register/', views.register, name = 'register'),
 ]

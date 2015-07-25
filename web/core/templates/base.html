@@ -38,12 +38,68 @@
 						<li><a href="#">Tool</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="{% url 'login' %}" id = "button" class="btn btn-primary">Login</a></li>
-						<li><a href="#" id = "button" class="btn btn-success">Register</a></li>
+						<li><button id="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">Login</button></li>
+						<li><button id="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#RegisterModal">Register</button></li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
+        <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog login" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login</h4>
+              </div>
+                <form id = "login" method="POST" action={% url "login" %}>
+                    {% csrf_token %}
+              <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleInputUsername">Username</label>
+                        <input type="username" name="username" class="form-control" id="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <input type="hidden" name="next" value="{% url 'home' %}" />
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" value="login" class="btn btn-primary">Login</button>
+              </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog login" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login</h4>
+              </div>
+                <form id = "login" method="POST" action={% url "login" %}>
+                    {% csrf_token %}
+              <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleInputUsername">Username</label>
+                        <input type="username" name="username" class="form-control" id="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <input type="hidden" name="next" value="{% url 'home' %}" />
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" value="login" class="btn btn-primary">Login</button>
+              </div>
+               </form>
+            </div>
+          </div>
+        </div>
 		<div id = "bodydiv" class = "container">
             {% block bodytext %}
                 <div id = "helloworld" class="jumbotron">
@@ -68,7 +124,7 @@
 		<div id = "foot" class = "container">
 			<hr></hr>
 			<footer>
-				<p class="text-center">Copyright© 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU ACM Team.</strong></a> All Rights Reserved.</p>
+				<p class="text-center">Copyright© 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU ACM Team</strong></a> All Rights Reserved.</p>
 			</footer>
 		</div>
         <script src={% static "js/jquery.js"%}></script>
