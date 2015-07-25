@@ -2,9 +2,18 @@
 
 {% block othercss %}
     <style>
+        #main {
+            margin-top: 50px;
+            margin-bottom: 150px;
+        }
         #forms {
-            width: 300px;
+            width: 25%;
             float: left;
+            margin-top: 100px;
+        }
+        #info {
+            width: 70%;
+            float: right;
             margin-top: 50px;
         }
     </style>
@@ -16,7 +25,7 @@
         <p class = "error">Sorry, that's not a valid username or password.</p>
     {% endif %}
 
-    <div class = "container">
+    <div id = "main" class = "container">
         <div id = "forms" class = "container">
             <form id = "login" method="POST">
                 {% csrf_token %}
@@ -31,6 +40,13 @@
                 <button type="submit" value="login" class="btn btn-default">Submit</button>
                 <input type="hidden" name="next" value="{% url 'home' %}" />
             </form>
+        </div>
+        <div id = "info" class = "container">
+            <div class="jumbotron">
+              <h1>Hello, world!</h1>
+              <p>...</p>
+              <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+            </div>
         </div>
     </div>
 
