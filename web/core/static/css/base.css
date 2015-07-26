@@ -31,3 +31,15 @@
 .login {
     width: 400px;
 }
+
+.welcome {
+    margin-top: 5px;
+}
+
+.welcome a {
+    color: #fff;
+}
+
+.bodymain {
+    margin-top: 50px;
+}

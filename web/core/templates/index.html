@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block othercss %}
+    <style>
+        .outer {
+            margin-top: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block bodytext %}
+    <div class = "container outer">
+        <div class = "panel panel-default">
+            {% if user.is_authenticated %}
+                <p>welcome, {{ user.username }}.</p>
+            {% else %}
+                <p>please log in.</p>
+            {% endif%}
+        </div>
+    </div>
+{% endblock %}

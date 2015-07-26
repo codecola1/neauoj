@@ -5,7 +5,6 @@
 {% block othercss %}
     <style>
         #main {
-            margin-top: 50px;
             margin-bottom: 150px;
         }
         #forms {
@@ -16,19 +15,18 @@
         #info {
             width: 70%;
             float: right;
-            margin-top: 50px;
+            margin-top: 100px;
         }
     </style>
 {% endblock %}
 
 {% block bodytext %}
 
-    {% if form.error %}
-        <p class = "error">Sorry, that's not a valid username or password.</p>
-    {% endif %}
-
     <div id = "main" class = "container">
         <div id = "forms" class = "container">
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">Sorry, that's not a valid username or password.</div>
+            {% endif %}
             <form id = "login" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
