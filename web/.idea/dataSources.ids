@@ -1492,14 +1492,6 @@
       <foreign-key name="status_ce_info_solve_id_748009bc00fe2c40_fk_status_solve_id" columns="solve_id" ref-table="status_solve" ref-schema="" ref-catalog="neauoj" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="status_ce_info_1aa24492" unique="false" columns="solve_id"/>
     </table>
-    <table name="status_code" schema="" catalog="neauoj" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="code" sqlType="LONGTEXT" precision="2147483647" scale="0" nullable="false" jdbcType="-1"/>
-      <column name="solve_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="status_code_solve_id_4cb8e46207a52fb3_fk_status_solve_id" columns="solve_id" ref-table="status_solve" ref-schema="" ref-catalog="neauoj" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="status_code_1aa24492" unique="false" columns="solve_id"/>
-    </table>
     <table name="status_solve" schema="" catalog="neauoj" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="run_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
@@ -1517,7 +1509,6 @@
       <foreign-key name="status_solve_user_id_37fa6fa3d11d5c0d_fk_auth_user_id" columns="user_id" ref-table="auth_user" ref-schema="" ref-catalog="neauoj" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="core_judge_solve_id_523ac4640396dcc7_fk_status_solve_id" table="core_judge" schema="" catalog="neauoj" columns="solve_id"/>
       <exported-key name="status_ce_info_solve_id_748009bc00fe2c40_fk_status_solve_id" table="status_ce_info" schema="" catalog="neauoj" columns="solve_id"/>
-      <exported-key name="status_code_solve_id_4cb8e46207a52fb3_fk_status_solve_id" table="status_code" schema="" catalog="neauoj" columns="solve_id"/>
       <exported-key name="status_solve_first_solve_id_4f6296b40257af5_fk_status_solve_id" table="status_solve_first" schema="" catalog="neauoj" columns="solve_id"/>
       <index name="status_solve_problem_id_6a98622edd5ab2ee_fk_problem_problem_id" unique="false" columns="problem_id"/>
       <index name="status_solve_user_id_37fa6fa3d11d5c0d_fk_auth_user_id" unique="false" columns="user_id"/>

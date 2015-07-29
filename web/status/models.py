@@ -15,14 +15,10 @@ class Solve(models.Model):
     language = models.CharField(max_length=20)
     length = models.IntegerField()
     wait_show = models.BooleanField(default=True)
+    is_site = models.BooleanField(default=True)
+    code = models.TextField(max_length=5000, default="")
     def __unicode__(self):
         return self.problem.title
-
-class Code(models.Model):
-    solve = models.ForeignKey(Solve)
-    code = models.TextField(max_length=5000)
-    def __unicode__(self):
-        return self.code
 
 class ce_info(models.Model):
     solve = models.ForeignKey(Solve)
