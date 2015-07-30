@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,AbstractUser
 
 # Create your models here.
 
@@ -15,7 +15,7 @@ class Account(models.Model):
         return self.username
 
 class Info(models.Model):
-    user = models.ForeignKey(User,unique=True)
+    user = models.OneToOneField(User)
     nickname = models.CharField(max_length=50)
     submit = models.PositiveIntegerField(default=0)
     solve = models.PositiveIntegerField(default=0)
@@ -28,7 +28,7 @@ class Info(models.Model):
     team = models.BooleanField(default=False)
     account = models.ManyToManyField(Account)
     def __unicode__(self):
-        return self.nickname
+        return self.user.username
 
 class Message(models.Model):
     user = models.ForeignKey(User)

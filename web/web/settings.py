@@ -110,4 +110,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-AUTH_PROFILE_MODULE = 'users.Info'
+# AUTH_USER_MODEL = 'users.Info'
+# AUTH_PROFILE_MODULE = 'djangoadmin.myadmin.UserProfile'
