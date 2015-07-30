@@ -11,7 +11,7 @@ def register(req):
         if form.is_valid():
             new_user = form.save()
             return HttpResponseRedirect("/index")
-        else :
+        else:
             return render_to_response("register.html", {
                 'form': form,
             }, context_instance=RequestContext(req))

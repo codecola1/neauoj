@@ -4,10 +4,12 @@
 from django.contrib.auth.models import User
 from users.models import Info
 from django import forms
+import re
 
 class UserRegisterForm(forms.ModelForm):
     error_messages = {
-        'username_mismatch': ("Users have been registered."),
+        'username_mismatch': ("The Username can only fill in the letters, number and underscode."),
+        'username_mismatch_have': ("Users have been registered."),
         'password_mismatch': ("The two password fields didn't match."),
         'school_mismatch' : ("School can not be empty."),
         'grade_mismatch' : ("Grade can not be empty."),
@@ -17,7 +19,7 @@ class UserRegisterForm(forms.ModelForm):
         (u'neau',u'东北农业大学'),
         (u'others',u'其他'),
     )
-    grade_choice = [(u'', u'Select Year')]
+    grade_choice = [(u'', u'Grade')]
     grade_choice.extend([(unicode(year),unicode(year)) for year in range(2010, 2016)])
     username = forms.CharField(
         error_messages={'required': 'Your username is Required'}
@@ -43,14 +45,20 @@ class UserRegisterForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
+        ma = re.match('^[a-zA-Z0-9_]+$', username)
+        if not ma:
+            raise forms.ValidationError(
+                self.error_messages['username_mismatch'],
+                code='username_mismatch',
+            )
         try:
             u = User.objects.get(username = username)
         except:
             return username
         else:
             raise forms.ValidationError(
-                self.error_messages['username_mismatch'],
-                code='usernmae_mismatch',
+                self.error_messages['username_mismatch_have'],
+                code='username_mismatch_have',
             )
 
     def clean_password2(self):
