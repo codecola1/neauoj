@@ -26,12 +26,9 @@ def index(req, username):
     try:
         user = User.objects.get(username = username)
     except:
-        user = None
-        find_error = True
-    else:
-        find_error = False
+        return render_to_response("user_error.html", {
+            'username':username,
+        })
     return render_to_response("user_main.html", {
-        'find_error' : find_error,
         'u' : user,
-        'username' : username,
     }, context_instance=RequestContext(req))
