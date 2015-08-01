@@ -1,13 +1,63 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load user_tags %}
 
 {% block set_title %}{{ u.username }} Information.{% endblock %}
 
 {% block othercss %}
-    <style>
+    <style type="text/css">
+        #list {
+            float: left;
+            width: 25%;
+            height: 600px;
+            position: relative;
+                top: 20px;
+        }
+        #list p {
+            position: relative;
+                bottom: 20px;
+            width: 100%;
+            height: 40px;
+            font-size:20px;
+            letter-spacing:4px;
+        }
+        #list .list-group {
+            margin-top: 20px;
+        }
+        .main {
+            margin-top: 30px;
+        }
+        .inform {
+            float: right;
+            width: 70%;
+            overflow: auto;
+            height: 580px;
+        }
     </style>
 {% endblock %}
 
 {% block bodytext %}
-
+    <div class="container main">
+        <div id = "list" class="container">
+            <p class="btn btn-primary">{{ u.info.nickname }}</p>
+            <ul class="nav nav-pills nav-stacked">
+              <li role="presentation"><a href="#">Survey</a></li>
+              <li role="presentation"><a href="#">Statistics</a></li>
+              <li role="presentation"><a href="#">Problem</a></li>
+              <li role="presentation"><a href="#">Score</a></li>
+              <li role="presentation"><a href="#">School Team</a></li>
+              <li role="presentation"><a href="#">In Contest</a></li>
+            </ul>
+            <ul class="list-group">
+              <li class="list-group-item">Submit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.submit }}</li>
+              <li class="list-group-item">Solved:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.solve }}</li>
+              <li class="list-group-item">School:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.school|school }}</li>
+              <li class="list-group-item">Grade:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.grade }}级</li>
+              <li class="list-group-item">In Team:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.team|team }}</li>
+              <li class="list-group-item">Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.email }}</li>
+            </ul>
+        </div>
+        <div data-spy="scroll" data-target="#list" class="jumbotron inform">
+        </div>
+    </div>
 {% endblock %}
