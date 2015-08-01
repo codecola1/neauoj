@@ -8,7 +8,7 @@ import re
 
 class UserRegisterForm(forms.ModelForm):
     error_messages = {
-        'username_mismatch': ("The Username can only fill in the letters, number and underscode."),
+        'username_mismatch': ("The Username can only fill in the letters, numbers and underscodes."),
         'username_mismatch_have': ("Users have been registered."),
         'password_mismatch': ("The two password fields didn't match."),
         'school_mismatch' : ("School can not be empty."),

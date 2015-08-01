@@ -14,4 +14,5 @@ urlpatterns = [
         "next_page" : "/index",
     }, name = "logout"),
     url(r'^register/', views.register, name = 'register'),
+    url(r'^([a-zA-Z0-9_]+)/', views.index, name = 'userpage')
 ]

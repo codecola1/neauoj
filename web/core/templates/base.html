@@ -40,7 +40,7 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
-                            <li class="welcome"><h4><span class="label label-primary">Welcome <a href="#">{{ user.info.nickname }}</a>.<a href={% url "logout" %}> Logout.</a> </span></h4></li>
+                            <li class="welcome"><h4><span class="label label-primary">Welcome <a href="{% url "userpage" user.username %}">{{ user.info.nickname }}</a>.<a href={% url "logout" %}> Logout.</a> </span></h4></li>
                         {% else %}
 						    <li><button id="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">Login</button></li>
 						    <li><a id="button" type="button" class="btn btn-primary" href="{% url 'register' %}">Register</a></li>
@@ -79,26 +79,26 @@
         </div>
         <div class="container bodymain">
             {% block bodytext %}
-		    <div id = "bodydiv" class = "container">
-                <div id = "helloworld" class="jumbotron">
-                    <div class="container">
-                        <h1>Hello, world!</h1>
-                        <p>This page is test page!!!</p>
-                        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+                <div id = "bodydiv" class = "container">
+                    <div id = "helloworld" class="jumbotron">
+                        <div class="container">
+                            <h1>Hello, world!</h1>
+                            <p>This page is test page!!!</p>
+                            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+                        </div>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        {% if k %}
-                            <p>Welcome.</p>
-                        {% else %}
-                            <p>Please log in.</p>
-                        {% endif %}
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {% if k %}
+                                <p>Welcome.</p>
+                            {% else %}
+                                <p>Please log in.</p>
+                            {% endif %}
 
+                        </div>
                     </div>
                 </div>
-		    </div>
-        {% endblock %}
+            {% endblock %}
         </div>
 		<div id = "foot" class = "container">
 			<hr></hr>
