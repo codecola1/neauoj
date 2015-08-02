@@ -10,6 +10,7 @@ def school(s):
     l = {
         'neau':u'东北农业大学',
         'other':u'其他',
+        '':u'',
     }
     return l[s]
 

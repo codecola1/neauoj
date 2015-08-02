@@ -24,6 +24,15 @@
         #list .list-group {
             margin-top: 20px;
         }
+        .charts {
+            width: 95%;
+            text-align:center;
+            margin:0 auto;
+        }
+        #problem {
+            margin-top: 50px;
+            margin-bottom: 100px;
+        }
         .main {
             margin-top: 30px;
         }
@@ -41,12 +50,12 @@
         <div id = "list" class="container">
             <p class="btn btn-primary">{{ u.info.nickname }}</p>
             <ul class="nav nav-pills nav-stacked">
-              <li role="presentation"><a href="#">Survey</a></li>
-              <li role="presentation"><a href="#">Statistics</a></li>
-              <li role="presentation"><a href="#">Problem</a></li>
-              <li role="presentation"><a href="#">Score</a></li>
-              <li role="presentation"><a href="#">School Team</a></li>
-              <li role="presentation"><a href="#">In Contest</a></li>
+              <li role="presentation"><a href="#survey">Survey</a></li>
+              <li role="presentation"><a href="#statistics">Statistics</a></li>
+              <li role="presentation"><a href="#problem">Problem</a></li>
+              <li role="presentation"><a href="#score">Score</a></li>
+              <li role="presentation"><a href="#school">School Team</a></li>
+              <li role="presentation"><a href="#contest">In Contest</a></li>
             </ul>
             <ul class="list-group">
               <li class="list-group-item">Submit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.info.submit }}</li>
@@ -57,7 +66,374 @@
               <li class="list-group-item">Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u.email }}</li>
             </ul>
         </div>
-        <div data-spy="scroll" data-target="#list" class="jumbotron inform">
+        <div data-spy="scroll" data-target="#list" class="panel panel-default inform">
+            <div id="survey" class="charts" style="height:400px"></div>
+            <div id="statistics" class="charts" style="height: 400px"></div>
+            <div id="problem">
+                <h2 style="text-align: center">Problem<br /></h2>
+                <table class="table table-striped" style="width: 95%;margin:0 auto;">
+                    <thead>
+                        <tr>
+                            <th>Solved</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">HDU</th>
+                            <td>1000</td>
+                            <td>1001</td>
+                            <td>1002</td>
+                            <td>1003</td>
+                            <td>1004</td>
+                            <td>1005</td>
+                            <td>1006</td>
+                            <td>1007</td>
+                            <td>1008</td>
+                            <td>1009</td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>1010</td>
+                            <td>1011</td>
+                            <td>1012</td>
+                            <td>1013</td>
+                            <td>1014</td>
+                            <td>1015</td>
+                            <td>1016</td>
+                            <td>1017</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">POJ</th>
+                            <td>1000</td>
+                            <td>1001</td>
+                            <td>1002</td>
+                            <td>1003</td>
+                            <td>1004</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped" style="width: 95%;margin:0 auto;">
+                    <thead>
+                        <tr>
+                            <th>UnSolved</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">HDU</th>
+                            <td>2000</td>
+                            <td>2001</td>
+                            <td>2002</td>
+                            <td>2003</td>
+                            <td>2004</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">POJ</th>
+                            <td>1005</td>
+                            <td>1006</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="score" class="charts"></div>
+            <div id="school" class="charts" style="height: 400px"></div>
+            <div id="contest" class="charts" style="height: 400px"></div>
         </div>
     </div>
+{% endblock %}
+
+{% block otherjs %}
+    <script src="{% static "js/echarts.js" %}"></script>
+    <script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: '{% static "js/dist" %}'
+            }
+        });
+
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+                'echarts/chart/radar',
+                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+            ],
+            Draw
+        );
+        function Draw(ec) {
+            survey(ec);
+            statistics(ec);
+            school(ec);
+            contest(ec);
+        }
+        function survey(ec) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = ec.init(document.getElementById('survey'));
+
+            var option = {
+                title : {
+                    text: 'Survey',
+                    subtext: '概况'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['submit']
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: false},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : ['周一','周二','周三','周四','周五','周六','周日']
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        axisLabel : {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                series : [
+                    {
+                        name:'submit',
+                        type:'line',
+                        data:[11, 11, 15, 13, 12, 13, 10],
+                        markPoint : {
+                            data : [
+                                {type : 'max', name: 'Max'},
+                                {type : 'min', name: 'Min'}
+                            ]
+                        },
+                        markLine : {
+                            data : [
+                                {type : 'average', name: 'Average'}
+                            ]
+                        }
+                    }
+                ]
+            };
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        }
+        function statistics(ec) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = ec.init(document.getElementById('statistics'));
+
+            var option = {
+                title : {
+                    text: 'Statistics',
+                    subtext: '统计'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    orient : 'vertical',
+                    x : 'right',
+                    y : 'bottom',
+                    data:['题目类型']
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: false},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                polar : [
+                   {
+                       indicator : [
+                           { text: '图论（Graph Theory）', max: 6000},
+                           { text: '数据结构（Data Structure）', max: 16000},
+                           { text: '动态规划（Dynamic Programming）', max: 30000},
+                           { text: '数论（Math）', max: 38000},
+                           { text: '计算几何（Computational Geometry）', max: 52000},
+                           { text: '水题（Practice）', max: 25000}
+                        ]
+                    }
+                ],
+                calculable : true,
+                series : [
+                    {
+                        name: '预算 vs 开销（Budget vs spending）',
+                        type: 'radar',
+                        data : [
+                            {
+                                value : [4300, 10000, 28000, 35000, 50000, 19000],
+                                name : '题目类型'
+                            }
+                        ]
+                    }
+                ]
+            };
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        }
+        function school(ec) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = ec.init(document.getElementById('school'));
+            var option = {
+                title : {
+                    text: 'School Team',
+                    subtext: '集训队'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['朱原熯','李鹏越','李维娜','江锦','郑昕']
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: false},
+                        dataView : {show: false, readOnly: false},
+                        magicType : {show: false, type: ['line', 'bar', 'stack', 'tiled']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : ['周一','周二','周三','周四','周五','周六','周日']
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'朱原熯',
+                        type:'line',
+                        stack: '总量',
+                        data:[120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name:'李鹏越',
+                        type:'line',
+                        stack: '总量',
+                        data:[220, 182, 191, 234, 290, 330, 310]
+                    },
+                    {
+                        name:'李维娜',
+                        type:'line',
+                        stack: '总量',
+                        data:[150, 232, 201, 154, 190, 330, 410]
+                    },
+                    {
+                        name:'江锦',
+                        type:'line',
+                        stack: '总量',
+                        data:[320, 332, 301, 334, 390, 330, 320]
+                    },
+                    {
+                        name:'郑昕',
+                        type:'line',
+                        stack: '总量',
+                        data:[820, 932, 901, 934, 1290, 1330, 1320]
+                    }
+                ]
+            };
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        }
+        function contest(ec) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = ec.init(document.getElementById('contest'));
+            var option = {
+                title : {
+                    text: 'Contest',
+                    subtext: '比赛'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['Rank','Solved']
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: false},
+                        dataView : {show: false, readOnly: false},
+                        magicType : {show: false, type: ['line', 'bar', 'stack', 'tiled']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : ['1000','1001','1002','1003','1004','1005','1006']
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'Rank',
+                        type:'line',
+                        stack: '总量',
+                        data:[120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name:'Solved',
+                        type:'line',
+                        stack: '总量',
+                        data:[220, 182, 191, 234, 290, 330, 310]
+                    }
+                ]
+            };
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        }
+    </script>
 {% endblock %}
