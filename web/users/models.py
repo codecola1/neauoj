@@ -11,6 +11,7 @@ class Account(models.Model):
     last = models.PositiveIntegerField()
     submit = models.PositiveIntegerField(default=0)
     solved = models.PositiveIntegerField(default=0)
+    defunct = models.BooleanField(default=False)
     def __unicode__(self):
         return self.username
 

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load user_tags %}
 
-{% block set_title %}{{ u.username }} Information.{% endblock %}
+{% block set_title %}{{ u.username }} Information{% endblock %}
 
 {% block othercss %}
     <style type="text/css">
@@ -68,7 +68,7 @@
         </div>
         <div data-spy="scroll" data-target="#list" class="panel panel-default inform">
             <div id="survey" class="charts" style="height:400px"></div>
-            <div id="statistics" class="charts" style="height: 400px"></div>
+            <div id="statistics" class="charts" style="height: 300px;"></div>
             <div id="problem">
                 <h2 style="text-align: center">Problem<br /></h2>
                 <table class="table table-striped" style="width: 95%;margin:0 auto;">
@@ -293,7 +293,7 @@
                 calculable : true,
                 series : [
                     {
-                        name: '预算 vs 开销（Budget vs spending）',
+                        name: '题目类型',
                         type: 'radar',
                         data : [
                             {

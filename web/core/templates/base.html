@@ -48,7 +48,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a href="{% url "userpage" user.username %}">Infomathion</a></li>
-                                    <li><a href="#">Account</a></li>
+                                    <li><a href="{% url "account"%}">Account</a></li>
                                     <li role="separator" class="divider"></li>
                                     <li><a href="{% url "logout" %}">Logout</a></li>
                                 </ul>
