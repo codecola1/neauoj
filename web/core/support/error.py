@@ -4,8 +4,9 @@
 __author__ = 'Code_Cola'
 
 import datetime
+import os
 
-logfile = open('../../web/log/error.txt', 'a')
+logfile = open(os.path.abspath('../../web/log/error.txt'),'a')
 
 Error = [
     'MySQL connect ERROR!!!',
@@ -13,6 +14,7 @@ Error = [
     'Not Find User!!!',
     'Get HTML ERROR!!!',
     'Login ERROR!!!',
+    'Get Image ERROR',
 ]
 
 def error_write(error_index, other_error = ""):

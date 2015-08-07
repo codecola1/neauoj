@@ -111,7 +111,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_PATH = os.path.join( os.path.dirname(__file__) , 'static' )
+STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 # AUTH_USER_MODEL = 'users.Info'
 # AUTH_PROFILE_MODULE = 'djangoadmin.myadmin.UserProfile'

@@ -6,9 +6,11 @@ import urllib
 import urllib2
 import cookielib
 import re
+import os
 
 from core.support.error import error_write
 from core.support.mysql_join import Connect
+from web.settings import STATIC_PATH
 
 Headers = {
     'hdu': {
@@ -39,6 +41,11 @@ Data = {
         'B1': 'login',
         'url': '/'
     }
+}
+
+url_index = {
+    'hdu': 'http://acm.hdu.edu.cn',
+    'poj': 'http://poj.org'
 }
 
 Login_url = {
@@ -116,3 +123,16 @@ class Access:
                 error_write(4)
                 sql = "UPDATE users_account SET defunct = '1' WHERE account_id = '%s'" % (self.account_id)
                 Connect.query(sql)
+
+    def save_img(self, url, problem_id=''):
+        filename = url.split('/')[-1]
+        path = os.path.join(STATIC_PATH, 'upload', problem_id)
+        if not os.path.exists(path):
+            os.mkdir(path)
+        path = os.path.join(path, filename)
+        if url[0:4] != 'http':
+            url = url_index[self.oj] + ('' if url[0] == '/' else '/') + url
+        try:
+            urllib.urlretrieve(url, path, None)
+        except:
+            error_write(5)
