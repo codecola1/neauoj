@@ -9,3 +9,6 @@ def index(req):
     if req.method == 'GET':
         return render_to_response('index.html', {
         }, context_instance=RequestContext(req))
+
+def test(req):
+    return render_to_response('test.html')

@@ -45,6 +45,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -110,5 +111,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_PATH = os.path.join( os.path.dirname(__file__) , 'static' )
+
 # AUTH_USER_MODEL = 'users.Info'
 # AUTH_PROFILE_MODULE = 'djangoadmin.myadmin.UserProfile'
+
+#Session
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

@@ -7,7 +7,7 @@ import urllib2
 import cookielib
 import re
 
-from core.support.error import Error_log
+from core.support.error import error_write
 from core.support.mysql_join import Connect
 
 Headers = {
@@ -76,7 +76,7 @@ class Access:
             self.password = str(results[0][1])
             self.oj = str(results[0][2])
         else:
-            Error_log.write(2)
+            error_write(2)
             self.safe = False
             return
         self.postdata = Data[self.oj]
@@ -89,11 +89,11 @@ class Access:
             return ''
         req = urllib2.Request(url = url, headers = self.header, data = None if not len(postdata) else urllib.urlencode(postdata))
         try:
-            s = self.opener.open(req).rend()
+            s = self.opener.open(req).read()
             if decode[self.oj]:
                 s = s.decode('gbk').encode('utf8')
         except urllib2.URLError, e:
-            Error_log.write(3,other_error=e)
+            error_write(3, other_error=e.reason)
             self.safe = False
             return ''
         else:
@@ -113,6 +113,6 @@ class Access:
                     return False if match else True
             if not judge_password(html):
                 self.safe = False
-                Error_log.write(4)
+                error_write(4)
                 sql = "UPDATE users_account SET defunct = '1' WHERE account_id = '%s'" % (self.account_id)
                 Connect.query(sql)

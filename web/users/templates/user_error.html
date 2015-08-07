@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load staticfiles %}
 
 {% block set_title %}Information Error.{% endblock %}
 
@@ -31,7 +30,7 @@
 {% block bodytext %}
     <div class="top"></div>
     <div class="alert alert-danger find_error" role="alert">
-        <img src="{% static "img/jingao.png" %}" width="50" height="50"><h3>No User {{ username }}!</h3>
+        <img src="/img/alert.png" width="50" height="50"><h3>No User {{ username }}!</h3>
     </div>
     <div class="top"></div>
 {% endblock %}

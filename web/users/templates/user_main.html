@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load staticfiles %}
 {% load user_tags %}
 
 {% block set_title %}{{ u.username }} Information{% endblock %}
@@ -163,12 +162,12 @@
 {% endblock %}
 
 {% block otherjs %}
-    <script src="{% static "js/echarts.js" %}"></script>
+    <script src="/js/echarts.js"></script>
     <script type="text/javascript">
         // 路径配置
         require.config({
             paths: {
-                echarts: '{% static "js/dist" %}'
+                echarts: '/js/dist'
             }
         });
 

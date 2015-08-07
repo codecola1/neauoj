@@ -5,7 +5,7 @@ __author__ = 'Code_Cola'
 
 import datetime
 
-logfile = open('../../web/log/error.txt', 'w')
+logfile = open('../../web/log/error.txt', 'a')
 
 Error = [
     'MySQL connect ERROR!!!',
@@ -15,8 +15,7 @@ Error = [
     'Login ERROR!!!',
 ]
 
-class Error_log:
-    def write(self, error_index, other_error = ""):
-        now = datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p")
-        error_str = now + ": " + Error[error_index] + "" if not other_error else "-------" + other_error
-        logfile.write(error_str)
+def error_write(error_index, other_error = ""):
+    now = datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p")
+    error_str = now + ": " + Error[error_index] + ("\n" if not other_error else "\n" + "-"*20 + str(other_error))
+    logfile.write(error_str + "\n")
