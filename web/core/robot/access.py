@@ -126,13 +126,17 @@ class Access:
 
     def save_img(self, url, problem_id=''):
         filename = url.split('/')[-1]
-        path = os.path.join(STATIC_PATH, 'upload', problem_id)
+        path = os.path.join(STATIC_PATH, 'upload', self.oj, problem_id)
         if not os.path.exists(path):
             os.mkdir(path)
         path = os.path.join(path, filename)
         if url[0:4] != 'http':
             url = url_index[self.oj] + ('' if url[0] == '/' else '/') + url
         try:
+            # conn = urllib.urlopen(url)
+            # f = open(path,'wb')
+            # f.write(conn.read())
+            # f.close()
             urllib.urlretrieve(url, path, None)
         except:
             error_write(5)
