@@ -6,7 +6,7 @@ __author__ = 'Code_Cola'
 import datetime
 import os
 
-logfile = open(os.path.abspath('../../web/log/error.txt'),'a')
+logfile = open(os.path.abspath('web/log/error.txt'),'a')#../../web/log/error.txt
 
 Error = [
     'MySQL connect ERROR!!!',

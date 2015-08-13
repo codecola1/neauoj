@@ -2,6 +2,8 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.models import User
+from django import forms
+from problem.robot.get_problem import Down_problem
 
 # Create your views here.
 
@@ -10,10 +12,41 @@ def index(req):
         return render_to_response('index.html', {
         }, context_instance=RequestContext(req))
 
+class testform(forms.Form):
+    ind = forms.IntegerField()
+
 def test(req):
-    from robot.access import Access
-    ac = Access(oj='hdu')
-    html = ac.get_html(url='http://acm.hdu.edu.cn/showproblem.php?pid=1022')
-    return render_to_response('test.html', {
-        'html':html
-    })
+    if req.method == 'POST':
+        form = testform(req.POST)
+        if form.is_valid():
+            ind = form.cleaned_data['ind']
+            test = Down_problem('poj', ind)
+            if test.right:
+                test.get_info()
+                test.get_img()
+        return render_to_response('test.html', {
+            'form': form,
+            'pname': test.pid,
+            'title': test.Title if test.right else "",
+            'description': test.Description if test.right else "",
+            'input': test.Input if test.right else "",
+            'output': test.Output if test.right else "",
+            'sinput': test.Sinput if test.right else "",
+            'soutput': test.Soutput if test.right else "",
+            'hint': test.Hint if test.right else "",
+            'author': test.Source if test.right else "",
+        }, context_instance=RequestContext(req))
+    else:
+        form = testform()
+        return render_to_response('test.html', {
+            'form': form,
+            'pname': 'None',
+            'title': '',
+            'description': '',
+            'input': '',
+            'output': '',
+            'sinput': '',
+            'soutput': '',
+            'hint': '',
+            'author': '',
+        }, context_instance=RequestContext(req))

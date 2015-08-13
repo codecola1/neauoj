@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Problem(models.Model):
     problem_id = models.CharField(max_length=20)
     title = models.CharField(max_length=50)
@@ -17,12 +18,13 @@ class Problem(models.Model):
     time_limit_java = models.IntegerField(default=0)
     memory_limit_c = models.IntegerField(default=0)
     memory_limit_java = models.IntegerField(default=0)
-    defunct = models.BooleanField()
-    accepted = models.PositiveIntegerField()
-    submit = models.PositiveIntegerField()
-    solved = models.PositiveIntegerField()
-    type = models.CharField(max_length=20)
+    defunct = models.BooleanField(default=0)
+    accepted = models.PositiveIntegerField(default=0)
+    submit = models.PositiveIntegerField(default=0)
+    solved = models.PositiveIntegerField(default=0)
+    type = models.CharField(max_length=20, default="")
     oj = models.CharField(max_length=20)
     judge_type = models.PositiveIntegerField()
+
     def __unicode__(self):
         return self.title
