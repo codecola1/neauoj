@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^index/$', 'core.views.index', name = 'home'),
     url(r'^test/$', 'core.views.test'),
     url(r'^accounts/', include('users.urls')),
+    url(r'^problem/', include('problem.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

@@ -33,7 +33,7 @@ r = {
         r'Desc.*?">(.*?)</div>',
         r'>Input.*?">(.*?)</div>',
         r'>Output.*?">(.*?)</div>',
-        r' Output<.*?">(.*?)</pre>',
+        r' Input<.*?">(.*?)</pre>',
         r' Output<.*?">(.*?)</pre>',
         r'Hint(.*?)</div>',
         r'Source.*?<a.*?">(.*?)</',
@@ -41,8 +41,8 @@ r = {
 }
 
 replace = {
-    'hdu': 'data/images/',
-    'poj': 'images/'
+    'hdu': r'/data/images/',
+    'poj': r'images([/\d]*)/'
 }
 
 img = []
@@ -96,10 +96,13 @@ class Down_problem:
         else:
             self.Time_Limit_Java, self.Time_Limit_C = use_re(2, self.html, self.ojname, 2)
             self.Memory_Limit_Java, self.Memory_Limit_C = use_re(3, self.html, self.ojname, 2)
-        path = 'upload/' + self.ojname + "/" + str(self.pid) + "/"
-        self.Description = use_re(4, self.html, self.ojname).replace(replace[self.ojname], ("/" + path) if self.ojname == 'poj' else path)
-        self.Input = use_re(5, self.html, self.ojname)
-        self.Output = use_re(6, self.html, self.ojname)
+        path = '/upload/' + self.ojname + "/" + str(self.pid) + "/"
+        self.Description = use_re(4, self.html, self.ojname)#.replace(replace[self.ojname], ("/" + path) if self.ojname == 'poj' else path)
+        self.Input = use_re(5, self.html, self.ojname)#.replace(replace[self.ojname], ("/" + path) if self.ojname == 'poj' else path)
+        self.Output = use_re(6, self.html, self.ojname)#.replace(replace[self.ojname], ("/" + path) if self.ojname == 'poj' else path)
+        self.Description = re.sub(replace[self.ojname], path, self.Description)
+        self.Input = re.sub(replace[self.ojname], path, self.Input)
+        self.Output = re.sub(replace[self.ojname], path, self.Output)
         self.Sinput = use_re(7, self.html, self.ojname).replace('\n', '<br>')
         self.Soutput = use_re(8, self.html, self.ojname).replace('\n', '<br>')
         self.Hint = use_re(9, self.html, self.ojname)

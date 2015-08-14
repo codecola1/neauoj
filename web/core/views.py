@@ -20,7 +20,7 @@ def test(req):
         form = testform(req.POST)
         if form.is_valid():
             ind = form.cleaned_data['ind']
-            test = Down_problem('poj', ind)
+            test = Down_problem('hdu', ind)
             if test.right:
                 test.get_info()
                 test.get_img()
