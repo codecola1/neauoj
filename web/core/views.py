@@ -13,6 +13,9 @@ def index(req):
         }, context_instance=RequestContext(req))
 
 class testform(forms.Form):
+    oj = forms.ChoiceField(
+        choices=(('hdu','hdu'), ('poj', 'poj'))
+    )
     ind = forms.IntegerField()
 
 def test(req):
@@ -20,7 +23,8 @@ def test(req):
         form = testform(req.POST)
         if form.is_valid():
             ind = form.cleaned_data['ind']
-            test = Down_problem('hdu', ind)
+            oj = form.cleaned_data['oj']
+            test = Down_problem(oj, ind)
             if test.right:
                 test.get_info()
                 test.get_img()
