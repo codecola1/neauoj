@@ -91,7 +91,7 @@ class Down_problem:
         if self.ojname == 'poj':
             self.Time_Limit_C = use_re(2,self.html,self.ojname)
             self.Memory_Limit_C = use_re(3,self.html,self.ojname)
-            self.Time_Limit_Java = 2 * self.Time_Limit_C
+            self.Time_Limit_Java = str(2 * int(self.Time_Limit_C))
             self.Memory_Limit_Java = self.Memory_Limit_C
         else:
             self.Time_Limit_Java, self.Time_Limit_C = use_re(2, self.html, self.ojname, 2)
@@ -126,4 +126,4 @@ class Down_problem:
             problem_id=self.pid,
             judge_type=1,
         )
-        # p.save()
+        p.save()

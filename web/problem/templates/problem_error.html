@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block set_title %}Problem Error.{% endblock %}
+
+{% block othercss %}
+    <style type="text/css">
+        .find_error {
+            margin-top: 50px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 400px;
+            height: 100px;
+            text-align: center;
+        }
+        .top {
+            margin-top: 200px;
+        }
+        .find_error img {
+            position: relative;
+	        right: 120px;
+            top: 10px;
+        }
+        .find_error h3 {
+            position: relative;
+            left: 20px;
+	        bottom: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block bodytext %}
+    <div class="top"></div>
+    <div class="alert alert-danger find_error" role="alert">
+        <img src="/img/alert.png" width="50" height="50"><h3>No Such Problem!</h3>
+    </div>
+    <div class="top"></div>
+{% endblock %}

@@ -14,7 +14,7 @@ Error = [
     'Not Find User!!!',
     'Get HTML ERROR!!!',
     'Login ERROR!!!',
-    'Get Image ERROR',
+    'Get Image ERROR!!!',
 ]
 
 def error_write(error_index, other_error = ""):
