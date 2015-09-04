@@ -2,20 +2,27 @@
 
 {% block othercss %}
     <style type="text/css">
-        .outer {
+        .first {
             margin-top: 50px;
         }
+{#        #ttime {#}
+{#            width: 920px;#}
+{#            margin: 0px auto;#}
+{#        }#}
     </style>
+{% endblock %}
+{% block headjs %}
+{#    <script src="/js/jquery-1.8.3.min.js"></script>#}
+{#    <script src="/js/jscss.js"></script>#}
 {% endblock %}
 
 {% block bodytext %}
-    <div class = "container outer">
-        <div class = "panel panel-default">
-            {% if user.is_authenticated %}
-                <p>welcome, {{ user.username }}.</p>
-            {% else %}
-                <p>please log in.</p>
-            {% endif%}
-        </div>
+    <div class="jumbotron first">
+        <h2>Welcome to NEAU Online Judge!</h2>
+        <p>What do you want to do?</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
     </div>
+{#    <div id="ttime">#}
+{#        <canvas id="canvas"></canvas>#}
+{#    </div>#}
 {% endblock %}

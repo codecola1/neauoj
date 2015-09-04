@@ -1,7 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from users.froms import UserRegisterForm
+from users.forms import UserRegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -34,6 +34,7 @@ def index(req, username):
     return render_to_response("user_main.html", {
         'u' : user,
     }, context_instance=RequestContext(req))
+
 
 @login_required
 def account(req):

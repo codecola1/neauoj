@@ -5,5 +5,5 @@ from problem import views
 
 
 urlpatterns = [
-    url(r'^p/([0-9]+)$', views.problem_main, name = 'problempage')
+    url(r'^p/([0-9]+)$', views.problem_main, name = 'problempage'),
 ]

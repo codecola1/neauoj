@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 #!/usr/bin/python
 __author__ = 'Code_Cola'
 
@@ -8,9 +8,11 @@ import cookielib
 import re
 import os
 
-from core.support.error import error_write
 from core.support.mysql_join import Connect
 from web.settings import STATIC_PATH
+from core.support.log_main import Log
+
+logging = Log()
 
 Headers = {
     'hdu': {
@@ -63,6 +65,12 @@ decode = {
     'poj': False
 }
 
+login_error = {
+    'hdu': r'No\ssuch\suser\sor\swrong\spassword',
+    'poj': r'User\sID',
+}
+
+
 class Access:
     def __init__(self, account_id='', oj=''):
         self.accunt_id = account_id
@@ -83,7 +91,7 @@ class Access:
             self.password = str(results[0][1])
             self.oj = str(results[0][2])
         else:
-            error_write(2)
+            logging.warning("get_user MySQL query ERROR!!!")
             self.safe = False
             return
         self.postdata = Data[self.oj]
@@ -91,44 +99,51 @@ class Access:
         self.postdata[Listmap[self.oj][1]] = self.password
         self.oj = Headers[self.oj]
 
-    def get_html(self, url, postdata = {}):
+    def get_html(self, url, postdata={}):
         if not self.safe:
             return ''
-        req = urllib2.Request(url = url, headers = self.header, data = None if not len(postdata) else urllib.urlencode(postdata))
+        req = urllib2.Request(url=url, headers=self.header,
+                              data=None if not len(postdata) else urllib.urlencode(postdata))
         try:
             s = self.opener.open(req).read()
             if decode[self.oj]:
                 s = s.decode('gbk').encode('utf8')
         except urllib2.URLError, e:
-            error_write(3, other_error=e.reason)
+            logging.warning("Get HTML ERROR!!!" + e.reason)
             self.safe = False
             return ''
         else:
+            logging.info("get_html:" + url)
             return s
+
+    def judge_password(self, html):
+        match = re.search(login_error[self.oj], html, re.M)
+        return False if match else True
 
     def login(self):
         url = Login_url[self.oj]
         html = self.get_html(url, self.postdata)
         if self.safe:
-            if self.oj == 'hdu':
-                def judge_password(html):
-                    match = re.search(r'No\ssuch\suser\sor\swrong\spassword',html,re.M)
-                    return False if match else True
-            elif self.oj == 'poj':
-                def judge_password(html):
-                    match = re.search(r'User\sID',html,re.M);
-                    return False if match else True
-            if not judge_password(html):
+            if not self.judge_password(html):
                 self.safe = False
-                error_write(4)
+                logging.warning("Login ERRER!!! No Such User!!!")
                 sql = "UPDATE users_account SET defunct = '1' WHERE account_id = '%s'" % (self.account_id)
                 Connect.query(sql)
+            else:
+                logging.info("OJ:" + self.oj + " USER:" + self.username + "Logined")
+                return True
+        logging.warning("Login ERROR!!!")
+        return False
 
     def save_img(self, url, problem_id=''):
         filename = url.split('/')[-1]
         path = os.path.join(STATIC_PATH, 'upload', self.oj, str(problem_id))
         if not os.path.exists(path):
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                logging.warning("img mkdir ERROR!!!")
+                return
         path = os.path.join(path, filename)
         if url[0:4] != 'http':
             url = url_index[self.oj] + ('' if url[0] == '/' else '/') + url
@@ -139,4 +154,6 @@ class Access:
             # f.close()
             urllib.urlretrieve(url, path)
         except:
-            error_write(5)
+            logging.warning("Get Image ERROR!!!")
+        else:
+            logging.info("Download image <%s> over" % (filename))

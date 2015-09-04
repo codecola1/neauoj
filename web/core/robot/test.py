@@ -1,7 +1,6 @@
 __author__ = 'Code_Cola'
 
-from problem.robot.get_problem import Down_problem
+from core.support.log_main import Log
 
-test = Down_problem('hdu', 2345)
-if test.right:
-    test.get_info()
+logging = Log()
+logging.info('test')

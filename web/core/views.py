@@ -12,11 +12,13 @@ def index(req):
         return render_to_response('index.html', {
         }, context_instance=RequestContext(req))
 
+
 class testform(forms.Form):
     oj = forms.ChoiceField(
-        choices=(('hdu','hdu'), ('poj', 'poj'))
+        choices=(('hdu', 'hdu'), ('poj', 'poj'))
     )
     ind = forms.IntegerField()
+
 
 def test(req):
     if req.method == 'POST':

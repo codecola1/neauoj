@@ -14,29 +14,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url, patterns
-from django.contrib import admin
 from web import settings
 import os
 
 urlpatterns = [
-    url(r'^$', 'core.views.index', name = 'home'),
-    url(r'^index/$', 'core.views.index', name = 'home'),
+    url(r'^$', 'core.views.index', name='home'),
+    url(r'^index/$', 'core.views.index', name='home'),
     url(r'^test/$', 'core.views.test'),
+    url(r'^submit/$', 'status.views.submit', name='submit'),
     url(r'^accounts/', include('users.urls')),
     url(r'^problem/', include('problem.urls')),
-    url(r'^admin/', include(admin.site.urls)),
 ]
 
 urlpatterns += patterns('',
-    (r'^img/(?P<path>.*)$' , 'django.views.static.serve',
-        {'document_root': os.path.join( settings.STATIC_PATH , 'img' ) } ) ,
+                        (r'^img/(?P<path>.*)$', 'django.views.static.serve',
+                         {'document_root': os.path.join(settings.STATIC_PATH, 'img')} ),
 
-    (r'^upload/(?P<path>.*)$' , 'django.views.static.serve',
-        {'document_root': os.path.join( settings.STATIC_PATH , 'upload' ) } ) ,
+                        (r'^upload/(?P<path>.*)$', 'django.views.static.serve',
+                         {'document_root': os.path.join(settings.STATIC_PATH, 'upload')} ),
 
-    (r'^css/(?P<path>.*)$' , 'django.views.static.serve',
-        {'document_root': os.path.join( settings.STATIC_PATH , 'css' ) } ) ,
+                        (r'^css/(?P<path>.*)$', 'django.views.static.serve',
+                         {'document_root': os.path.join(settings.STATIC_PATH, 'css')} ),
 
-    (r'^js/(?P<path>.*)$' , 'django.views.static.serve',
-        {'document_root': os.path.join( settings.STATIC_PATH , 'js' ) } ) ,
+                        (r'^js/(?P<path>.*)$', 'django.views.static.serve',
+                         {'document_root': os.path.join(settings.STATIC_PATH, 'js')} ),
 )
