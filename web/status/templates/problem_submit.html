@@ -2,6 +2,45 @@
 
 {% block set_title %}Submit{% endblock %}
 
-{% block bodytext %}
+{% block othercss %}
+    <style>
+        #head h1 {
+            font-size: 64px;
+            text-align: center;
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+        #submit_form {
+            margin: auto;
+            width: 50%;
+            text-align: center;
+        }
+        #id_language {
+            width: 60%;
+        }
+    </style>
+{% endblock %}
 
+{% block bodytext %}
+    <div class="container">
+        <div id="head" class="container">
+            <h1>Submit Your Code</h1>
+        </div>
+        <form id="submit_form">
+            {% csrf_token %}
+            <div class="form-group" style="float: left;width: 40%">
+                <label style="float: left;margin-top: 5px;">Problem(id):&nbsp;&nbsp;&nbsp;</label>
+                <input id="id_problem" class="form-control" name="problem" type="text" style="width: 50%">
+            </div>
+            <div class="form-group" style="float: right;width: 40%">
+                <label style="float: left;margin-top: 5px;width: 40%">Language:</label>
+                {{ form.language }}
+            </div>
+            <div class="form-group">
+                <label for="id_code" style="margin-top: 50px;font-size: 32px;">Code:</label>
+                <textarea cols="70" id="id_code" maxlength="5000" name="code" rows="20"></textarea>
+            </div>
+            <button type="submit" value="login" class="btn btn-default">Submit</button>
+        </form>
+    </div>
 {% endblock %}

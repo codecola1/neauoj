@@ -17,18 +17,23 @@ class Solve(models.Model):
     wait_show = models.BooleanField(default=True)
     is_site = models.BooleanField(default=True)
     code = models.TextField(max_length=5000, default="")
+
     def __unicode__(self):
         return self.problem.title
+
 
 class ce_info(models.Model):
     solve = models.ForeignKey(Solve)
     info = models.TextField(max_length=500)
+
     def __unicode__(self):
         return self.solve.problem.title
+
 
 class Solve_first(models.Model):
     user = models.ForeignKey(User)
     problem = models.ForeignKey(Problem)
     solve = models.ForeignKey(Solve)
+
     def __unicode__(self):
         return self.problem.title

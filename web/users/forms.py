@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 #!/usr/bin/python
 
 from django.contrib.auth.models import User
@@ -6,21 +6,22 @@ from users.models import Info
 from django import forms
 import re
 
+
 class UserRegisterForm(forms.ModelForm):
     error_messages = {
         'username_mismatch': ("The Username can only fill in the letters, numbers and underscodes."),
         'username_mismatch_have': ("Users have been registered."),
         'password_mismatch': ("The two password fields didn't match."),
-        'school_mismatch' : ("School can not be empty."),
-        'grade_mismatch' : ("Grade can not be empty."),
+        'school_mismatch': ("School can not be empty."),
+        'grade_mismatch': ("Grade can not be empty."),
     }
     school_choice = (
         (u'', u'School'),
-        (u'neau',u'东北农业大学'),
-        (u'others',u'其他'),
+        (u'neau', u'东北农业大学'),
+        (u'others', u'其他'),
     )
     grade_choice = [(u'', u'Grade')]
-    grade_choice.extend([(unicode(year),unicode(year)) for year in range(2010, 2016)])
+    grade_choice.extend([(unicode(year), unicode(year)) for year in range(2010, 2016)])
     username = forms.CharField(
         error_messages={'required': 'Your username is Required'}
     )
@@ -30,18 +31,18 @@ class UserRegisterForm(forms.ModelForm):
     school = forms.ChoiceField(
         error_messages={'required': 'Your school is Required'},
         choices=school_choice,
-        widget=forms.Select(attrs={'class':'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     grade = forms.ChoiceField(
         error_messages={'required': 'Your grade is Required'},
         choices=grade_choice,
-        widget=forms.Select(attrs={'class':'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
 
     class Meta:
         model = Info
-        fields = ("nickname","school","grade")
+        fields = ("nickname", "school", "grade")
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
@@ -52,7 +53,7 @@ class UserRegisterForm(forms.ModelForm):
                 code='username_mismatch',
             )
         try:
-            u = User.objects.get(username = username)
+            u = User.objects.get(username=username)
         except:
             return username
         else:
@@ -96,9 +97,9 @@ class UserRegisterForm(forms.ModelForm):
         email = self.cleaned_data.get("email")
         school = self.cleaned_data.get("school")
         grade = self.cleaned_data.get("grade")
-        user = User(username = username, email = email)
+        user = User(username=username, email=email)
         user.set_password(self.cleaned_data["password1"])
         user.save()
-        info = Info(user = user, nickname = nickname, school = school, grade = grade)
+        info = Info(user=user, nickname=nickname, school=school, grade=grade)
         info.save()
         return user
