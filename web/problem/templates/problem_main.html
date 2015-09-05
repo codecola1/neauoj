@@ -15,7 +15,9 @@
 
 {% block bodytext %}
     <div class="page-header title">
-        <h1>{{ p.title }}<small>&nbsp;&nbsp;&nbsp;From {{ p.oj|upper }}</small></h1>
+        <h1>{{ p.title }}
+            <small>&nbsp;&nbsp;&nbsp;From {{ p.oj|upper }}</small>
+        </h1>
         <div class="info">
             <p>
                 <strong>Time Limit:</strong>&nbsp;{{ p.time_limit_c }}MS / {{ p.time_limit_java }}MS (C/Java)&nbsp;
@@ -25,38 +27,50 @@
     </div>
     <div class="container">
         <h3>Description</h3>
+
         <div class="container"><p>{{ p.description|safe }}</p></div>
     </div>
     <div class="container">
         <h3>Input</h3>
+
         <div class="container"><p>{{ p.input|safe }}</p></div>
     </div>
     <div class="container">
         <h3>Output</h3>
+
         <div class="container"><p>{{ p.output|safe }}</p></div>
     </div>
     <div class="container">
         <h3>Sample Input</h3>
-        <div class="container"><pre>{{ p.sample_input|safe }}</pre></div>
+
+        <div class="container">
+            <pre>{{ p.sample_input|safe }}</pre>
+        </div>
     </div>
     <div class="container">
         <h3>Sample Output</h3>
-        <div class="container"><pre>{{ p.sample_output|safe }}</pre></div>
+
+        <div class="container">
+            <pre>{{ p.sample_output|safe }}</pre>
+        </div>
     </div>
     {% if p.hint %}
         <div class="container">
             <h3>Hint</h3>
+
             <div class="container"><p>{{ p.hint|safe }}</p></div>
         </div>
     {% endif %}
     {% if p.source %}
         <div class="container">
             <h3>Source</h3>
+
             <div class="container"><p>{{ p.source|safe }}</p></div>
         </div>
     {% endif %}
     <div class="container">
-        <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit" style="margin:0 auto;display:block;">
+        <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit"
+                style="margin:0 auto;display:block;">
             Submit
         </button>
     </div>
@@ -64,18 +78,36 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
                 </div>
-                <div class="modal-body">
-                    <form>
+                <form method="POST" action={% url "submit" %}>
+                    <div class="modal-body">
                         {% csrf_token %}
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Submit</button>
-                </div>
+                        <div class="modal-body">
+                            <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
+
+                            <div class="form-group">
+                                <label style="float: left;width: 20%;font-size: 24px;">Language:</label>
+                                <select class="form-control" id="id_language" name="language" style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
+                                    <option value="" selected="selected">Language</option>
+                                    <option value="c">C</option>
+                                    <option value="c++">C++</option>
+                                    <option value="java">Java</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label style="margin-top: 50px;margin-left: -230px;font-size: 32px;">Code:</label>
+                                <textarea id="id_code" maxlength="5000" name="code" rows="20" style="margin: auto;width: 99%"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

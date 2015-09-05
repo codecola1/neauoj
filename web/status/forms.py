@@ -2,12 +2,14 @@ __author__ = 'Code_Cola'
 
 from django import forms
 from models import Solve
+from problem.models import Problem
 
 
 class SubmitForm(forms.ModelForm):
     error_messages = {
         'code': 'Code is too short',
-        'language': "Language can not be empty"
+        'language': "Language can not be empty",
+        'problem': "Not such problem",
     }
 
     language_choice = (
@@ -18,17 +20,27 @@ class SubmitForm(forms.ModelForm):
     )
 
     language = forms.ChoiceField(
-        error_messages={'required': 'Your language is Required'},
+        error_messages={'required': 'Language can not be empty'},
         choices=language_choice,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    problem = forms.CharField()
+
     class Meta:
         model = Solve
-        fields = ('problem', 'language', 'code')
-        widgets = {
-            'problem': forms.TextInput(attrs={'style': 'width: 40%'}),
-        }
+        fields = ('language', 'code')
+
+    def clean_problem(self):
+        problem_id = self.cleaned_data.get("problem")
+        try:
+            Problem.objects.get(id=problem_id)
+        except:
+            raise forms.ValidationError(
+                self.error_messages['problem'],
+                code='problem_error'
+            )
+        return problem_id
 
     def clean_code(self):
         code = self.cleaned_data.get("code")
@@ -47,3 +59,12 @@ class SubmitForm(forms.ModelForm):
                 code='language_error'
             )
         return language
+
+    def save(self, commit=True):
+        problem_id = self.cleaned_data.get("problem")
+        language = self.cleaned_data.get("language")
+        code = self.cleaned_data.get("code")
+        p = Problem.objects.get(id=problem_id)
+        solve = Solve(problem=p, language=language, code=code)
+        # solve.save()
+        return solve

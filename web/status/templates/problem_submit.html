@@ -8,7 +8,7 @@
             font-size: 64px;
             text-align: center;
             margin-top: 100px;
-            margin-bottom: 100px;
+            margin-bottom: 50px;
         }
         #submit_form {
             margin: auto;
@@ -26,7 +26,10 @@
         <div id="head" class="container">
             <h1>Submit Your Code</h1>
         </div>
-        <form id="submit_form">
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert" style="width: 50%;margin: auto"><h3>Sorry</h3>{{ form.errors }}</div>
+        {% endif %}
+        <form id="submit_form" method="POST">
             {% csrf_token %}
             <div class="form-group" style="float: left;width: 40%">
                 <label style="float: left;margin-top: 5px;">Problem(id):&nbsp;&nbsp;&nbsp;</label>
@@ -40,7 +43,7 @@
                 <label for="id_code" style="margin-top: 50px;font-size: 32px;">Code:</label>
                 <textarea cols="70" id="id_code" maxlength="5000" name="code" rows="20"></textarea>
             </div>
-            <button type="submit" value="login" class="btn btn-default">Submit</button>
+            <button type="submit" value="submit" class="btn btn-default">Submit</button>
         </form>
     </div>
 {% endblock %}
