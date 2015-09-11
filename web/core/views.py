@@ -10,6 +10,7 @@ from problem.robot.get_problem import Down_problem
 def index(req):
     if req.method == 'GET':
         return render_to_response('index.html', {
+            'path': req.path,
         }, context_instance=RequestContext(req))
 
 
@@ -45,6 +46,7 @@ def test(req):
     else:
         form = testform()
         return render_to_response('test.html', {
+            'path': req.path,
             'form': form,
             'pname': 'None',
             'title': '',

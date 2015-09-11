@@ -44,6 +44,7 @@
                 <textarea cols="70" id="id_code" maxlength="5000" name="code" rows="20"></textarea>
             </div>
             <button type="submit" value="submit" class="btn btn-default">Submit</button>
+            <input type="hidden" name="uid" value="{{ user.id }}" />
         </form>
     </div>
 {% endblock %}

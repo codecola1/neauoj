@@ -13,5 +13,6 @@ def problem_main(req, pid):
         except:
             return render_to_response('problem_error.html')
         return render_to_response('problem_main.html', {
+            'path': req.path,
             'p': p,
         }, context_instance=RequestContext(req))

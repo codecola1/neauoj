@@ -112,6 +112,7 @@ class Down_problem:
         self.Hint = use_re(9, self.html, self.ojname)
         if self.Hint:
             self.Soutput = self.Soutput[0:-6]
+            self.Hint = re.sub(replace[self.ojname], path, self.Hint.replace('../', ''))
         self.Source = use_re(10, self.html, self.ojname)
         logging.info("Download Problem: " + self.ojname + "-" + str(self.pid) + " Info Over")
         try:

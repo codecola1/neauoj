@@ -81,11 +81,11 @@
                                 <label for="exampleInputPassword1">Password</label>
                                 <input type="password" name="password" class="form-control" id="password" placeholder="Password">
                             </div>
-                            <input type="hidden" name="next" value="{% url 'home' %}" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" value="login" class="btn btn-primary">Login</button>
+                            <input type="hidden" name="next" value="{{ path|escape }}" />
                         </div>
                     </form>
                 </div>

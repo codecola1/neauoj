@@ -48,7 +48,7 @@
                         <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                     </div>
                     <button type="submit" value="login" class="btn btn-default">Submit</button>
-                    <input type="hidden" name="next" value="{{ next }}" />
+                    <input type="hidden" name="next" value="{{ next|escape }}" />
                 </form>
             </div>
             <div id = "info" class = "container">

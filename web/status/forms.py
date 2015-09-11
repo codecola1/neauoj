@@ -3,6 +3,7 @@ __author__ = 'Code_Cola'
 from django import forms
 from models import Solve
 from problem.models import Problem
+from django.contrib.auth.models import User
 
 
 class SubmitForm(forms.ModelForm):
@@ -26,6 +27,7 @@ class SubmitForm(forms.ModelForm):
     )
 
     problem = forms.CharField()
+    uid = forms.CharField()
 
     class Meta:
         model = Solve
@@ -44,7 +46,7 @@ class SubmitForm(forms.ModelForm):
 
     def clean_code(self):
         code = self.cleaned_data.get("code")
-        if len(code) < 10:
+        if len(code) < 50 or len(code) >= 65536:
             raise forms.ValidationError(
                 self.error_messages['code'],
                 code='code_error'
@@ -64,7 +66,9 @@ class SubmitForm(forms.ModelForm):
         problem_id = self.cleaned_data.get("problem")
         language = self.cleaned_data.get("language")
         code = self.cleaned_data.get("code")
+        uid = self.cleaned_data.get("uid")
         p = Problem.objects.get(id=problem_id)
-        solve = Solve(problem=p, language=language, code=code)
-        # solve.save()
+        u = User.objects.get(id=uid)
+        solve = Solve(user=u, problem=p, language=language, code=code, wait_show=True, length=len(code))
+        solve.save()
         return solve

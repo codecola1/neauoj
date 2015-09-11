@@ -16,6 +16,7 @@ def submit(req):
     if req.method == 'GET':
         form = SubmitForm()
         return render_to_response('problem_submit.html', {
+            'path': req.path,
             'form': form
         }, context_instance=RequestContext(req))
     if req.method == 'POST':
@@ -27,5 +28,6 @@ def submit(req):
             return HttpResponseRedirect("/index")
         else:
             return render_to_response("problem_submit.html", {
+                'path': req.path,
                 'form': form,
             }, context_instance=RequestContext(req))

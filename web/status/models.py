@@ -7,15 +7,13 @@ from problem.models import Problem
 class Solve(models.Model):
     user = models.ForeignKey(User)
     problem = models.ForeignKey(Problem)
-    run_id = models.PositiveIntegerField()
-    submit_time = models.DateTimeField()
+    submit_time = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20)
-    use_time = models.IntegerField()
-    use_memory = models.IntegerField()
+    use_time = models.IntegerField(default=0)
+    use_memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)
     length = models.IntegerField()
     wait_show = models.BooleanField(default=True)
-    is_site = models.BooleanField(default=True)
     code = models.TextField(max_length=5000, default="")
 
     def __unicode__(self):
@@ -28,12 +26,3 @@ class ce_info(models.Model):
 
     def __unicode__(self):
         return self.solve.problem.title
-
-
-class Solve_first(models.Model):
-    user = models.ForeignKey(User)
-    problem = models.ForeignKey(Problem)
-    solve = models.ForeignKey(Solve)
-
-    def __unicode__(self):
-        return self.problem.title

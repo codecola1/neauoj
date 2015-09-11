@@ -21,11 +21,13 @@ def register(req):
             return HttpResponseRedirect("/index")
         else:
             return render_to_response("register.html", {
+                'path': req.path,
                 'form': form,
             }, context_instance=RequestContext(req))
     else:
         form = UserRegisterForm()
         return render_to_response("register.html", {
+            'path': req.path,
             'form': form,
         }, context_instance=RequestContext(req))
 
@@ -35,9 +37,11 @@ def index(req, username):
         user = User.objects.get(username=username)
     except:
         return render_to_response("user_error.html", {
+            'path': req.path,
             'username': username,
         })
     return render_to_response("user_main.html", {
+        'path': req.path,
         'u': user,
     }, context_instance=RequestContext(req))
 
@@ -45,5 +49,5 @@ def index(req, username):
 @login_required
 def account(req):
     return render_to_response("account.html", {
-
+        'path': req.path,
     }, context_instance=RequestContext(req))

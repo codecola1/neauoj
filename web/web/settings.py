@@ -117,4 +117,5 @@ STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 #Session
 
+SESSION_COOKIE_AGE = 60*60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

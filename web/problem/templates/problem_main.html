@@ -77,37 +77,49 @@
     <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
-                </div>
-                <form method="POST" action={% url "submit" %}>
-                    <div class="modal-body">
-                        {% csrf_token %}
+                {% if user.is_authenticated %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
+                    </div>
+                    <form method="POST" action={% url "submit" %}>
                         <div class="modal-body">
-                            <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
 
-                            <div class="form-group">
-                                <label style="float: left;width: 20%;font-size: 24px;">Language:</label>
-                                <select class="form-control" id="id_language" name="language" style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
-                                    <option value="" selected="selected">Language</option>
-                                    <option value="c">C</option>
-                                    <option value="c++">C++</option>
-                                    <option value="java">Java</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label style="margin-top: 50px;margin-left: -230px;font-size: 32px;">Code:</label>
-                                <textarea id="id_code" maxlength="5000" name="code" rows="20" style="margin: auto;width: 99%"></textarea>
+                                <div class="form-group">
+                                    <label style="float: left;width: 20%;font-size: 24px;">Language:</label>
+                                    <select class="form-control" id="id_language" name="language" style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
+                                        <option value="" selected="selected">Language</option>
+                                        <option value="c">C</option>
+                                        <option value="c++">C++</option>
+                                        <option value="java">Java</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
+                                    <textarea id="id_code" maxlength="5000" name="code" rows="20" style="margin: auto;width: 99%"></textarea>
+                                </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                            <input type="hidden" name="uid" value="{{ user.id }}" />
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h2 class="modal-title" id="myModalLabel">Error!</h2>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                    <div class="modal-body">
+                        <h3 style="text-align: center;">Please Login First!</h3>
                     </div>
-                </form>
+                {% endif %}
             </div>
         </div>
     </div>
