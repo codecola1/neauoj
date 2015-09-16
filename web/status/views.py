@@ -3,7 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
-from core.support.log_main import Log
+from core.support.log_web import Log
+import socket
 
 
 # Create your views here.
@@ -23,6 +24,10 @@ def submit(req):
         form = SubmitForm(req.POST)
         if form.is_valid():
             new_submit = form.save()
+            client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            client.connect("/tmp/judge.sock")
+            client.send(str(new_submit.id))
+            print client.recv(1024)
             logging.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             return HttpResponseRedirect("/index")

@@ -4,7 +4,7 @@ from django.template import RequestContext
 from users.forms import UserRegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from core.support.log_main import Log
+from core.support.log_web import Log
 
 
 # Create your views here.

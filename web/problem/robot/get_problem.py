@@ -3,9 +3,9 @@ __author__ = 'Code_Cola'
 
 import re
 from HTMLParser import HTMLParser
-from core.robot.access import Access
+from problem.robot.access import Access
 from problem.models import Problem
-from core.support.log_main import Log
+from core.support.log_web import Log
 
 logging = Log()
 
@@ -120,6 +120,7 @@ class Down_problem:
         except:
             p = Problem(
                 title=self.Title,
+                time_limit_c=self.Time_Limit_C,
                 memory_limit_c=self.Memory_Limit_C,
                 time_limit_java=self.Time_Limit_Java,
                 memory_limit_java=self.Memory_Limit_Java,
@@ -138,6 +139,7 @@ class Down_problem:
             logging.info("Problem: " + self.ojname + "-" + str(self.pid) + " Saved")
         else:
             p.title = self.Title
+            p.time_limit_c = self.Time_Limit_C
             p.memory_limit_c = self.Memory_Limit_C
             p.time_limit_java = self.Time_Limit_Java
             p.memory_limit_java = self.Memory_Limit_Java
@@ -148,4 +150,5 @@ class Down_problem:
             p.sample_output = self.Soutput
             p.hint = self.Hint
             p.source = self.Source
+            p.save()
             logging.info("Problem: " + self.ojname + "-" + str(self.pid) + " Updated")

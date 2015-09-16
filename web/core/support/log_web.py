@@ -9,7 +9,7 @@ class Log:
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                             datefmt='%Y %b %d, %a <%H:%M:%S>',
-                            filename='web/log/web.log',)#../../web/log/
+                            filename='web/log/web.log',)
 
     def info(self, message):
         logging.info(message)

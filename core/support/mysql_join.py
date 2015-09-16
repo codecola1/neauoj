@@ -4,13 +4,14 @@
 __author__ = 'Code_Cola'
 
 import MySQLdb
-from web.settings import DATABASES
-from error import error_write
+from settings import DATABASES
+from log_judge import Log
 
 host = 'localhost'
 username = DATABASES['default']['USER']
 password = DATABASES['default']['PASSWORD']
 database = DATABASES['default']['NAME']
+logging = Log()
 
 
 class Connect:
@@ -18,13 +19,14 @@ class Connect:
         try:
             db = MySQLdb.connect(host, username, password, database, charset="utf8")
         except:
-            error_write(0)
+            logging.warning('MySQL connect ERROR!!!')
+            return
         self.cursor = db.cursor()
     def query(self, sql):
         try:
             self.cursor.execute(sql)
         except:
-            error_write(1)
+            logging.warning('MySQL query ERROR!!!')
             return ''
         else:
             return self.cursor.fetchall()
