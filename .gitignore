@@ -1,1 +1,3 @@
-*.[(xml)(log)(pyc)]
+*.xml
+*.py[cod]
+*.log
