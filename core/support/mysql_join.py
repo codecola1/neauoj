@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 #!/usr/bin/python
 
 __author__ = 'Code_Cola'
@@ -17,11 +17,21 @@ logging = Log()
 class Connect:
     def __init__(self):
         try:
-            db = MySQLdb.connect(host, username, password, database, charset="utf8")
+            self.db = MySQLdb.connect(host, username, password, database, charset="utf8")
         except:
             logging.warning('MySQL connect ERROR!!!')
             return
-        self.cursor = db.cursor()
+        self.cursor = self.db.cursor()
+
+    def update(self, sql):
+        try:
+            self.cursor.execute(sql)
+        except:
+            logging.warning('MySQL update ERROR!!!')
+            return
+        else:
+            self.db.commit()
+
     def query(self, sql):
         try:
             self.cursor.execute(sql)

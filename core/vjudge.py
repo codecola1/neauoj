@@ -2,6 +2,7 @@ __author__ = 'Code_Cola'
 
 from access import Access
 from support.mysql_join import Connect
+from time import sleep
 import re
 
 url_index = {
@@ -16,8 +17,12 @@ url_status = {
     'hdu': ['http://acm.hdu.edu.cn/status.php', 'http://acm.hdu.edu.cn/status.php?first='],
 }
 
+url_ce = {
+    'hdu': 'http://acm.hdu.edu.cn/viewerror.php?rid=',
+}
+
 re_string = {
-    'hdu': [r'22px>.*?%s', r'22px>(\w+)<', r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K'],
+    'hdu': [r'22px>.*?%s', r'22px>(\w+)<', r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K', r'<pre>(.*?)</pre>'],
 }
 
 post_data = {
@@ -47,9 +52,11 @@ language_map = {
 class Vjudge:
     def __init__(self, sid, username, password):
         self.mysql = Connect()
+        self.sid = sid
         self.get_info(sid)
         self.username = username
         self.ac = Access(self.oj, username, password)
+        self.ce_info = ''
 
     def get_info(self, sid):
         result = self.mysql.query("SELECT problem_id, language, code FROM status_solve WHERE id = '%s'" % sid)
@@ -72,20 +79,38 @@ class Vjudge:
         if not self.rid:
             url = url_status[self.oj][0]
             html = self.ac.get_html(url)
-            match = re.search(re_string[self.oj][0] % self.username, html, re.M | re.I)
+            match = re.search(re_string[self.oj][0] % self.username, html, re.M | re.I | re.S)
             s = match.group()
-            self.rid = re.findall(re_string[self.oj][1], s, re.M | re.I)[-1]
-        print self.rid
+            self.rid = re.findall(re_string[self.oj][1], s, re.M | re.I | re.S)[-1]
         url = url_status[self.oj][1] + self.rid
         html = self.ac.get_html(url)
-        match = re.search(re_string[self.oj][2] % self.rid, html, re.M | re.I)
+        match = re.search(re_string[self.oj][2] % self.rid, html, re.M | re.I | re.S)
+        if match.group(1) == 'Compilation Error':
+            url = url_ce[self.oj] + self.rid
+            html = self.ac.get_html(url)
+            t = re.search(re_string[self.oj][3], html, re.M | re.I | re.S)
+            self.ce_info = t.group(1)
         return match.group(1), match.group(2), match.group(3)
+
+    def hdu_again(self, s):
+        if s == 'Queuing' or s == 'Compiling' or s == 'Running':
+            return True
+        return False
 
     def run(self):
         self.submit()
         self.rid = ''
         o = eval('self.' + self.oj + '_get_status')()
-        print o
-        while o[0] != 'Accepted':
+        self.mysql.update(
+            "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
+                o[0], o[1], o[2], self.sid))
+        while eval('self.' + self.oj + '_again')(o[0]):
             o = eval('self.' + self.oj + '_get_status')()
-            print o
+            self.mysql.update(
+                "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
+                    o[0], o[1], o[2], self.sid))
+            sleep(0.3)
+            # print o
+        if self.ce_info:
+            sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
+            self.mysql.update(sql)

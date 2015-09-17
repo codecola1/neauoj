@@ -8,7 +8,7 @@ class Solve(models.Model):
     user = models.ForeignKey(User)
     problem = models.ForeignKey(Problem)
     submit_time = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=200)
     use_time = models.IntegerField(default=0)
     use_memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)

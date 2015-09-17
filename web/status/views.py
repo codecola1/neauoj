@@ -27,7 +27,9 @@ def submit(req):
             client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             client.connect("/tmp/judge.sock")
             client.send(str(new_submit.id))
-            print client.recv(1024)
+            receive = client.recv(1024)
+            client.close()
+            logging.info(receive)
             logging.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             return HttpResponseRedirect("/index")

@@ -4,5 +4,7 @@ from support.mysql_join import Connect
 
 mysql = Connect()
 
-s = mysql.query("SELECT problem_id, language, code FROM status_solve WHERE id = '1'")
-print s[0][0]
+print 'test'
+s = mysql.query("SELECT username, password FROM core_judge_account WHERE oj = 'hdu' AND user_index = '0'")
+print s
+print 'test'

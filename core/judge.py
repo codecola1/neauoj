@@ -19,7 +19,6 @@ import os
 
 
 logging = Log()
-mysql = Connect()
 vqueue = Queue(5)
 queue = Queue(5)
 
@@ -27,17 +26,21 @@ queue = Queue(5)
 class Producer(threading.Thread):
     def __init__(self, sid):
         threading.Thread.__init__(self)
-        result = mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid)
+        self.sid = sid
+        self.mysql = Connect()
+        result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid)
         self.pid = result[0][0]
         self.uid = result[0][1]
-        result = mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
+        self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
+        result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
         self.judge_type = result[0][0]
+
 
     def run(self):
         if self.judge_type == 0:
             pass
         elif self.judge_type == 1:
-            pass
+            vqueue.put((self.sid, self.pid, self.uid))
         elif self.judge_type == 2:
             pass
         elif self.judge_type == 3:
@@ -58,10 +61,24 @@ class Consumer(threading.Thread):
 class vConsumer(threading.Thread):
     def __init__(self, index):
         threading.Thread.__init__(self)
-        self.index = index
+        self.index = str(index)
+        self.mysql = Connect()
 
     def run(self):
-        pass
+        while True:
+            self.sid, self.pid, self.uid = vqueue.get()
+            self.judge()
+
+    def judge(self):
+        result = self.mysql.query("SELECT oj FROM problem_problem WHERE id = '%s'" % self.pid)
+        self.oj = result[0][0]
+        result = self.mysql.query(
+            "SELECT username, password FROM core_judge_account WHERE oj = '%s' AND user_index = '%s'" % (
+                self.oj, self.index))
+        username = result[0][0]
+        password = result[0][1]
+        v = Vjudge(self.sid, username, password)
+        v.run()
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ class Judge(models.Model):
 
 class Judge_account(models.Model):
     oj = models.CharField(max_length=20)
-    index = models.IntegerField(default=-1)
+    user_index = models.IntegerField(default=-1)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     defunct = models.BooleanField(default=False)
