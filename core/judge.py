@@ -35,7 +35,6 @@ class Producer(threading.Thread):
         result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
         self.judge_type = result[0][0]
 
-
     def run(self):
         if self.judge_type == 0:
             pass

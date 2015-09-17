@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
 from core.support.log_web import Log
+from models import Solve,ce_info
 import socket
 
 
@@ -38,3 +39,13 @@ def submit(req):
                 'path': req.path,
                 'form': form,
             }, context_instance=RequestContext(req))
+
+def ce(req, sid):
+    try:
+        s = Solve.objects.get(id=sid)
+        c = ce_info.objects.get(solve=s)
+    except:
+        return render_to_response("problem_ce_info_error.html")
+    return render_to_response("problem_ce_info.html", {
+        'info': c.info
+    })

@@ -104,12 +104,13 @@ class Vjudge:
         self.mysql.update(
             "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
                 o[0], o[1], o[2], self.sid))
+        sleep(0.3)
         while eval('self.' + self.oj + '_again')(o[0]):
             o = eval('self.' + self.oj + '_get_status')()
             self.mysql.update(
                 "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
                     o[0], o[1], o[2], self.sid))
-            sleep(0.3)
+            sleep(0.5)
             # print o
         if self.ce_info:
             sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)

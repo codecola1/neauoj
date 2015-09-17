@@ -5,5 +5,5 @@ from status import views
 
 
 urlpatterns = [
-    url(r'^submit$', views.submit, name = 'submit'),
+    url(r'^ce/(\d+)/$', views.ce, name = 'ce_info')
 ]

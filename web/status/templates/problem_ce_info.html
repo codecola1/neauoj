@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block set_title %}Compilation Error - Information{% endblock %}
+{% block bodytext %}
+    <h1 style="text-align: center;margin-top: 50px;margin-bottom: 50px">Compilation Error - Information</h1>
+    <div class="container">
+        <pre>
+            <br>
+            {{ info }}
+        </pre>
+    </div>
+{% endblock %}
