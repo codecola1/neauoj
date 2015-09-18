@@ -5,24 +5,51 @@
         .first {
             margin-top: 50px;
         }
-{#        #ttime {#}
-{#            width: 920px;#}
-{#            margin: 0px auto;#}
-{#        }#}
     </style>
 {% endblock %}
-{% block headjs %}
-{#    <script src="/js/jquery-1.8.3.min.js"></script>#}
-{#    <script src="/js/jscss.js"></script>#}
-{% endblock %}
-
 {% block bodytext %}
     <div class="jumbotron first">
         <h2>Welcome to NEAU Online Judge!</h2>
-        <p>What do you want to do?</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+
+        <p>Please choose one type you are</p>
     </div>
-{#    <div id="ttime">#}
-{#        <canvas id="canvas"></canvas>#}
-{#    </div>#}
+    <div class="row" style="margin-top: 50px">
+        <div class="col-sm-6 col-md-4">
+            <a href="{% url 'problem_studentlist' %}">
+                <div class="thumbnail">
+                    <img src="/img/xiaobiao.jpg" alt="Undergraduate"
+                         style="height: 170px">
+
+                    <div class="caption">
+                        <h3 style="text-align: center">Undergraduate</h3>
+                    </div>
+
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <a href="{% url 'problem_acmlist' %}">
+                <div class="thumbnail">
+                    <img src="/img/acm.png" alt="ACMer" style="height: 170px">
+
+                    <div class="caption">
+                        <h3 style="text-align: center">ACMer</h3>
+                    </div>
+
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <a href="{% url 'contest_vjudgelist' %}">
+                <div class="thumbnail">
+                    <img src="/img/vjudge.png" alt="VJudge" style="height: 170px">
+
+                    <div class="caption">
+                        <h3 style="text-align: center">VJudge</h3>
+                    </div>
+
+                </div>
+            </a>
+        </div>
+    </div>
 {% endblock %}

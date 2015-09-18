@@ -21,6 +21,15 @@ import os
 logging = Log()
 vqueue = Queue(5)
 queue = Queue(5)
+local_path = '/'.join(os.getcwd().split('/')[0:-1])
+language_map = {
+    'c': ['0', 'c'],
+    'c++': ['1', 'cpp'],
+    'g++': ['2', 'cc'],
+    'java': ['3', 'java'],
+}
+judge_map = ['Accepted', 'Wrong Answer', 'Presentation Error', 'Compilation Error', 'Time Limit Exceeded',
+             'Memory Limit Exceeded', 'Runtime Error']
 
 
 class Producer(threading.Thread):
@@ -37,13 +46,13 @@ class Producer(threading.Thread):
 
     def run(self):
         if self.judge_type == 0:
-            pass
+            queue.put((self.sid, self.pid, self.uid, self.judge_type))
         elif self.judge_type == 1:
             vqueue.put((self.sid, self.pid, self.uid))
         elif self.judge_type == 2:
-            pass
+            queue.put((self.sid, self.pid, self.uid, self.judge_type))
         elif self.judge_type == 3:
-            pass
+            queue.put((self.sid, self.pid, self.uid, self.judge_type))
         elif self.judge_type == 4:
             pass
 
@@ -52,9 +61,40 @@ class Consumer(threading.Thread):
     def __init__(self, index):
         threading.Thread.__init__(self)
         self.index = index
+        self.mysql = Connect()
+        self.run_path = local_path + '/work/run' + str(index)
 
     def run(self):
-        pass
+        while True:
+            self.sid, self.pid, self.uid, self.judge_type = queue.get()
+            self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
+            self.judge()
+            os.system("rm -rf %s/*" % self.run_path)
+
+    def judge(self):
+        result = self.mysql.query(
+            "SELECT time_limit_c, time_limit_java, memory_limit_c, memory_limit_java FROM problem_problem WHERE id = '%s'" % self.pid)
+        self.time_limit_c = result[0][0]
+        self.time_limit_java = result[0][1]
+        self.memory_limit_c = result[0][2]
+        self.memory_limit_java = result[0][3]
+        self.data_path = local_path + '/data/' + str(self.pid)
+        result = self.mysql.query("SELECT language, code  FROM status_solve WHERE id = '%s'" % self.sid)
+        self.language = language_map[result[0][0]][0]
+        code = result[0][1]
+        code_path = self.run_path + '/Main.' + language_map[result[0][0]][1]
+        fp = open(code_path, "w+")
+        fp.write(code)
+        fp.close()
+        f = os.popen('./nightspy %s %s %s %s %s %s' % (
+            self.language, self.run_path, self.data_path, self.judge_type, self.time_limit_c, self.memory_limit_c))
+        self.data = f.readline()
+        f.close()
+        self.save()
+
+    def save(self):
+        judge_status = judge_map[int(self.data)]
+        self.mysql.update("UPDATE status_solve SET status = '%s' WHERE id = '%s'" % (judge_status, self.sid))
 
 
 class vConsumer(threading.Thread):
@@ -66,6 +106,7 @@ class vConsumer(threading.Thread):
     def run(self):
         while True:
             self.sid, self.pid, self.uid = vqueue.get()
+            self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
 
     def judge(self):

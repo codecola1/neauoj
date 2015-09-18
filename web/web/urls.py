@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'status/', include('status.urls')),
     url(r'^accounts/', include('users.urls')),
     url(r'^problem/', include('problem.urls')),
+    url(r'^contest/', include('contest.urls')),
 ]
 
 urlpatterns += patterns('',

@@ -32,9 +32,30 @@
 				<div id="navbar" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="{% url 'home' %}">Home</a></li>
-						<li><a href="#">Problem</a></li>
-						<li><a href="#">Contest</a></li>
-						<li><a href="#">Status</a></li>
+                        <li class="dropdown">
+                            <a id="drop_problem" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                Problem
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="drop_problem">
+                                <li><a href="{% url 'problem_acmlist' %}">ACM Problem</a></li>
+                                <li><a href="{% url 'problem_studentlist' %}">Student Problem</a></li>
+                            </ul>
+                        </li>
+						<li class="dropdown">
+                            <a id="drop_Contest" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                Contest
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="drop_Contest">
+                                <li><a href="{% url 'contest_acmlist' %}">ACM Contest</a></li>
+                                <li><a href="{% url 'contest_studentlist' %}">Student Contest</a></li>
+                                <li><a href="{% url 'contest_vjudgelist' %}">VJudge Contest</a></li>
+                            </ul>
+                        </li>
+						<li><a href="{% url 'status' %}">Status</a></li>
 						<li><a href="#">Rank</a></li>
 						<li><a href="#">Discuss</a></li>
 						<li><a href="#">Handbook</a></li>
