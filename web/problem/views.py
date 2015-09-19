@@ -22,7 +22,7 @@ def problem_main(req, pid):
 
 def problem_list(req):
     if req.path[9] == 'a':
-        pinfo = Problem.objects.filter(judge_type=0)
+        pinfo = Problem.objects.filter(judge_type=1)
         type = 'ACM'
     elif req.path[9] == 's':
         pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
@@ -36,15 +36,32 @@ def problem_list(req):
 
 
 def get_problem_info(req, type, page):
-    data = {'test': '''
+    page = int(page)
+    first = (page - 1) * 20
+    last = page * 20
+    data = {'data': ''}
+    html = '''
 <tr>
-    <th scope="row">1</th>
-    <td>1000</td>
-    <td><a href='/problem/p/%s'>A + B</a></td>
-    <td>ACM Team</td>
-    <td>NEAU</td>
-    <td>0</td>
-    <td>0</td>
+    <th scope="row">%s</th>
+    <td>%s</td>
+    <td><a href='/problem/p/%s'>%s</a></td>
+    <td>%s</td>
+    <td>%s</td>
+    <td>%s</td>
+    <td>%s</td>
 </tr>
-    ''' % "1"}
+'''
+    if type == 'ACM':
+        pinfo = Problem.objects.filter(judge_type=0)
+    elif type == 'Student':
+        pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
+    else:
+        raise Http404
+    last = last if last < len(pinfo) else len(pinfo)
+    pinfo = pinfo[first:last]
+    ii = (page - 1) * 20 + 1
+    for i in pinfo:
+        s = html % (ii, i.problem_id, i.id, i.title, i.source, i.oj, i.submit, i.solved)
+        data['data'] += s
+        ii += 1
     return JsonResponse(data)

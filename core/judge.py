@@ -69,6 +69,7 @@ class Consumer(threading.Thread):
             self.sid, self.pid, self.uid, self.judge_type = queue.get()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
+            self.save()
             os.system("rm -rf %s/*" % self.run_path)
 
     def judge(self):
@@ -90,7 +91,6 @@ class Consumer(threading.Thread):
             self.language, self.run_path, self.data_path, self.judge_type, self.time_limit_c, self.memory_limit_c))
         self.data = f.readline()
         f.close()
-        self.save()
 
     def save(self):
         judge_status = judge_map[int(self.data)]

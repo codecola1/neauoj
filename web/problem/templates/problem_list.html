@@ -28,7 +28,7 @@
                                 <th width="5%">#</th>
                                 <th width="10%">Problem ID</th>
                                 <th width="55%">Title</th>
-                                <th width="15%">Source</th>
+                                <th width="15%">Author</th>
                                 <th width="5%">OJ</th>
                                 <th width="5%">Submit</th>
                                 <th width="5%">Solve</th>
@@ -44,13 +44,15 @@
 {% endblock %}
 {% block otherjs %}
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#tab1').click(function () {
-                $.getJSON("/problem/info/ACM/1", function (ret) {
-                    $('#info1').html(ret['test'] + '{{ type }}');
+        {% for i in len %}
+            $(document).ready(function () {
+                $('#tab{{ i|add:"1" }}').click(function () {
+                    $.getJSON("/problem/info/{{ type }}/{{ i|add:"1" }}", function (ret) {
+                        $('#info{{ i|add:"1" }}').html(ret['data']);
+                    })
                 })
-            })
-            $("#tab1").trigger("click");
-        });
+                {% if not i %}$("#tab{{ i|add:"1" }}").trigger("click");{% endif %}
+            });
+        {% endfor %}
     </script>
 {% endblock %}

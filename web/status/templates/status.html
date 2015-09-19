@@ -10,14 +10,15 @@
                 <tr>
                     <th style="width: 6%">Run ID</th>
                     <th style="width: 15%">Submit Time</th>
-                    <th style="width: 10%">Judge Status</th>
+                    <th style="width: 12%">Judge Status</th>
+                    <th style="width: 3%"></th>
                     <th style="width: 5%">OJ</th>
-                    <th style="width: 10%">Problem ID</th>
-                    <th style="width: 12%">Expend Time</th>
-                    <th style="width: 12%">Expend Memory</th>
+                    <th style="width: 8%">Problem ID</th>
+                    <th style="width: 8%">Time</th>
+                    <th style="width: 8%">Memory</th>
                     <th style="width: 10%">Code Length</th>
                     <th style="width: 10%">Language</th>
-                    <th style="width: 10%">User</th>
+                    <th style="width: 15%">User</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -26,6 +27,7 @@
                         <th scope="row">{{ i.id }}</th>
                         <td>{{ i.submit_time }}</td>
                         <td style="background-color: #009933">{{ i.status }}</td>
+                        <td><img src="/img/loading.gif" width="100%"></td>
                         <td>{{ i.problem.oj }}</td>
                         <td>{{ i.problem.problem_id }}</td>
                         <td>{{ i.use_time }}</td>

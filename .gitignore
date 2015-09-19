@@ -59,4 +59,5 @@ target/
 
 # Myself
 .idea
-.xml
+*.xml
+upload/
