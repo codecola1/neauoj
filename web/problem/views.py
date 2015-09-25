@@ -30,6 +30,7 @@ def problem_list(req):
     else:
         raise Http404
     return render_to_response('problem_list.html', {
+        'path': req.path,
         'type': type,
         'len': range(len(pinfo) / 20 + 1),
     }, context_instance=RequestContext(req))
@@ -52,7 +53,7 @@ def get_problem_info(req, type, page):
 </tr>
 '''
     if type == 'ACM':
-        pinfo = Problem.objects.filter(judge_type=0)
+        pinfo = Problem.objects.filter(judge_type=1)
     elif type == 'Student':
         pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
     else:

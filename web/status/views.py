@@ -49,12 +49,34 @@ def ce(req, sid):
         except:
             return render_to_response("problem_ce_info_error.html")
         return render_to_response("problem_ce_info.html", {
+            'path': req.path,
             'info': c.info
         }, context_instance=RequestContext(req))
+
 
 def status(req):
     if req.method == 'GET':
         s = Solve.objects.order_by('-id')[0:20]
         return render_to_response("status.html", {
-            'data': s
+            'path': req.path,
+            'data': s,
         }, context_instance=RequestContext(req))
+
+@login_required
+def show_code(req, sid):
+    try:
+        s = Solve.objects.get(id=sid)
+        error = 0
+        code = s.code
+        if s.user != req.user:
+            error = 2
+    except:
+        error = 1
+        s = ''
+        code = ''
+    return render_to_response("show_code.html", {
+        'path': req.path,
+        'error': error,
+        's': s,
+        'code': code
+    },context_instance=RequestContext(req))

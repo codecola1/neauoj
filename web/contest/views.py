@@ -16,6 +16,7 @@ def contest_list(req):
         cinfo = Contest.objects.filter(type=3)
         type = 'VJudge'
     return render_to_response('contest_list.html', {
+        'path': req.path,
         'type': type,
         'info': cinfo,
     }, context_instance=RequestContext(req))

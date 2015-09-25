@@ -29,16 +29,22 @@
                         <td style="background-color: #009933">{{ i.status }}</td>
                         <td><img src="/img/loading.gif" width="100%"></td>
                         <td>{{ i.problem.oj }}</td>
-                        <td>{{ i.problem.problem_id }}</td>
+                        <td><a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a></td>
                         <td>{{ i.use_time }}</td>
                         <td>{{ i.use_memory }}</td>
-                        <td>{{ i.length }}</td>
+                        <td>{% if user.is_authenticated%}{% ifequal user.id i.user.id %}<a href="{% url 'show_code' i.id %}">{{ i.length }}</a>{% else %}{{ i.length }}{% endifequal %}{% else %}{{ i.length }}{% endif %}</td>
                         <td>{{ i.language }}</td>
-                        <td>{{ i.user.info.nickname }}</td>
+                        <td><a href="{% url 'userpage' i.user.username %}">{{ i.user.info.nickname }}</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            <nav>
+                <ul class="pager">
+                    <li class="previous"><a href="#"><span aria-hidden="true">&larr;</span> Older</a></li>
+                    <li class="next"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+            </nav>
         </div>
     </div>
 {% endblock %}
