@@ -1,50 +1,90 @@
 {% extends "base.html" %}
 {% block set_title %}Status{% endblock %}
+{% block othercss %}
+    <style type="text/css">
+        .find_error {
+            margin-top: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 200px;
+            width: 400px;
+            height: 100px;
+            text-align: center;
+        }
+
+        .find_error img {
+            position: relative;
+            right: 120px;
+            top: 10px;
+        }
+
+        .find_error h3 {
+            position: relative;
+            left: 20px;
+            bottom: 50px;
+        }
+    </style>
+{% endblock %}
 {% block bodytext %}
     <div class="container">
         <h1 style="text-align: center; margin-top: 50px; margin-bottom: 50px">Judge Status</h1>
+        {% if error %}
+            <div class="alert alert-danger find_error" role="alert">
+                <img src="/img/alert.png" width="50" height="50">
 
-        <div class="container">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th style="width: 6%">Run ID</th>
-                    <th style="width: 15%">Submit Time</th>
-                    <th style="width: 12%">Judge Status</th>
-                    <th style="width: 3%"></th>
-                    <th style="width: 5%">OJ</th>
-                    <th style="width: 8%">Problem ID</th>
-                    <th style="width: 8%">Time</th>
-                    <th style="width: 8%">Memory</th>
-                    <th style="width: 10%">Code Length</th>
-                    <th style="width: 10%">Language</th>
-                    <th style="width: 15%">User</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in data %}
+                <h3>
+                    No Such Page!
+                </h3>
+            </div>
+        {% else %}
+            <div class="container">
+                <table class="table table-striped">
+                    <thead>
                     <tr>
-                        <th scope="row">{{ i.id }}</th>
-                        <td>{{ i.submit_time }}</td>
-                        <td style="background-color: #009933">{{ i.status }}</td>
-                        <td><img src="/img/loading.gif" width="100%"></td>
-                        <td>{{ i.problem.oj }}</td>
-                        <td><a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a></td>
-                        <td>{{ i.use_time }}</td>
-                        <td>{{ i.use_memory }}</td>
-                        <td>{% if user.is_authenticated%}{% ifequal user.id i.user.id %}<a href="{% url 'show_code' i.id %}">{{ i.length }}</a>{% else %}{{ i.length }}{% endifequal %}{% else %}{{ i.length }}{% endif %}</td>
-                        <td>{{ i.language }}</td>
-                        <td><a href="{% url 'userpage' i.user.username %}">{{ i.user.info.nickname }}</a></td>
+                        <th style="width: 6%">Run ID</th>
+                        <th style="width: 15%">Submit Time</th>
+                        <th style="width: 12%">Judge Status</th>
+                        <th style="width: 3%"></th>
+                        <th style="width: 5%">OJ</th>
+                        <th style="width: 8%">Problem ID</th>
+                        <th style="width: 8%">Time</th>
+                        <th style="width: 8%">Memory</th>
+                        <th style="width: 10%">Code Length</th>
+                        <th style="width: 10%">Language</th>
+                        <th style="width: 15%">User</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <nav>
-                <ul class="pager">
-                    <li class="previous"><a href="#"><span aria-hidden="true">&larr;</span> Older</a></li>
-                    <li class="next"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
-                </ul>
-            </nav>
-        </div>
+                    </thead>
+                    <tbody>
+                    {% for i in data %}
+                        <tr>
+                            <th scope="row">{{ i.id }}</th>
+                            <td>{{ i.submit_time }}</td>
+                            <td style="background-color: #009933">{{ i.status }}</td>
+                            <td><img src="/img/loading.gif" width="100%"></td>
+                            <td>{{ i.problem.oj }}</td>
+                            <td><a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a></td>
+                            <td>{{ i.use_time }}</td>
+                            <td>{{ i.use_memory }}</td>
+                            <td>{% if user.is_authenticated %}{% ifequal user.id i.user.id %}
+                                <a href="{% url 'show_code' i.id %}">{{ i.length }}</a>{% else %}{{ i.length }}
+                            {% endifequal %}{% else %}{{ i.length }}{% endif %}</td>
+                            <td>{{ i.language }}</td>
+                            <td><a href="{% url 'userpage' i.user.username %}">{{ i.user.info.nickname }}</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <nav>
+                    <ul class="pager">
+                        <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a
+                                href="{% ifequal page 1 %}#{% else %}/status/?page={{ page|add:'-1' }}{% endifequal %}"><span
+                                aria-hidden="true">&larr;</span> Previous</a></li>
+                        <li class="next {% if over %}disabled{% endif %}"><a
+                                href="{% if over %}#{% else %}/status/?page={{ page|add:'1' }}{% endif %}">Next <span
+                                aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

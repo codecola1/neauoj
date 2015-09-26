@@ -56,11 +56,23 @@ def ce(req, sid):
 
 def status(req):
     if req.method == 'GET':
-        s = Solve.objects.order_by('-id')[0:20]
+        page = int(req.GET.get('page', 1))
+        all_solve = Solve.objects.order_by('-id')
+        l = len(all_solve)
+        if page < 1 or page > l / 20 + 1:
+            error = 1
+            s = ''
+        else:
+            error = 0
+            s = all_solve[(page - 1) * 20:page * 20]
         return render_to_response("status.html", {
+            'error': error,
+            'page': page,
             'path': req.path,
             'data': s,
+            'over': 0 if page <= l / 20 else 1,
         }, context_instance=RequestContext(req))
+
 
 @login_required
 def show_code(req, sid):
@@ -79,4 +91,4 @@ def show_code(req, sid):
         'error': error,
         's': s,
         'code': code
-    },context_instance=RequestContext(req))
+    }, context_instance=RequestContext(req))
