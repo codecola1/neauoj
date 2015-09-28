@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load status_tags %}
 {% block set_title %}Status{% endblock %}
 {% block othercss %}
     <style type="text/css">
@@ -38,16 +39,16 @@
             </div>
         {% else %}
             <div class="container">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover" id="status-tab">
                     <thead>
-                    <tr>
+                    <tr style="background-color: #666666">
                         <th style="width: 6%">Run ID</th>
                         <th style="width: 15%">Submit Time</th>
-                        <th style="width: 12%">Judge Status</th>
+                        <th style="width: 15%">Judge Status</th>
                         <th style="width: 3%"></th>
-                        <th style="width: 5%">OJ</th>
+                        <th style="width: 3%">OJ</th>
                         <th style="width: 8%">Problem ID</th>
-                        <th style="width: 8%">Time</th>
+                        <th style="width: 5%">Time</th>
                         <th style="width: 8%">Memory</th>
                         <th style="width: 10%">Code Length</th>
                         <th style="width: 10%">Language</th>
@@ -56,15 +57,18 @@
                     </thead>
                     <tbody>
                     {% for i in data %}
-                        <tr>
+                        <tr class="{{ i.status|color }}">
                             <th scope="row">{{ i.id }}</th>
                             <td>{{ i.submit_time }}</td>
-                            <td style="background-color: #009933">{{ i.status }}</td>
-                            <td><img src="/img/loading.gif" width="100%"></td>
+                            <td style="color: {{ i.status|text_color }}" id="status{{ i.id }}">
+                                {% ifequal i.status 'Compilation Error' %}
+                                    <a href="{% url 'ce_info' i.id %}">
+                                        {{ i.status|safe }}</a>{% else %}{{ i.status|safe }}{% endifequal %}</td>
+                            <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>
                             <td>{{ i.problem.oj }}</td>
                             <td><a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a></td>
-                            <td>{{ i.use_time }}</td>
-                            <td>{{ i.use_memory }}</td>
+                            <td id="time{{ i.id }}">{{ i.use_time }}</td>
+                            <td id="memory{{ i.id }}">{{ i.use_memory }}</td>
                             <td>{% if user.is_authenticated %}{% ifequal user.id i.user.id %}
                                 <a href="{% url 'show_code' i.id %}">{{ i.length }}</a>{% else %}{{ i.length }}
                             {% endifequal %}{% else %}{{ i.length }}{% endif %}</td>
@@ -77,14 +81,49 @@
                 <nav>
                     <ul class="pager">
                         <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a
-                                href="{% ifequal page 1 %}#{% else %}/status/?page={{ page|add:'-1' }}{% endifequal %}"><span
+                                {% ifnotequal page 1 %}href="/status/?page={{ page|add:'-1' }}"{% endifnotequal %}><span
                                 aria-hidden="true">&larr;</span> Previous</a></li>
                         <li class="next {% if over %}disabled{% endif %}"><a
-                                href="{% if over %}#{% else %}/status/?page={{ page|add:'1' }}{% endif %}">Next <span
+                                {% if not over %}href="/status/?page={{ page|add:'1' }}"{% endif %}>Next <span
                                 aria-hidden="true">&rarr;</span></a></li>
                     </ul>
                 </nav>
             </div>
         {% endif %}
     </div>
+    <p id="demo"></p>
+{% endblock %}
+{% block otherjs %}
+    <script type="text/javascript">
+        var i = 0;
+        function auto_refresh() {
+            var tb = window.document.getElementById('status-tab');
+            var rows = tb.rows;
+            for (var i = 1; i < rows.length; i++) {
+                var cell = rows[i].cells[2].innerHTML;
+                var sid = rows[i].cells[0].innerHTML;
+                if (cell.indexOf('Judging') != -1 || cell.indexOf('Queuing') != -1 || cell.indexOf('Compiling') != -1 || cell.indexOf('Running') != -1) {
+                    fresh_result(sid);
+                }
+            }
+        }
+        function fresh_result(solution_id) {
+            var url = "/status/get_status/" + solution_id + "/";
+            var status = "#status" + solution_id;
+            var time = "#time" + solution_id;
+            var memory = "#memory" + solution_id;
+            $.getJSON(url, function (ret) {
+                $(status).html(ret['status']);
+                $(time).html(ret['time']);
+                $(memory).html(ret['memory']);
+                if (ret['status'] == "Judging" || ret['status'] == "Queuing" || ret['status'] == "Compiling" || ret['status'] == "Running") {
+                    window.setTimeout("fresh_result(" + solution_id + ")", 1000);
+                }
+                else {
+                    window.location.reload();
+                }
+            });
+        }
+        auto_refresh();
+    </script>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
@@ -72,6 +72,19 @@ def status(req):
             'data': s,
             'over': 0 if page <= l / 20 else 1,
         }, context_instance=RequestContext(req))
+
+
+def get_status(req, sid):
+    try:
+        s = Solve.objects.get(id=sid)
+        data = {
+            'status': s.status,
+            'time': s.use_time,
+            'memory': s.use_memory,
+        }
+    except:
+        data = {}
+    return JsonResponse(data)
 
 
 @login_required

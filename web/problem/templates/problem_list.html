@@ -44,15 +44,15 @@
 {% endblock %}
 {% block otherjs %}
     <script type="text/javascript">
-        {% for i in len %}
-            $(document).ready(function () {
+        $(document).ready(function () {
+            {% for i in len %}
                 $('#tab{{ i|add:"1" }}').click(function () {
                     $.getJSON("/problem/info/{{ type }}/{{ i|add:"1" }}", function (ret) {
                         $('#info{{ i|add:"1" }}').html(ret['data']);
                     })
                 })
                 {% if not i %}$("#tab{{ i|add:"1" }}").trigger("click");{% endif %}
-            });
-        {% endfor %}
+            {% endfor %}
+        });
     </script>
 {% endblock %}

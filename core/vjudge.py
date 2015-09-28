@@ -100,6 +100,7 @@ class Vjudge:
     def run(self):
         self.submit()
         self.rid = ''
+        sleep(0.5)
         o = eval('self.' + self.oj + '_get_status')()
         self.mysql.update(
             "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (

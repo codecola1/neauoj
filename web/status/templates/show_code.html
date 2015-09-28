@@ -43,7 +43,7 @@
             <div class="jumbotron" style="margin-top: 50px;text-align: center">
                 <p><strong>Submit Time: </strong>{{ s.submit_time }} <strong>Judge Status: </strong>{{ s.status }}</p>
 
-                <p><strong>Use Time: </strong>{{ s.use_time }} MS <strong>Use Memory: </strong>{{ s.use_memory }} K</p>
+                <p><strong>Language: </strong>{{ s.language|upper }} <strong>Use Time: </strong>{{ s.use_time }} MS <strong>Use Memory: </strong>{{ s.use_memory }} K</p>
 
                 <p><strong>OJ: </strong>{{ s.problem.oj|upper }} <strong>Problem Id: </strong>{{ s.problem.problem_id }}
                     <strong>User Name: </strong>{{ s.user.username }}</p>
