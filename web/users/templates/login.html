@@ -18,9 +18,7 @@
             margin-top: 100px;
         }
         .auth {
-            width: 30%;
             margin-top: 50px;
-            margin-left: 400px;
             text-align: center;
         }
     </style>
@@ -29,7 +27,8 @@
 {% block bodytext %}
     {% if user.is_authenticated %}
         <div class="alert alert-danger auth" role="alert">
-            <p>Sorry, Please logout!</p>
+            <h1>Access denied !</h1>
+            <h2>You are not authorized to access this page.<br/></h2>
         </div>
     {% else %}
         <div id = "main" class = "container">

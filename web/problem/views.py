@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.contrib.auth.decorators import permission_required
 from django.template import RequestContext
 from models import Problem
+from forms import Add_problem_form
 from django.db.models import Q
 
 # Create your views here.
@@ -20,9 +22,27 @@ def problem_main(req, pid):
         }, context_instance=RequestContext(req))
 
 
+@permission_required('problem.add_problem')
+def add_problem(req):
+    if req.method == 'POST':
+        form = Add_problem_form(req.POST)
+        if form.is_valid():
+            new_problem = form.save()
+            return HttpResponseRedirect("/")
+        else:
+            return render_to_response("add_problem.html", {
+                'form': form,
+            }, context_instance=RequestContext(req))
+    else:
+        form = Add_problem_form()
+        return render_to_response('add_problem.html', {
+            'form': form,
+        }, context_instance=RequestContext(req))
+
+
 def problem_list(req):
     if req.path[9] == 'a':
-        pinfo = Problem.objects.filter(judge_type=1)
+        pinfo = Problem.objects.filter(judge_type=0)
         type = 'ACM'
     elif req.path[9] == 's':
         pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
@@ -53,7 +73,7 @@ def get_problem_info(req, type, page):
 </tr>
 '''
     if type == 'ACM':
-        pinfo = Problem.objects.filter(judge_type=1)
+        pinfo = Problem.objects.filter(judge_type=0)
     elif type == 'Student':
         pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
     else:

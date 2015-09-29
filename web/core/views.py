@@ -1,7 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django import forms
 from problem.robot.get_problem import Down_problem
 
@@ -45,6 +45,9 @@ def test(req):
             'author': test.Source if test.right else "",
         }, context_instance=RequestContext(req))
     else:
+        # u = User.objects.get(username='neau')
+        # p = Permission.objects.get(id='7')
+        # u.user_permissions.add(p)
         form = testform()
         return render_to_response('test.html', {
             'path': req.path,

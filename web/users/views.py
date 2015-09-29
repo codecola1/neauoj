@@ -1,6 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
+from django.contrib.auth.decorators import permission_required
 from users.forms import UserRegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -50,4 +51,10 @@ def index(req, username):
 def account(req):
     return render_to_response("account.html", {
         'path': req.path,
+    }, context_instance=RequestContext(req))
+
+
+@permission_required('problem.add_permission')
+def permission(req):
+    return render_to_response("permission.html", {
     }, context_instance=RequestContext(req))

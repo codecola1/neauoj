@@ -51,8 +51,8 @@
                         $('#info{{ i|add:"1" }}').html(ret['data']);
                     })
                 })
-                {% if not i %}$("#tab{{ i|add:"1" }}").trigger("click");{% endif %}
             {% endfor %}
+            $("#tab1").trigger("click");
         });
     </script>
 {% endblock %}

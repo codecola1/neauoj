@@ -31,7 +31,7 @@ class SubmitForm(forms.ModelForm):
 
     class Meta:
         model = Solve
-        fields = ('language', 'code')
+        fields = ('code',)
 
     def clean_problem(self):
         problem_id = self.cleaned_data.get("problem")

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block set_title %}Add Problem{% endblock %}
+{% block bodytext %}
+    <div class="container">
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert" style="width: 50%;margin: auto"><h3>Sorry</h3>{{ form.errors }}
+            </div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <h1 style="text-align: center;margin-top: 50px;margin-bottom: 50px">Add Problem</h1>
+
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Problem Type: </label>
+                <select class="form-control" name="judge_type">
+                    <option value="0" selected="selected">ACM</option>
+                </select>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Title: </label>
+                <input class="form-control" name="title" type="text"><br/>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px;float: left">Time Limit:&nbsp;</label>
+                <input class="form-control" name="time_limit_c" type="text" style="width: 15%;float: left">
+                <label style="font-size: 20px;float: left">&nbsp;MS</label>
+                <label style="font-size: 20px;float: left">&nbsp;&nbsp;&nbsp;Memory Limit:&nbsp;</label>
+                <input class="form-control" name="memory_limit_c" type="text" style="width: 15%;float: left">
+                <label style="font-size: 20px;float: left">&nbsp;MB</label><br/><br/>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Description</label><br/>
+                <textarea cols="80" maxlength="5000" name="description" rows="15"></textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Input</label><br/>
+                <textarea cols="80" maxlength="5000" name="input" rows="5"></textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Output</label><br/>
+                <textarea cols="80" maxlength="5000" name="output" rows="5"></textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Sample Input</label><br/>
+                <textarea cols="80" maxlength="5000" name="sample_input" rows="5"></textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Sample Output</label><br/>
+                <textarea cols="80" maxlength="5000" name="sample_output" rows="5"></textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px">Hint</label><br/>
+                <textarea cols="80" maxlength="5000" name="hint" rows="5">&nbsp;</textarea>
+            </div>
+            <div class="container" style="width: 50%">
+                <label style="font-size: 20px;float: left">Author&nbsp;</label>
+                <input class="form-control" name="source" type="text" style="width: 50%">
+            </div>
+            <div class="container" style="width: 50%">
+                <button type="submit" value="submit" class="btn btn-default">Submit</button>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

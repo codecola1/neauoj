@@ -93,7 +93,7 @@ def show_code(req, sid):
         s = Solve.objects.get(id=sid)
         error = 0
         code = s.code
-        if s.user != req.user:
+        if s.user != req.user and not req.user.has_perm('change_solve'):
             error = 2
     except:
         error = 1

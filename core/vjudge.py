@@ -116,3 +116,5 @@ class Vjudge:
         if self.ce_info:
             sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
             self.mysql.update(sql)
+        if o[0] == 'Accepted':
+            self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.sid)
