@@ -1,7 +1,7 @@
 # coding=utf-8
 #!/usr/bin/python
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from users.models import Info
 from django import forms
 import re
@@ -103,3 +103,34 @@ class UserRegisterForm(forms.ModelForm):
         info = Info(user=user, nickname=nickname, school=school, grade=grade)
         info.save()
         return user
+
+
+class PermissionForm(forms.Form):
+    username = forms.CharField()
+    permission = forms.ChoiceField(
+        choices=(
+            ('1', 'Can add permission'),
+            ('7', 'Can add user'),
+            ('43', 'Can add problem'),
+            ('47', 'Can change solve'),
+            ('40', 'Can add Contest'),
+        )
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        try:
+            User.objects.get(username=username)
+        except:
+            raise forms.ValidationError(
+                "No such User",
+                code='username_mismatch',
+            )
+        return username
+
+    def save(self):
+        username = self.cleaned_data.get("username")
+        permission = self.cleaned_data.get("permission")
+        u = User.objects.get(username=username)
+        p = Permission.objects.get(id=permission)
+        u.user_permissions.add(p)

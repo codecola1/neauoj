@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import permission_required
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, PermissionForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from core.support.log_web import Log
@@ -56,5 +56,21 @@ def account(req):
 
 @permission_required('problem.add_permission')
 def permission(req):
-    return render_to_response("permission.html", {
-    }, context_instance=RequestContext(req))
+    users = User.objects.all()
+    data = [(x.username, y.name) for x in users for y in x.user_permissions.all()]
+    if req.method == 'GET':
+        form = PermissionForm()
+        return render_to_response("permission.html", {
+            'form': form,
+            'data': data
+        }, context_instance=RequestContext(req))
+    else:
+        form = PermissionForm(req.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/accounts/permission")
+        else:
+            return render_to_response("permission.html", {
+                'form': form,
+                'data': data
+            }, context_instance=RequestContext(req))

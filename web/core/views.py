@@ -45,9 +45,6 @@ def test(req):
             'author': test.Source if test.right else "",
         }, context_instance=RequestContext(req))
     else:
-        # u = User.objects.get(username='neau')
-        # p = Permission.objects.get(id='7')
-        # u.user_permissions.add(p)
         form = testform()
         return render_to_response('test.html', {
             'path': req.path,
