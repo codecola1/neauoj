@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block set_title %}Add User{% endblock %}
+{% block bodytext %}
+    <div class="container">
+        <h1 class="text-center" style="margin-top: 50px">Users</h1>
+        <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#users" id="users-tab" role="tab" data-toggle="tab"
+                                                          aria-controls="users" aria-expanded="true">Users</a></li>
+                <li class="" role="presentation"><a aria-expanded="false" href="#add" role="tab" id="add-tab"
+                                                    data-toggle="tab" aria-controls="add">Add User</a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div role="tabpanel" class="tab-pane fade active in" id="users" aria-labelledby="users-tab">
+
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="add" aria-labelledby="add-tab">
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

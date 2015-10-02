@@ -8,10 +8,12 @@
             margin-top: 50px;
             margin-bottom: 150px;
         }
+
         #forms {
             width: 30%;
             margin-top: 100px;
         }
+
         #forms h3 {
             margin-top: -5px;
         }
@@ -19,17 +21,17 @@
 {% endblock %}
 
 {% block bodytext %}
-    <div id = "main" class = "container">
-        <div id = "forms" class = "container">
+    <div id="main" class="container">
+        <div id="forms" class="container">
             {% if form.errors %}
                 <div class="alert alert-danger" role="alert"><h3>Sorry</h3>{{ form.errors }}</div>
             {% endif %}
             {% if user.is_authenticated %}
                 <div class="alert alert-danger" role="alert">
-                    <p>Sorry, Please logout!</p>
+                    <h1>Access denied !</h1>
                 </div>
             {% else %}
-                <form id = "login" method="POST">
+                <form id="login" method="POST">
                     {% csrf_token %}
                     <div class="form-group">
                         <label>Username</label>
@@ -60,7 +62,7 @@
                         {{ form.grade }}
                     </div>
                     <button type="submit" value="login" class="btn btn-default">Submit</button>
-                    <input type="hidden" name="next" value="{% url 'home' %}" />
+                    <input type="hidden" name="next" value="{% url 'home' %}"/>
                 </form>
             {% endif %}
         </div>

@@ -4,12 +4,15 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class In_Problem(models.Model):
     problem = models.ForeignKey(Problem)
     problem_new_id = models.CharField(max_length=20)
-    title = models.CharField(max_length = 50)
+    title = models.CharField(max_length=50)
+
     def __unicode__(self):
         return self.problem_new_id
+
 
 class Discuss(models.Model):
     problem = models.ForeignKey(In_Problem)
@@ -17,11 +20,14 @@ class Discuss(models.Model):
     content = models.TextField(max_length=500)
     time = models.DateTimeField(auto_now_add=True)
     first = models.BooleanField()
+
     def __unicode__(self):
         return self.content
 
+
 class Judger(models.Model):
     user = models.ForeignKey(User)
+
 
 class Contest(models.Model):
     title = models.CharField(max_length=50)
@@ -37,5 +43,6 @@ class Contest(models.Model):
     judger = models.ManyToManyField(Judger)
     student = models.ManyToManyField(User)
     discusses = models.ManyToManyField(Discuss)
+
     def __unicode__(self):
         return self.title

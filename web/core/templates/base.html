@@ -75,11 +75,15 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li><a href="{% url "userpage" user.username %}">Infomathion</a></li>
-                            {% if perms.auth.add_problem %}
+                            <li><a href="{% url "change_password" %}">Change Password</a></li>
+                            {% if perms.problem.add_problem %}
                                 <li><a href="{% url "add_problem" %}">Add Problem</a></li>
                             {% endif %}
                             {% if perms.auth.add_permission %}
                                 <li><a href="{% url "permission" %}">Permission</a></li>
+                            {% endif %}
+                            {% if perms.auth.add_user %}
+                                <li><a href="{% url "useradmin" %}">Users</a></li>
                             {% endif %}
                             <li role="separator" class="divider"></li>
                             <li><a href="{% url "logout" %}">Logout</a></li>

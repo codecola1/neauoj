@@ -9,10 +9,11 @@ import re
 import os
 
 from web.settings import STATIC_PATH
-from core.support.log_web import Log
+import logging
 from web.access_parameter import *
 
-logging = Log()
+
+logger = logging.getLogger(__name__)
 
 
 class Access:
@@ -36,11 +37,11 @@ class Access:
             if decode[self.oj]:
                 s = s.decode('gbk').encode('utf8')
         except urllib2.URLError, e:
-            logging.warning("Get HTML ERROR!!!" + e.reason)
+            logger.warning("Get HTML ERROR!!!" + e.reason)
             self.safe = False
             return ''
         else:
-            logging.info("get_html:" + url)
+            logger.info("get_html:" + url)
             return s
 
     def save_img(self, url, problem_id=''):
@@ -50,7 +51,7 @@ class Access:
             try:
                 os.mkdir(path)
             except:
-                logging.warning("img mkdir ERROR!!!")
+                logger.warning("img mkdir ERROR!!!")
                 return
         path = os.path.join(path, filename)
         if url[0:4] != 'http':
@@ -58,6 +59,6 @@ class Access:
         try:
             urllib.urlretrieve(url, path)
         except:
-            logging.warning("Get Image ERROR!!!")
+            logger.warning("Get Image ERROR!!!")
         else:
-            logging.info("Download image <%s> over" % (filename))
+            logger.info("Download image <%s> over" % (filename))

@@ -98,7 +98,7 @@ class UserRegisterForm(forms.ModelForm):
         school = self.cleaned_data.get("school")
         grade = self.cleaned_data.get("grade")
         user = User(username=username, email=email)
-        user.set_password(self.cleaned_data["password1"])
+        user.set_password(self.cleaned_data["password2"])
         user.save()
         info = Info(user=user, nickname=nickname, school=school, grade=grade)
         info.save()
@@ -134,3 +134,46 @@ class PermissionForm(forms.Form):
         u = User.objects.get(username=username)
         p = Permission.objects.get(id=permission)
         u.user_permissions.add(p)
+
+
+class ChangePasswd(forms.Form):
+    username = forms.CharField()
+    password1 = forms.CharField()
+    password2 = forms.CharField()
+
+    def set_user(self, user):
+        self.this_user = user
+        self.permission = user.has_perm('change_user')
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        try:
+            self.user = User.objects.get(username=username)
+        except:
+            raise forms.ValidationError(
+                "No such User",
+                code='username_mismatch',
+            )
+        if not self.permission and self.user != self.this_user:
+            raise forms.ValidationError(
+                "Access denied!",
+                code='username_mismatch',
+            )
+        return username
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if not self.permission and not self.user.check_password(password1):
+            raise forms.ValidationError(
+                "Incorrect password!",
+                code='password_mismatch',
+            )
+        return password2
+
+    def save(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password2')
+        u = User.objects.get(username=username)
+        u.set_password(password)
+        u.save()

@@ -3,15 +3,14 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
-from core.support.log_web import Log
 from models import Solve, ce_info
 import socket
+import logging
 
 
 # Create your views here.
 
-logging = Log()
-
+logger = logging.getLogger(__name__)
 
 @login_required
 def submit(req):
@@ -30,8 +29,8 @@ def submit(req):
             client.send(str(new_submit.id))
             receive = client.recv(1024)
             client.close()
-            logging.info(receive)
-            logging.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
+            logger.info(receive)
+            logger.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             return HttpResponseRedirect("/status")
         else:

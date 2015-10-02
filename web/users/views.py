@@ -2,23 +2,23 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import permission_required
-from users.forms import UserRegisterForm, PermissionForm
+from users.forms import UserRegisterForm, PermissionForm, ChangePasswd
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from core.support.log_web import Log
+import logging
 
 
 # Create your views here.
 
-logging = Log()
 
+logger = logging.getLogger(__name__)
 
 def register(req):
     if req.method == 'POST':
         form = UserRegisterForm(req.POST)
         if form.is_valid():
             new_user = form.save()
-            logging.info("User: " + new_user.username + "Registered")
+            logger.info("User: " + new_user.username + "Registered")
             return HttpResponseRedirect("/index")
         else:
             return render_to_response("register.html", {
@@ -54,7 +54,26 @@ def account(req):
     }, context_instance=RequestContext(req))
 
 
-@permission_required('problem.add_permission')
+@login_required
+def change_password(req):
+    if req.method == 'GET':
+        form = ChangePasswd()
+        return render_to_response("change_password.html", {
+            'form': form,
+        }, context_instance=RequestContext(req))
+    else:
+        form = ChangePasswd(req.POST)
+        form.set_user(req.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/accounts/logout")
+        else:
+            return render_to_response("change_password.html", {
+                'form': form,
+            }, context_instance=RequestContext(req))
+
+
+@permission_required('auth.add_permission')
 def permission(req):
     users = User.objects.all()
     data = [(x.username, y.name) for x in users for y in x.user_permissions.all()]
@@ -74,3 +93,9 @@ def permission(req):
                 'form': form,
                 'data': data
             }, context_instance=RequestContext(req))
+
+
+@permission_required('auth.add_user')
+def useradmin(req):
+    return render_to_response("UserAdmin.html", {
+    }, context_instance=RequestContext(req))

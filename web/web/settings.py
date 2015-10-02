@@ -119,3 +119,24 @@ STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 SESSION_COOKIE_AGE = 60*60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+#logging
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': '/web/web/log/web.log',
+#         },
+#     },
+#     'loggers': {
+#         'django.request': {
+#             'handlers': ['file'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

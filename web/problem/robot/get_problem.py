@@ -5,9 +5,9 @@ import re
 from HTMLParser import HTMLParser
 from problem.robot.access import Access
 from problem.models import Problem
-from core.support.log_web import Log
+import logging
 
-logging = Log()
+logger = logging.getLogger(__name__)
 
 url = {
     'hdu': 'http://acm.hdu.edu.cn/showproblem.php?pid=',
@@ -114,7 +114,7 @@ class Down_problem:
             self.Soutput = self.Soutput[0:-6]
             self.Hint = re.sub(replace[self.ojname], path, self.Hint.replace('../', ''))
         self.Source = use_re(10, self.html, self.ojname)
-        logging.info("Download Problem: " + self.ojname + "-" + str(self.pid) + " Info Over")
+        logger.info("Download Problem: " + self.ojname + "-" + str(self.pid) + " Info Over")
         try:
             p = Problem.objects.get(oj=self.ojname, problem_id=self.pid)
         except:
@@ -136,7 +136,7 @@ class Down_problem:
                 judge_type=1,
             )
             p.save()
-            logging.info("Problem: " + self.ojname + "-" + str(self.pid) + " Saved")
+            logger.info("Problem: " + self.ojname + "-" + str(self.pid) + " Saved")
         else:
             p.title = self.Title
             p.time_limit_c = self.Time_Limit_C
@@ -151,4 +151,4 @@ class Down_problem:
             p.hint = self.Hint
             p.source = self.Source
             p.save()
-            logging.info("Problem: " + self.ojname + "-" + str(self.pid) + " Updated")
+            logger.info("Problem: " + self.ojname + "-" + str(self.pid) + " Updated")
