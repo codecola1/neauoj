@@ -110,7 +110,7 @@ class PermissionForm(forms.Form):
     permission = forms.ChoiceField(
         choices=(
             ('1', 'Can add permission'),
-            ('7', 'Can add user'),
+            ('8', 'Can change user'),
             ('43', 'Can add problem'),
             ('47', 'Can change solve'),
             ('40', 'Can add Contest'),
@@ -177,3 +177,7 @@ class ChangePasswd(forms.Form):
         u = User.objects.get(username=username)
         u.set_password(password)
         u.save()
+
+
+class AddUserForm(forms.Form):
+    pass

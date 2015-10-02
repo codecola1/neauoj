@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import permission_required
-from users.forms import UserRegisterForm, PermissionForm, ChangePasswd
+from users.forms import UserRegisterForm, PermissionForm, ChangePasswd, AddUserForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import logging
@@ -12,6 +12,7 @@ import logging
 
 
 logger = logging.getLogger(__name__)
+
 
 def register(req):
     if req.method == 'POST':
@@ -66,6 +67,9 @@ def change_password(req):
         form.set_user(req.user)
         if form.is_valid():
             form.save()
+            referer = req.META['HTTP_REFERER']
+            if referer[-20:] == '/accounts/useradmin/':
+                return HttpResponseRedirect("/accounts/useradmin")
             return HttpResponseRedirect("/accounts/logout")
         else:
             return render_to_response("change_password.html", {
@@ -95,7 +99,16 @@ def permission(req):
             }, context_instance=RequestContext(req))
 
 
-@permission_required('auth.add_user')
+@permission_required('auth.change_user')
 def useradmin(req):
-    return render_to_response("UserAdmin.html", {
-    }, context_instance=RequestContext(req))
+    users = User.objects.exclude(is_superuser='1')
+    if req.method == 'GET':
+        form = AddUserForm()
+        page = int(req.GET.get('page', 1))
+        return render_to_response("UserAdmin.html", {
+            'form': form,
+            'users': users[20 * (page - 1):20 * page],
+            'length': range(1, len(users) / 20 + 2),
+        }, context_instance=RequestContext(req))
+    else:
+        form = AddUserForm(req.POST)

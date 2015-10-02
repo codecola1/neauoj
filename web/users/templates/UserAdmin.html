@@ -3,6 +3,7 @@
 {% block bodytext %}
     <div class="container">
         <h1 class="text-center" style="margin-top: 50px">Users</h1>
+
         <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#users" id="users-tab" role="tab" data-toggle="tab"
@@ -12,7 +13,44 @@
             </ul>
             <div id="myTabContent" class="tab-content">
                 <div role="tabpanel" class="tab-pane fade active in" id="users" aria-labelledby="users-tab">
-
+                    <nav>
+                        <ul class="pagination">
+                            {% for i in length %}
+                                <li><a href="/accounts/useradmin/?page={{ i }}">{{ i }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Username</th>
+                            <th>Nickname</th>
+                            <th>Change Password</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for u in users %}
+                            <tr>
+                                <td>{{ u.id }}</td>
+                                <td>{{ u.username }}</td>
+                                <td>{{ u.info.nickname }}</td>
+                                <td>
+                                    <form method="POST" action="{% url 'change_password' %}">
+                                        {% csrf_token %}
+                                        <input name="username" type="hidden" value="{{ u.username }}">
+                                        <input name="password1" type="hidden" value="0">
+                                        <input name="password2" placeholder="Password" type="password"
+                                               class="form-control" style="width: 50%;float: left">
+                                        <button type="submit" value="Submit" class="btn btn-primary"
+                                                style="float: left">Submit
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="add" aria-labelledby="add-tab">
 
