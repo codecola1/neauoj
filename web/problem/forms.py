@@ -2,6 +2,7 @@ __author__ = 'Code_Cola'
 
 from django import forms
 from problem.models import Problem
+import os
 
 
 class Add_problem_form(forms.ModelForm):
@@ -15,9 +16,14 @@ class Add_problem_form(forms.ModelForm):
         widget=forms.Select()
     )
 
+    inputdata = forms.CharField()
+    outputdata = forms.CharField()
+
     class Meta:
         model = Problem
-        fields = ('title', 'description', 'input', 'output', 'sample_input', 'sample_output', 'hint', 'source', 'memory_limit_c', 'time_limit_c')
+        fields = (
+        'title', 'description', 'input', 'output', 'sample_input', 'sample_output', 'hint', 'source', 'memory_limit_c',
+        'time_limit_c')
 
     def save(self, commit=True):
         problem_id = len(Problem.objects.filter(judge_type='0')) + 1000
@@ -27,6 +33,8 @@ class Add_problem_form(forms.ModelForm):
         Output = self.cleaned_data.get("output")
         sample_input = self.cleaned_data.get("sample_input")
         sample_output = self.cleaned_data.get("sample_output")
+        inputdata = self.cleaned_data.get("inputdata")
+        outputdata = self.cleaned_data.get("outputdata")
         hint = self.cleaned_data.get("hint")
         if len(hint) == 1:
             hint = ''
@@ -59,4 +67,17 @@ class Add_problem_form(forms.ModelForm):
             time_limit_java=str(int(time_limit) * 2)
         )
         problem.save()
+        path = os.getcwd().split('/')[1:-1]
+        path = '/' + os.path.join('/'.join(path), 'data', str(problem.id))
+        if not os.path.exists(path):
+            try:
+                os.mkdir(path)
+            except:
+                return problem
+        fp = open(path + '/data.in', 'w')
+        fp.write(inputdata)
+        fp.close()
+        fp = open(path + '/data.out', 'w')
+        fp.write(outputdata)
+        fp.close()
         return problem
