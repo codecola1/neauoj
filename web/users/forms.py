@@ -181,3 +181,38 @@ class ChangePasswd(forms.Form):
 
 class AddUserForm(forms.Form):
     pass
+
+
+class EditInforForm(forms.Form):
+    username = forms.CharField()
+    nickname = forms.CharField()
+    password = forms.CharField()
+
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        try:
+            self.user = User.objects.get(username=username)
+        except:
+            raise forms.ValidationError(
+                "No such User",
+                code='username_mismatch',
+            )
+        return username
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                "Incorrect password!",
+                code='password_mismatch',
+            )
+        return password
+
+    def save(self):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        nickname = self.cleaned_data.get("nickname")
+        u = User.objects.get(username=username)
+        u.info.nickname = nickname
+        u.info.save()

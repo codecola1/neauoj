@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block set_title %}Add Contest{% endblock %}
+{% block bodytext %}
+    <div class="container">
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert" style="width: 50%;margin: auto"><h3>Sorry</h3>{{ form.errors }}
+            </div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form }}
+        </form>
+    </div>
+{% endblock %}

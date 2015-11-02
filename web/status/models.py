@@ -13,7 +13,6 @@ class Solve(models.Model):
     use_memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)
     length = models.IntegerField()
-    wait_show = models.BooleanField(default=True)
     code = models.TextField(max_length=5000, default="")
 
     def __unicode__(self):

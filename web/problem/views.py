@@ -6,6 +6,7 @@ from django.template import RequestContext
 from models import Problem
 from forms import Add_problem_form
 from django.db.models import Q
+from robot.get_problem import Down_problem
 
 # Create your views here.
 
@@ -48,15 +49,47 @@ def problem_list(req):
         pinfo = Problem.objects.filter(Q(judge_type=2) | Q(judge_type=3))
         type = 'Student'
     else:
-        raise Http404
+        raise Http404()
+    leng = len(pinfo)
+    leng = leng / 20 if leng / 20. == leng // 20 else leng / 20 + 1
     return render_to_response('problem_list.html', {
         'path': req.path,
         'type': type,
-        'len': range(len(pinfo) / 20 + 1),
+        'len': range(leng),
     }, context_instance=RequestContext(req))
 
 
-def get_problem_info(req, type, page):
+def get_problem_info(req, oj, problem_id, index):
+    problem_id = int(problem_id)
+    pinfo = ''
+    data = {
+        'pid': 0,
+        'title': '',
+        'index': index,
+    }
+    try:
+        pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
+    except:
+        if oj != 'neau':
+            dpinfo = Down_problem(oj, problem_id)
+            if dpinfo.right:
+                dpinfo.get_info()
+                dpinfo.get_img()
+            try:
+                pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
+            except:
+                pass
+    if pinfo:
+        data = {
+            'pid': pinfo.id,
+            'title': pinfo.title,
+            'index': index,
+        }
+    return JsonResponse(data)
+
+
+
+def get_problem_list(req, type, page):
     page = int(page)
     first = (page - 1) * 20
     last = page * 20

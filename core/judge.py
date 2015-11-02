@@ -41,7 +41,8 @@ class Producer(threading.Thread):
         self.pid = result[0][0]
         self.uid = result[0][1]
         self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
-        self.mysql.update("UPDATE problem_problem SET submit = submit + '1' WHERE id = '%s'" % self.sid)
+        self.mysql.update("UPDATE problem_problem SET submit = submit + 1 WHERE id = '%s'" % self.pid)
+        self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
         result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
         self.judge_type = result[0][0]
 
@@ -97,7 +98,8 @@ class Consumer(threading.Thread):
         judge_status = judge_map[int(self.data)]
         self.mysql.update("UPDATE status_solve SET status = '%s' WHERE id = '%s'" % (judge_status, self.sid))
         if judge_status == 'Accepted':
-            self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.sid)
+            self.mysql.update("UPDATE problem_problem SET solved = solved + 1 WHERE id = '%s'" % self.pid)
+            self.mysql.update("UPDATE users_info SET solve = solve + 1 WHERE id = '%s'" % self.uid)
 
 
 class vConsumer(threading.Thread):

@@ -65,7 +65,7 @@
                                     <a href="{% url 'ce_info' i.id %}">
                                         {{ i.status|safe }}</a>{% else %}{{ i.status|safe }}{% endifequal %}</td>
                             <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>
-                            <td>{{ i.problem.oj }}</td>
+                            <td>{{ i.problem.oj|upper }}</td>
                             <td><a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a></td>
                             <td id="time{{ i.id }}">{{ i.use_time }}</td>
                             <td id="memory{{ i.id }}">{{ i.use_memory }}</td>

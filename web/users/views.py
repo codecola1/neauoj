@@ -1,10 +1,9 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django.contrib.auth.decorators import permission_required
-from users.forms import UserRegisterForm, PermissionForm, ChangePasswd, AddUserForm
+from users.forms import UserRegisterForm, PermissionForm, ChangePasswd, AddUserForm, EditInforForm
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 import logging
 
 
@@ -29,7 +28,7 @@ def register(req):
     else:
         form = UserRegisterForm()
         return render_to_response("register.html", {
-            'path': req.path,
+            'path': '/',
             'form': form,
         }, context_instance=RequestContext(req))
 
@@ -73,6 +72,24 @@ def change_password(req):
             return HttpResponseRedirect("/accounts/logout")
         else:
             return render_to_response("change_password.html", {
+                'form': form,
+            }, context_instance=RequestContext(req))
+
+
+@login_required
+def edit_information(req):
+    if req.method == 'GET':
+        form = EditInforForm()
+        return render_to_response("edit_information.html", {
+            'form': form,
+        }, context_instance=RequestContext(req))
+    else:
+        form = EditInforForm(req.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/index")
+        else:
+            return render_to_response("edit_information.html", {
                 'form': form,
             }, context_instance=RequestContext(req))
 

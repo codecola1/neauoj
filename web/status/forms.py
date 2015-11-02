@@ -69,8 +69,6 @@ class SubmitForm(forms.ModelForm):
         uid = self.cleaned_data.get("uid")
         p = Problem.objects.get(id=problem_id)
         u = User.objects.get(id=uid)
-        solve = Solve(user=u, problem=p, language=language, code=code, wait_show=True, length=len(code))
-        u.info.submit += 1
-        u.info.save()
+        solve = Solve(user=u, problem=p, language=language, code=code, length=len(code))
         solve.save()
         return solve

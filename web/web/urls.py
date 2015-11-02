@@ -40,4 +40,7 @@ urlpatterns += patterns('',
 
                         (r'^js/(?P<path>.*)$', 'django.views.static.serve',
                          {'document_root': os.path.join(settings.STATIC_PATH, 'js')} ),
+
+                        (r'^fonts/(?P<path>.*)$', 'django.views.static.serve',
+                         {'document_root': os.path.join(settings.STATIC_PATH, 'fonts')} ),
 )

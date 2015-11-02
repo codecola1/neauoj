@@ -1,1 +1,184 @@
 {% extends "base.html" %}
+{% block set_title %}Contest List{% endblock %}
+{% block othercss %}
+    <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+{% endblock %}
+{% block bodytext %}
+    <div class="container" style="margin-top: 20px;margin-bottom: 20px">
+        <h1 style="text-align: center">Contest List
+            <small>&nbsp;&nbsp;&nbsp;Type: {{ type }}</small>
+        </h1>
+    </div>
+    {% if user.is_authenticated %}
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h2 class="modal-title" id="myModalLabel">Add Contest</h2>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action='/'>
+                            {% csrf_token %}
+                            <input type="hidden" name="creator" value="{{ user.id }}"/>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="id_title">Title</label>
+                                        <input id="id_title" type="text" name="title" class="form-control"
+                                               onkeyup="judge_title()" oninput="judge_title()" placeholder="Title">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_start_time" class="control-label tab-content">Begin Time</label>
+
+                                        <div class="input-group date form_datetime has-error"
+                                             data-date="{% now 'Y-m-d' %}T00:00:00Z"
+                                             data-date-format="yyyy-mm-dd HH:ii"
+                                             data-link-field="dtp_input1">
+                                            <input class="form-control" size="16" type="text" id="id_start_time"
+                                                   name="start_time" readonly>
+                                        <span class="input-group-addon"><span
+                                                class="glyphicon glyphicon-th"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_end_time" class="control-label tab-content">End Time</label>
+
+                                        <div class="input-group date form_datetime has-error"
+                                             data-date="{% now 'Y-m-d' %}T00:00:00Z"
+                                             data-date-format="yyyy-mm-dd HH:ii"
+                                             data-link-field="dtp_input1">
+                                            <input class="form-control" size="16" type="text" id="id_end_time"
+                                                   name="end_time" readonly>
+                                        <span class="input-group-addon"><span
+                                                class="glyphicon glyphicon-th"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_description">Description:</label>
+                                        <textarea class="form-control" cols="40" id="id_description" maxlength="200"
+                                                  name="description"
+                                                  rows="10" style="resize: none"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_password">Password:</label>
+                                        <input id="id_password" class="form-control" maxlength="50" name="password"
+                                               type="text" placeholder="Leave blank to make it public">
+                                    </div>
+                                </div>
+                                <div class="col-lg-8" id="addproblemlist">
+                                    <div class="form-group">
+                                        <h4>Add problems for this contest</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <table class="table table-striped" id="all_list">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 5%">
+                                                    <button class="btn btn-primary" type="button" id="addlist"
+                                                            style="height:30px;width:40px"><span
+                                                            class="glyphicon glyphicon-plus"
+                                                            aria-hidden="true"></span>
+                                                    </button>
+                                                </th>
+                                                <th style="width: 18%">OJ</th>
+                                                <th style="width: 22%">Problem ID</th>
+                                                <th style="width: 55%">Title (Leave blank to use default title)</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr class="problem_list" id="tr_exp" style="display: none">
+                                                <th>
+                                                    <button class="btn btn-default" type="button" id="deletelist" style="height:30px;width:40px"><span
+                                                            class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                                    </button>
+                                                </th>
+                                                <td>
+                                                    <select class="form-control" name="oj">
+                                                        <option selected="selected">NEAU</option>
+                                                        <option>HDU</option>
+                                                        <option>POJ</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <div class="has-error">
+                                                        <input id="id_title" type="text" name="pid"
+                                                               oninput="var row = $(this).parent().parent().parent();updateProblemInfo(row);"
+                                                               class="form-control" placeholder="Slow change!">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input id="id_title" type="text" name="title" class="form-control">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <p id="test"></p>
+                                <p onclick="alert('key: ' + key.toString(2) + '\nproblems: ' + problems + '\nnumber: ' + number + '\n iii: ' + iii);">test</p>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="submit" type="submit" value="submit" class="btn btn-primary"
+                                        disabled="true">Error Info!
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="container">
+        <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
+            <ul id="myTabs" class="pagination pagination-lg" role="tablist">
+                {% if user.is_authenticated %}
+                    {% ifequal type "VJudge" %}
+                        <li><a data-toggle="modal" data-target=".bs-example-modal-lg">Add Contest</a></li>
+                    {% else %}
+                        {% if perms.contest.add_contest %}
+                            <li><a href="{% url 'add_contest' type|lower %}">Add Contest</a></li>
+                        {% endif %}
+                    {% endifequal %}
+                {% endif %}
+                {% for i in len %}
+                    <li role="presentation"{% if not i %} class="active"{% endif %}><a href="#list{{ i|add:"1" }}"
+                                                                                       id="tab{{ i|add:"1" }}"
+                                                                                       role="tab" data-toggle="tab"
+                                                                                       aria-controls="home"
+                                                                                       aria-expanded="true">{{ i|add:"1" }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                {% for i in len %}
+                    <div role="tabpanel" class="tab-pane fade{% if not i %} active in{% endif %}"
+                         id="list{{ i|add:"1" }}" aria-labelledby="tab{{ i|add:"1" }}">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="10%">Contest ID</th>
+                                <th width="45%">Title</th>
+                                <th width="15%">Start Time</th>
+                                <th width="15%">End Time</th>
+                                <th width="5%">Length</th>
+                                <th width="5%">Jurisdiction</th>
+                            </tr>
+                            </thead>
+                            <tbody id="info{{ i|add:"1" }}"></tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block otherjs %}
+    <script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/js/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/js/add_contest.js" charset="UTF-8"></script>
+{% endblock %}

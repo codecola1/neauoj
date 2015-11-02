@@ -32,6 +32,11 @@ def test(req):
             if test.right:
                 test.get_info()
                 test.get_img()
+            # for i in range(ind, ind + 10):
+            #     test = Down_problem(oj, i)
+            #     if test.right:
+            #         test.get_info()
+            #         test.get_img()
         return render_to_response('test.html', {
             'form': form,
             'pname': test.pid,

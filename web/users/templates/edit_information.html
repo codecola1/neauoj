@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block set_title %}Edit information{% endblock %}
+{% block bodytext %}
+    <div class="container text-center">
+        <h1 style="margin-top: 50px">Edit your information</h1>
+    </div>
+    <div class="container text-center" style="width: 30%">
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">Sorry, There are some mistakes.</div>
+        {% endif %}
+        <form method="POST" style="margin-top: 50px;">
+            {% csrf_token %}
+            <input name="username" type="hidden" value="{{ user.username }}">
+            <label for="id_password2">Nickname</label>
+            <input id="id_password2" name="nickname"type="text" class="form-control"><br>
+            <label for="id_password2">Password</label>
+            <input id="id_password2" name="password" placeholder="Password" type="password" class="form-control"><br>
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}

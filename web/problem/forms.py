@@ -36,8 +36,6 @@ class Add_problem_form(forms.ModelForm):
         inputdata = self.cleaned_data.get("inputdata")
         outputdata = self.cleaned_data.get("outputdata")
         hint = self.cleaned_data.get("hint")
-        if len(hint) == 1:
-            hint = ''
         source = self.cleaned_data.get("source")
         type = ''
         oj = 'neau'

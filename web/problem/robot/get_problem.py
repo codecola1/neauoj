@@ -9,6 +9,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+ojnamelist = ['neau', 'hdu']
+
 url = {
     'hdu': 'http://acm.hdu.edu.cn/showproblem.php?pid=',
     'poj': 'http://poj.org/problem?id=',
@@ -75,6 +77,8 @@ class Down_problem:
         self.ojname = ojname
         self.pid = pid
         self.right = False
+        if ojname not in ojnamelist:
+            return
         self.ac = Access(oj=ojname)
         global img
         img = []
@@ -138,17 +142,18 @@ class Down_problem:
             p.save()
             logger.info("Problem: " + self.ojname + "-" + str(self.pid) + " Saved")
         else:
-            p.title = self.Title
-            p.time_limit_c = self.Time_Limit_C
-            p.memory_limit_c = self.Memory_Limit_C
-            p.time_limit_java = self.Time_Limit_Java
-            p.memory_limit_java = self.Memory_Limit_Java
-            p.description = self.Description
-            p.input = self.Input
-            p.output = self.Output
-            p.sample_input = self.Sinput
-            p.sample_output = self.Soutput
-            p.hint = self.Hint
-            p.source = self.Source
-            p.save()
-            logger.info("Problem: " + self.ojname + "-" + str(self.pid) + " Updated")
+            if p.title != self.Title or p.time_limit_c != self.Time_Limit_C or p.memory_limit_c != self.Memory_Limit_C or p.time_limit_java != self.Time_Limit_Java or p.memory_limit_java != self.Memory_Limit_Java or p.description != self.Description or p.input != self.Input or p.output != self.Output or p.sample_input != self.Sinput or p.sample_output != self.Soutput or p.hint != self.Hint or p.source != self.Source:
+                p.title = self.Title
+                p.time_limit_c = self.Time_Limit_C
+                p.memory_limit_c = self.Memory_Limit_C
+                p.time_limit_java = self.Time_Limit_Java
+                p.memory_limit_java = self.Memory_Limit_Java
+                p.description = self.Description
+                p.input = self.Input
+                p.output = self.Output
+                p.sample_input = self.Sinput
+                p.sample_output = self.Soutput
+                p.hint = self.Hint
+                p.source = self.Source
+                p.save()
+                logger.info("Problem: " + self.ojname + "-" + str(self.pid) + " Updated")

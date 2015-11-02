@@ -35,13 +35,14 @@ class Contest(models.Model):
     end_time = models.DateTimeField()
     length = models.TimeField()
     defunct = models.BooleanField(default=False)
-    description = models.TextField(max_length=200)
+    description = models.TextField(max_length=200, blank=True)
     private = models.BooleanField()
+    password = models.CharField(max_length=50, blank=True)
     impose = models.BooleanField(default=False)
     type = models.IntegerField()
+    creator = models.ForeignKey(User, default=None)
     problem = models.ManyToManyField(In_Problem)
     judger = models.ManyToManyField(Judger)
-    student = models.ManyToManyField(User)
     discusses = models.ManyToManyField(Discuss)
 
     def __unicode__(self):

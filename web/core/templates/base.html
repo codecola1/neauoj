@@ -20,7 +20,7 @@
     {% block headjs %}{% endblock %}
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -34,34 +34,36 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li class="dropdown">
-                    <a id="drop_problem" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                       aria-haspopup="true" aria-expanded="false">
-                        Problem
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="drop_problem">
-                        <li><a href="{% url 'problem_acmlist' %}">ACM Problem</a></li>
-                        <li><a href="{% url 'problem_studentlist' %}">Student Problem</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a id="drop_Contest" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                       aria-haspopup="true" aria-expanded="false">
-                        Contest
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="drop_Contest">
-                        <li><a href="{% url 'contest_acmlist' %}">ACM Contest</a></li>
-                        <li><a href="{% url 'contest_studentlist' %}">Student Contest</a></li>
-                        <li><a href="{% url 'contest_vjudgelist' %}">VJudge Contest</a></li>
-                    </ul>
-                </li>
-                <li><a href="{% url 'status' %}">Status</a></li>
-                <li><a href="#">Rank</a></li>
-                <li><a href="#">Discuss</a></li>
-                <li><a href="#">Handbook</a></li>
+                {% block navli %}
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li class="dropdown">
+                        <a id="drop_problem" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">
+                            Problem
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="drop_problem">
+                            <li><a href="{% url 'problem_acmlist' %}">ACM Problem</a></li>
+                            <li><a href="{% url 'problem_studentlist' %}">Student Problem</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a id="drop_Contest" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">
+                            Contest
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="drop_Contest">
+                            <li><a href="{% url 'contest_acmlist' %}">ACM Contest</a></li>
+                            <li><a href="{% url 'contest_studentlist' %}">Student Contest</a></li>
+                            <li><a href="{% url 'contest_vjudgelist' %}">VJudge Contest</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'status' %}">Status</a></li>
+                    <li><a href="#">Rank</a></li>
+                    <li><a href="#">Discuss</a></li>
+                    <li><a href="#">Handbook</a></li>
+                {% endblock %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
@@ -76,13 +78,14 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url "userpage" user.username %}">Infomathion</a></li>
                             <li><a href="{% url "change_password" %}">Change Password</a></li>
+                            <li><a href="{% url "edit_information" %}">Edit information</a></li>
                             {% if perms.problem.add_problem %}
                                 <li><a href="{% url "add_problem" %}">Add Problem</a></li>
                             {% endif %}
                             {% if perms.auth.add_permission %}
                                 <li><a href="{% url "permission" %}">Permission</a></li>
                             {% endif %}
-                            {% if perms.auth.add_user %}
+                            {% if perms.auth.change_user %}
                                 <li><a href="{% url "useradmin" %}">Users</a></li>
                             {% endif %}
                             <li role="separator" class="divider"></li>
@@ -168,8 +171,11 @@
 <div id="foot" class="container">
     <hr>
     <footer>
-        <p class="text-center">Copyright© 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU ACM
+        <p class="text-center">Copyright&copy; 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU ACM
             Team</strong></a> All Rights Reserved.</p>
+
+        <p class="text-center">Any questions,please contact the <a href="mailto:code_cola@163.com"><strong>Author</strong></a>.
+        </p>
     </footer>
 </div>
 <script src="/js/jquery.js"></script>

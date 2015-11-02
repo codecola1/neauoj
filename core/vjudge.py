@@ -59,9 +59,10 @@ class Vjudge:
         self.ce_info = ''
 
     def get_info(self, sid):
-        result = self.mysql.query("SELECT problem_id, language, code FROM status_solve WHERE id = '%s'" % sid)
+        result = self.mysql.query("SELECT problem_id, language, code, user_id FROM status_solve WHERE id = '%s'" % sid)
         self.language = result[0][1]
         self.code = result[0][2]
+        self.uid = result[0][3]
         result = self.mysql.query("SELECT oj, problem_id FROM problem_problem WHERE id = '%s'" % result[0][0])
         self.oj = result[0][0]
         self.pid = result[0][1]
@@ -117,4 +118,5 @@ class Vjudge:
             sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
             self.mysql.update(sql)
         if o[0] == 'Accepted':
-            self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.sid)
+            self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.pid)
+            self.mysql.update("UPDATE users_info SET solve = solve + '1' WHERE id = '%s'" % self.uid)
