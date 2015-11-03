@@ -61,11 +61,13 @@ def problem_list(req):
 
 def get_problem_info(req, oj, problem_id, index):
     problem_id = int(problem_id)
+    new = 0
     pinfo = ''
     data = {
         'pid': 0,
         'title': '',
         'index': index,
+        'new': 0,
     }
     try:
         pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
@@ -79,11 +81,14 @@ def get_problem_info(req, oj, problem_id, index):
                 pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
             except:
                 pass
+            else:
+                new = 1
     if pinfo:
         data = {
             'pid': pinfo.id,
             'title': pinfo.title,
             'index': index,
+            'new': new
         }
     return JsonResponse(data)
 

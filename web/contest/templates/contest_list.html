@@ -22,6 +22,7 @@
                         <form method="POST" action='/'>
                             {% csrf_token %}
                             <input type="hidden" name="creator" value="{{ user.id }}"/>
+                            <input type="hidden" name="data" id="data" value=""/>
 
                             <div class="row">
                                 <div class="col-lg-4">
@@ -35,10 +36,10 @@
 
                                         <div class="input-group date form_datetime has-error"
                                              data-date="{% now 'Y-m-d' %}T00:00:00Z"
-                                             data-date-format="yyyy-mm-dd HH:ii"
+                                             data-date-format="yyyy-mm-dd hh:ii"
                                              data-link-field="dtp_input1">
                                             <input class="form-control" size="16" type="text" id="id_start_time"
-                                                   name="start_time" readonly>
+                                                   name="start_time" readonly>{#  oninput="judge_start_time();" #}
                                         <span class="input-group-addon"><span
                                                 class="glyphicon glyphicon-th"></span></span>
                                         </div>
@@ -48,7 +49,7 @@
 
                                         <div class="input-group date form_datetime has-error"
                                              data-date="{% now 'Y-m-d' %}T00:00:00Z"
-                                             data-date-format="yyyy-mm-dd HH:ii"
+                                             data-date-format="yyyy-mm-dd hh:ii"
                                              data-link-field="dtp_input1">
                                             <input class="form-control" size="16" type="text" id="id_end_time"
                                                    name="end_time" readonly>
@@ -91,7 +92,8 @@
                                             <tbody>
                                             <tr class="problem_list" id="tr_exp" style="display: none">
                                                 <th>
-                                                    <button class="btn btn-default" type="button" id="deletelist" style="height:30px;width:40px"><span
+                                                    <button class="btn btn-default" type="button" id="deletelist"
+                                                            style="height:30px;width:40px"><span
                                                             class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                                                     </button>
                                                 </th>
@@ -106,11 +108,13 @@
                                                     <div class="has-error">
                                                         <input id="id_title" type="text" name="pid"
                                                                oninput="var row = $(this).parent().parent().parent();updateProblemInfo(row);"
-                                                               class="form-control" placeholder="Slow change!">
+                                                               class="form-control">
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <input id="id_title" type="text" name="title" class="form-control">
+                                                    <input id="id_title" type="text" name="title"
+                                                           oninput="var row = $(this).parent().parent();updateTitle(row);"
+                                                           class="form-control">
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -119,8 +123,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <p id="test"></p>
-                                <p onclick="alert('key: ' + key.toString(2) + '\nproblems: ' + problems + '\nnumber: ' + number + '\n iii: ' + iii);">test</p>
+{#                                <p onclick="alert($('#data').val());"><!--  'key: ' + key.toString(2) + '\nproblems: ' + problems + '\nnumber: ' + number + '\n iii: ' + iii + '\n titiles: ' + titles -->#}
+{#                                    test</p>#}
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 <button id="submit" type="submit" value="submit" class="btn btn-primary"
                                         disabled="true">Error Info!
