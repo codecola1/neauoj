@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
@@ -11,6 +11,7 @@ import logging
 # Create your views here.
 
 logger = logging.getLogger(__name__)
+
 
 @login_required
 def submit(req):
@@ -26,7 +27,7 @@ def submit(req):
             new_submit = form.save()
             client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             client.connect("/tmp/judge.sock")
-            client.send(str(new_submit.id))
+            client.send(str(new_submit.id) + " 0")
             receive = client.recv(1024)
             client.close()
             logger.info(receive)
@@ -38,6 +39,20 @@ def submit(req):
                 'path': req.path,
                 'form': form,
             }, context_instance=RequestContext(req))
+
+
+@login_required
+def rejudge(req, sid):
+    if req.method == 'GET':
+        client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        client.connect("/tmp/judge.sock")
+        client.send(str(sid) + " 1")
+        receive = client.recv(1024)
+        client.close()
+        logger.info(receive)
+        logger.info(u"User: " + req.user.username + u" Rejudge Solve ID: <" + sid + u">")
+        return HttpResponseRedirect("/status")
+    raise Http404()
 
 
 def ce(req, sid):

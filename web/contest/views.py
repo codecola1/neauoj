@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.shortcuts import render, render_to_response
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
 from models import Contest
-from forms import AddContestForm
+from forms import AddContestForm, AddVudgeForm
 from django.contrib.auth.decorators import login_required, permission_required
 
 # Create your views here.
@@ -18,14 +18,34 @@ def contest_main(req, cid):
 
 @permission_required('contest.add_contest')
 def add_contest(req, type):
-    if type not in ['acm', 'student', 'vjudge'] or req.method == 'GET':
+    if type not in ['acm', 'student']:  # or req.method == 'GET':
         raise Http404()
     if req.method == 'POST':
+        form = AddContestForm(req.POST)
+        return render_to_response('contest_add.html', {
+            'path': req.path,
+            'form': form,
+        }, context_instance=RequestContext(req))
+    else:
         form = AddContestForm()
         return render_to_response('contest_add.html', {
             'path': req.path,
             'form': form,
         }, context_instance=RequestContext(req))
+
+
+@login_required
+def add_vjudge_contest(req):
+    if req.method == 'GET':
+        raise Http404()
+    else:
+        form = AddVudgeForm(req.POST)
+        form.set_creator(req.user)
+        if form.is_valid():
+            new_contest = form.save()
+            return HttpResponseRedirect("/contest/Vjudgelist")
+        else:
+            raise Http404()
 
 
 def contest_list(req):

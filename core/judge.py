@@ -17,7 +17,6 @@ import threading
 import socket
 import os
 
-
 logging = Log()
 vqueue = Queue(5)
 queue = Queue(5)
@@ -35,26 +34,32 @@ judge_map = ['Accepted', 'Wrong Answer', 'Presentation Error', 'Compilation Erro
 class Producer(threading.Thread):
     def __init__(self, sid):
         threading.Thread.__init__(self)
-        self.sid = sid
+        self.sid = sid[0]
+        self.rejudge = sid[1]
         self.mysql = Connect()
-        result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid)
+        result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
         self.pid = result[0][0]
         self.uid = result[0][1]
-        self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
-        self.mysql.update("UPDATE problem_problem SET submit = submit + 1 WHERE id = '%s'" % self.pid)
-        self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
+        self.last_result = 0
+        if not self.rejudge:
+            self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
+            self.mysql.update("UPDATE problem_problem SET submit = submit + 1 WHERE id = '%s'" % self.pid)
+            self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
+        else:
+            result = self.mysql.query("SELECT status FROM status_solve WHERE id = '%s'" % self.sid)
+            self.last_result = 1 if result == 'Accepted' else 0
         result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
         self.judge_type = result[0][0]
 
     def run(self):
         if self.judge_type == 0:
-            queue.put((self.sid, self.pid, self.uid, self.judge_type))
+            queue.put((self.sid, self.pid, self.uid, self.judge_type, self.last_result))
         elif self.judge_type == 1:
-            vqueue.put((self.sid, self.pid, self.uid))
+            vqueue.put((self.sid, self.pid, self.uid, self.last_result))
         elif self.judge_type == 2:
-            queue.put((self.sid, self.pid, self.uid, self.judge_type))
+            queue.put((self.sid, self.pid, self.uid, self.judge_type, self.last_result))
         elif self.judge_type == 3:
-            queue.put((self.sid, self.pid, self.uid, self.judge_type))
+            queue.put((self.sid, self.pid, self.uid, self.judge_type, self.last_result))
         elif self.judge_type == 4:
             pass
 
@@ -68,7 +73,7 @@ class Consumer(threading.Thread):
 
     def run(self):
         while True:
-            self.sid, self.pid, self.uid, self.judge_type = queue.get()
+            self.sid, self.pid, self.uid, self.judge_type, self.last_result = queue.get()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
             self.save()
@@ -97,7 +102,7 @@ class Consumer(threading.Thread):
     def save(self):
         judge_status = judge_map[int(self.data)]
         self.mysql.update("UPDATE status_solve SET status = '%s' WHERE id = '%s'" % (judge_status, self.sid))
-        if judge_status == 'Accepted':
+        if judge_status == 'Accepted' and not self.last_result:
             self.mysql.update("UPDATE problem_problem SET solved = solved + 1 WHERE id = '%s'" % self.pid)
             self.mysql.update("UPDATE users_info SET solve = solve + 1 WHERE id = '%s'" % self.uid)
 
@@ -110,7 +115,7 @@ class vConsumer(threading.Thread):
 
     def run(self):
         while True:
-            self.sid, self.pid, self.uid = vqueue.get()
+            self.sid, self.pid, self.uid, self.last_result = vqueue.get()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
 
@@ -122,7 +127,7 @@ class vConsumer(threading.Thread):
                 self.oj, self.index))
         username = result[0][0]
         password = result[0][1]
-        v = Vjudge(self.sid, username, password)
+        v = Vjudge(self.sid, username, password, self.last_result)
         v.run()
 
 
@@ -146,9 +151,9 @@ if __name__ == '__main__':
         vthreads[i].start()
     while True:
         connection, address = server.accept()
-        sid = connection.recv(1024)
+        sid = connection.recv(1024).split(' ')
         new_judge = Producer(sid)
         new_judge.start()
-        connection.send('Receive SID: %s!' % sid)
+        connection.send('Receive SID: %s!' % sid[0])
         connection.close()
     server.close()

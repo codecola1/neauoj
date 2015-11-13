@@ -50,13 +50,14 @@ language_map = {
 
 
 class Vjudge:
-    def __init__(self, sid, username, password):
+    def __init__(self, sid, username, password, last_result):
         self.mysql = Connect()
         self.sid = sid
         self.get_info(sid)
         self.username = username
         self.ac = Access(self.oj, username, password)
         self.ce_info = ''
+        self.last_result = last_result
 
     def get_info(self, sid):
         result = self.mysql.query("SELECT problem_id, language, code, user_id FROM status_solve WHERE id = '%s'" % sid)
@@ -115,8 +116,14 @@ class Vjudge:
             sleep(0.2)
             # print o
         if self.ce_info:
-            sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
-            self.mysql.update(sql)
-        if o[0] == 'Accepted':
+            sql = "SELECT info FROM status_ce_info WHERE solve_id = '%s'" % self.sid
+            result = self.mysql.query(sql)
+            if result:
+                sql = "UPDATE status_ce_info SET info = '%s' WHERE solve_id = '%s'" % (self.ce_info, self.sid)
+                self.mysql.update(sql)
+            else:
+                sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
+                self.mysql.update(sql)
+        if o[0] == 'Accepted' and not self.last_result:
             self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.pid)
             self.mysql.update("UPDATE users_info SET solve = solve + '1' WHERE id = '%s'" % self.uid)
