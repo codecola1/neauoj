@@ -60,9 +60,9 @@
                         </ul>
                     </li>
                     <li><a href="{% url 'status' %}">Status</a></li>
-                    <li><a href="#">Rank</a></li>
-                    <li><a href="#">Discuss</a></li>
-                    <li><a href="#">Handbook</a></li>
+                    <li class="disabled"><a>Rank</a></li>
+                    <li class="disabled"><a>Discuss</a></li>
+                    <li class="disabled"><a>Handbook</a></li>
                 {% endblock %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -82,6 +82,10 @@
                             {% if perms.problem.add_problem %}
                                 <li><a href="{% url "add_problem" %}">Add Problem</a></li>
                             {% endif %}
+{#                            {% if perms.contest.add_contest %}#}
+{#                                <li><a href="{% url "add_contest" "acm" %}">Add ACM Contest</a></li>#}
+{#                                <li><a href="{% url "add_contest" "student"%}">Add Student Contest</a></li>#}
+{#                            {% endif %}#}
                             {% if perms.auth.add_permission %}
                                 <li><a href="{% url "permission" %}">Permission</a></li>
                             {% endif %}

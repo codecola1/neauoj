@@ -33,7 +33,6 @@ class Contest(models.Model):
     title = models.CharField(max_length=50)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    length = models.TimeField()
     defunct = models.BooleanField(default=False)
     description = models.TextField(max_length=200, blank=True)
     private = models.BooleanField()

@@ -3,29 +3,76 @@ from django.shortcuts import render, render_to_response
 from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
 from models import Contest
-from forms import AddContestForm, AddVudgeForm
+from forms import AddContestForm
+from django import forms
 from django.contrib.auth.decorators import login_required, permission_required
+import time
 
 # Create your views here.
+# 0   ACM
+# 1   vjudge
+# 2   Student
+
+class ContestForm(forms.Form):
+    password = forms.CharField()
+
+    def set_cid(self, cid):
+        self.cid = cid
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        c = Contest.objects.get(id=self.cid)
+        if c.password != password:
+            raise forms.ValidationError(message="Error Password!")
+
 
 def contest_main(req, cid):
+    cinfo = Contest.objects.get(id=cid)
+    key = req.session.get('login' + cid, False)
     if req.method == 'GET':
-        cinfo = Contest.objects.get(id=cid)
+        form = ContestForm()
         return render_to_response('contest_main.html', {
+            'info': cinfo,
             'path': req.path,
+            'key': key,
+            'form': form,
         }, context_instance=RequestContext(req))
+    else:
+        form = ContestForm(req.POST)
+        form.set_cid(cid)
+        if form.is_valid():
+            req.session['login' + cid] = True
+            return HttpResponseRedirect(req.path)
+        else:
+            return render_to_response('contest_main.html', {
+                'info': cinfo,
+                'path': req.path,
+                'key': key,
+                'form': form,
+            }, context_instance=RequestContext(req))
 
 
 @permission_required('contest.add_contest')
 def add_contest(req, type):
-    if type not in ['acm', 'student']:  # or req.method == 'GET':
+    judge_map = {
+        'acm': 0,
+        'vjudge': 1,
+        'student': 2,
+    }
+    if type not in ['acm', 'student', 'vjudge'] or req.method == 'GET':
         raise Http404()
     if req.method == 'POST':
         form = AddContestForm(req.POST)
-        return render_to_response('contest_add.html', {
-            'path': req.path,
-            'form': form,
-        }, context_instance=RequestContext(req))
+        if form.is_valid():
+            judge_type = judge_map[type]
+            form.set_info(req.user, judge_type)
+            form.save()
+            return HttpResponseRedirect('/contest/' + type + 'list')
+        else:
+            return render_to_response('contest_add.html', {
+                'path': req.path,
+                'form': form,
+            }, context_instance=RequestContext(req))
     else:
         form = AddContestForm()
         return render_to_response('contest_add.html', {
@@ -34,30 +81,36 @@ def add_contest(req, type):
         }, context_instance=RequestContext(req))
 
 
-@login_required
-def add_vjudge_contest(req):
-    if req.method == 'GET':
-        raise Http404()
-    else:
-        form = AddVudgeForm(req.POST)
-        form.set_creator(req.user)
-        if form.is_valid():
-            new_contest = form.save()
-            return HttpResponseRedirect("/contest/Vjudgelist")
-        else:
-            raise Http404()
+@permission_required('contest.change_contest')
+def hide_contest(req):
+    cid = int(req.GET.get('id', 0))
+    type = req.GET.get('type', 'acm')
+    c = Contest.objects.get(id=cid)
+    c.defunct = True
+    c.save()
+    return HttpResponseRedirect('/contest/' + type + 'list')
+
+
+@permission_required('contest.change_contest')
+def show_contest(req):
+    cid = int(req.GET.get('id', 0))
+    type = req.GET.get('type', 'acm')
+    c = Contest.objects.get(id=cid)
+    c.defunct = False
+    c.save()
+    return HttpResponseRedirect('/contest/' + type + 'list')
 
 
 def contest_list(req):
     if req.path[9:16] == 'acmlist':
         cinfo = Contest.objects.filter(type=0)
         type = 'ACM'
-    elif req.path[9:20] == 'studentlist':
-        cinfo = Contest.objects.filter(type=1)
-        type = 'Student'
     elif req.path[9:19] == 'vjudgelist':
-        cinfo = Contest.objects.filter(type=2)
+        cinfo = Contest.objects.filter(type=1)
         type = 'VJudge'
+    elif req.path[9:20] == 'studentlist':
+        cinfo = Contest.objects.filter(type=2)
+        type = 'Student'
     else:
         raise Http404()
     leng = len(cinfo)
@@ -78,24 +131,45 @@ def get_contest_info(req, type, page):
 <tr>
     <th scope="row">%s</th>
     <td>%s</td>
-    <td><a href='/problem/p/%s'>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
+    <td%s</td>
+    <td%s</td>
     <td>%s</td>
-</tr>
+
 '''
-    if req.path[9] == 'a':
-        cinfo = Contest.objects.filter(type=0)
-    elif req.path[9] == 's':
-        cinfo = Contest.objects.filter(type=1)
+    k = True if req.user.has_perm('change_contest') else False
+    if k:
+        if req.path[14] == 'a':
+            cinfo = Contest.objects.filter(type=0)
+        elif req.path[14] == 'v':
+            cinfo = Contest.objects.filter(type=1)
+        else:
+            cinfo = Contest.objects.filter(type=2)
     else:
-        cinfo = Contest.objects.filter(type=2)
+        if req.path[14] == 'a':
+            cinfo = Contest.objects.filter(type=0, defunct=False)
+        elif req.path[14] == 'v':
+            cinfo = Contest.objects.filter(type=1, defunct=False)
+        else:
+            cinfo = Contest.objects.filter(type=2, defunct=False)
     last = last if last < len(cinfo) else len(cinfo)
     cinfo = cinfo[first:last]
     ii = (page - 1) * 20 + 1
+    now = time.time()
     for i in cinfo:
-        s = html % (ii, i.id, i.title, i.start_time, i.end_time, i.length, "Private" if i.private else "Public")
+        s_format = '%Y-%m-%d %H:%M:%S'
+        s = html % (
+            ii, "<a href='/contest/c/%d'>%s</a>" % (i.id, i.title), i.start_time.strftime(s_format),
+            i.end_time.strftime(s_format),
+            i.end_time - i.start_time,
+            " style='color:#CC0033'>Private" if i.private else " style='color:#339933'>Public",
+            " style='color:#9900CC'>Waiting" if time.mktime(i.start_time.timetuple()) > now else (
+                ">Ended" if time.mktime(i.end_time.timetuple()) < now else " style='color:#3366FF'>Running"), i.creator)
+        s += '''<td><a class="btn btn-primary %s" href="/contest/hide/?id=%d&type=%s">H</a></td>
+        <td><a class="btn btn-primary %s" href="/contest/show/?id=%d&type=%s">S</a></td></tr>''' % (
+            "disabled" if i.defunct else "", i.id, type, "" if i.defunct else "disabled", i.id, type) if k else "</tr>"
         data['data'] += s
         ii += 1
     return JsonResponse(data)

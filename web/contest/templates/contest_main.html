@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block set_title %}Contest{% endblock %}
+{% block set_title %}{{ info.title }} - Contest{% endblock %}
 {% block othercss %}
 {% endblock %}
 {% block headjs %}
@@ -7,4 +7,13 @@
 {% block navli %}
 {% endblock %}
 {% block bodytext %}
+    {% if not info.private or key %}
+        <p>yes</p>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" value="submit" class="btn btn-default">Submit</button>
+        </form>
+    {% endif %}
 {% endblock %}

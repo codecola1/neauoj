@@ -80,9 +80,11 @@ def get_problem_info(req, oj, problem_id, index):
             try:
                 pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
             except:
-                pass
+                pinfo = ''
             else:
                 new = 1
+        else:
+            pinfo = ''
     if pinfo:
         data = {
             'pid': pinfo.id,

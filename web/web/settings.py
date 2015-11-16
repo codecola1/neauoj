@@ -102,7 +102,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -117,7 +117,7 @@ STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 #Session
 
-SESSION_COOKIE_AGE = 60*60
+# SESSION_COOKIE_AGE = 60*60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 #logging

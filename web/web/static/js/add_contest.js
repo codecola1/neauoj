@@ -19,13 +19,6 @@ $(document).ready(function () {
         //showMeridian: 1,
         forceParse: 0
     });
-    $("[id^='tab']").click(function () {
-        page = $(this).attr('id').match(/\d+/);
-        $.getJSON("/contest/info/{{ type }}/" + page, function (ret) {
-            $('#info' + page).html(ret['data']);
-        });
-    });
-    $("#tab1").trigger("click");
     $("#addlist").click(function () {
         addProblemRow();
     });
