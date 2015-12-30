@@ -55,7 +55,7 @@ class Access:
                 return
         path = os.path.join(path, filename)
         if url[0:4] != 'http':
-            url = url_index[self.oj] + ('' if url[0] == '/' else '/') + url
+            url = url_index[self.oj] + url
         try:
             urllib.urlretrieve(url, path)
         except:

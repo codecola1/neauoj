@@ -1,31 +1,67 @@
+/* header */
+.header {
+    /*padding: 15px 0;*/
+}
+
+.logo {
+    float: left;
+    width: 50%;
+}
+
+.head-right {
+    float: right;
+}
+
+.top-nav {
+    float: left;
+}
+
+.logo h1 {
+    margin: 3px;
+}
+
+.logo h1 a {
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #c2c2c2;
+    text-decoration: none;
+    font-family: 'SintonyRegular';
+}
+
+span.logo-clr {
+    font-weight: 400;
+    color: #a89574;
+}
+
+/* old style */
 #helloworld {
-	margin-top:100px;
+    margin-top: 100px;
 }
 
 .panel {
-	height:200px;
+    height: 200px;
 }
 
 #foot {
-	position: relative;
-	height: auto;
-	min-height: 100%;
+    position: relative;
+    height: auto;
+    min-height: 100%;
 }
 
 #button {
-	color:#fff;
-	padding-top: 5px;
-	padding-right: 10px;
-	padding-bottom: 5px;
-	padding-left: 10px;
-	margin-top: 10px;
-	margin-right: 5px;
-	margin-bottom: 5px;
-	margin-left: 10px;
+    color: #fff;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    margin-top: 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
 }
 
 #bodydiv {
-    margin-top: 50px;
+    margin-top: 80px;
 }
 
 .login {
@@ -41,5 +77,5 @@
 }
 
 .bodymain {
-    margin-top: 50px;
+    margin-top: 80px;
 }

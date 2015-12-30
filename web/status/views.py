@@ -23,6 +23,8 @@ def submit(req):
         }, context_instance=RequestContext(req))
     if req.method == 'POST':
         form = SubmitForm(req.POST)
+        form.set_user(req.user)
+        form.set_contest(req.POST.get('contest', -1))
         if form.is_valid():
             new_submit = form.save()
             client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -33,6 +35,8 @@ def submit(req):
             logger.info(receive)
             logger.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
+            if form.contest_id >= 0:
+                return HttpResponseRedirect("/contest/c/" + str(form.contest_id) + "?status=1")
             return HttpResponseRedirect("/status")
         else:
             return render_to_response("problem_submit.html", {

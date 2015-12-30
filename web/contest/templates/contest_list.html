@@ -170,9 +170,8 @@
                             <thead>
                             <tr>
                                 <th width="5%">#</th>
-                                <th width="31%">Title</th>
+                                <th width="45%">Title</th>
                                 <th width="14%">Start Time</th>
-                                <th width="14%">End Time</th>
                                 <th width="12%">Length</th>
                                 <th width="5%">Jurisdiction</th>
                                 <th width="5%">Status</th>
@@ -197,7 +196,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("[id^='tab']").click(function () {
-                page = $(this).attr('id').match(/\d+/);
+                var page = $(this).attr('id').match(/\d+/);
                 $.getJSON("/contest/info/{{ type|lower }}/" + page, function (ret) {
                     $('#info' + page).html(ret['data']);
                 });

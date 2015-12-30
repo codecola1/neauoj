@@ -1,10 +1,10 @@
 # coding=utf-8
-#!/usr/bin/python
+# !/usr/bin/python
 
 __author__ = 'Code_Cola'
 
 import MySQLdb
-from settings import DATABASES
+from config import DATABASES
 from log_judge import Log
 
 host = 'localhost'
@@ -20,15 +20,15 @@ class Connect:
             self.db = MySQLdb.connect(host, username, password, database, charset="utf8")
         except:
             logging.warning('MySQL connect ERROR!!!')
-            return
-        self.cursor = self.db.cursor()
+            self.db = None
+        else:
+            self.cursor = self.db.cursor()
 
     def update(self, sql):
         try:
             self.cursor.execute(sql)
         except:
             logging.warning('MySQL update ERROR!!!')
-            return
         else:
             self.db.commit()
 

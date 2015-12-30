@@ -46,7 +46,7 @@ r = {
 }
 
 replace = {
-    'hdu': r'/data/images/|data/images/',
+    'hdu': r'/data/images/|data/images/|http://bestcoder.hdu.edu.cn/data/images/',
     'poj': r'images([/\d]*)/'
 }
 
@@ -55,8 +55,8 @@ img = []
 
 class MyHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
-        if tag == 'img' and len(attrs) <= 2 and attrs[0][0] == 'src' and 'qqlogin' not in attrs[0][1]:
-            img.append(attrs[0][1])
+        if tag == 'img' and len(attrs) <= 2 and 'qqlogin' not in attrs[0][1]:
+            img.append(attrs[0][1] if attrs[0][0] == 'src' else attrs[1][1])
 
 
 def use_re(ri, data, oj, n=1):
@@ -91,7 +91,7 @@ class Down_problem:
         parser.feed(self.html)
         for i in img:
             i = i.replace('../', '')
-            self.ac.save_img(i if i[0] == '/' else '/' + i, self.pid)
+            self.ac.save_img(i if i[0] == '/' or i[0] == 'h' else '/' + i, self.pid)
 
     def get_info(self):
         self.Title = use_re(1, self.html, self.ojname)

@@ -66,9 +66,11 @@
     {% endif %}
     {% if p.hint %}
         <div class="container">
-            <h3>Hint</h3>
+            <blockquote style="margin-left: 15px;margin-top: 15px">
+                <h3>Hint</h3>
 
-            <div class="container"><p>{{ p.hint|safe }}</p></div>
+                <div class="container" style="width: auto"><p>{{ p.hint|safe }}</p></div>
+            </blockquote>
         </div>
     {% endif %}
     {% if p.source %}
@@ -98,9 +100,10 @@
                             {% csrf_token %}
                             <div class="modal-body">
                                 <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
+                                <input name="contest" type="hidden" value="-1">
 
                                 <div class="form-group">
-                                    <label style="float: left;width: 20%;font-size: 24px;">Language:</label>
+                                    <label for="id_language" style="float: left;width: 20%;font-size: 24px;">Language:</label>
                                     <select class="form-control" id="id_language" name="language"
                                             style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
                                         <option value="" selected="selected">Language</option>
@@ -110,9 +113,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
+                                    <label for="id_code" style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
                                     <textarea class="form-control" id="id_code" maxlength="5000" name="code" rows="20"
-                                              style="margin: auto;width: 99%"></textarea>
+                                              style="margin: auto;width: 99%;resize:none;"></textarea>
                                 </div>
                             </div>
                         </div>

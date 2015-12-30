@@ -95,7 +95,6 @@ def get_problem_info(req, oj, problem_id, index):
     return JsonResponse(data)
 
 
-
 def get_problem_list(req, type, page):
     page = int(page)
     first = (page - 1) * 20

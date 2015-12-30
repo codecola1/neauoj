@@ -53,7 +53,6 @@ class Add_problem_form(forms.ModelForm):
             hint=hint,
             source=source,
             defunct='0',
-            accepted='0',
             submit='0',
             solved='0',
             type=type,

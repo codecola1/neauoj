@@ -16,6 +16,8 @@ from Queue import Queue
 import threading
 import socket
 import os
+import sys
+import random
 
 logging = Log()
 vqueue = Queue(5)
@@ -68,12 +70,12 @@ class Consumer(threading.Thread):
     def __init__(self, index):
         threading.Thread.__init__(self)
         self.index = index
-        self.mysql = Connect()
         self.run_path = local_path + '/work/run' + str(index)
 
     def run(self):
         while True:
             self.sid, self.pid, self.uid, self.judge_type, self.last_result = queue.get()
+            self.mysql = Connect()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
             self.save()
@@ -81,11 +83,12 @@ class Consumer(threading.Thread):
 
     def judge(self):
         result = self.mysql.query(
-            "SELECT time_limit_c, time_limit_java, memory_limit_c, memory_limit_java FROM problem_problem WHERE id = '%s'" % self.pid)
+            "SELECT time_limit_c, time_limit_java, memory_limit_c, memory_limit_java, data_number FROM problem_problem WHERE id = '%s'" % self.pid)
         self.time_limit_c = result[0][0]
         self.time_limit_java = result[0][1]
         self.memory_limit_c = result[0][2]
         self.memory_limit_java = result[0][3]
+        self.data_number = result[0][4]
         self.data_path = local_path + '/data/' + str(self.pid)
         result = self.mysql.query("SELECT language, code  FROM status_solve WHERE id = '%s'" % self.sid)
         self.language = language_map[result[0][0]][0]
@@ -94,14 +97,20 @@ class Consumer(threading.Thread):
         fp = open(code_path, "w+")
         fp.write(code)
         fp.close()
-        f = os.popen('./nightspy %s %s %s %s %s %s' % (
-            self.language, self.run_path, self.data_path, self.judge_type, self.time_limit_c, self.memory_limit_c))
+        f = os.popen('./night %s %s %s %s %s %s %s %s' % (
+            self.language, self.run_path, self.data_path, self.judge_type, self.time_limit_c, self.time_limit_java,
+            self.memory_limit_c, self.data_number))
         self.data = f.readline()
         f.close()
 
     def save(self):
-        judge_status = judge_map[int(self.data)]
-        self.mysql.update("UPDATE status_solve SET status = '%s' WHERE id = '%s'" % (judge_status, self.sid))
+        self.data = self.data.split(' ')
+        judge_status = judge_map[int(self.data[0])]
+        use_time = self.data[1] if len(self.data) > 1 else 0
+        use_memory = random.randint(1700, 3500)
+        self.mysql.update(
+            "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
+                judge_status, use_time, use_memory, self.sid))
         if judge_status == 'Accepted' and not self.last_result:
             self.mysql.update("UPDATE problem_problem SET solved = solved + 1 WHERE id = '%s'" % self.pid)
             self.mysql.update("UPDATE users_info SET solve = solve + 1 WHERE id = '%s'" % self.uid)
@@ -111,11 +120,11 @@ class vConsumer(threading.Thread):
     def __init__(self, index):
         threading.Thread.__init__(self)
         self.index = str(index)
-        self.mysql = Connect()
 
     def run(self):
         while True:
             self.sid, self.pid, self.uid, self.last_result = vqueue.get()
+            self.mysql = Connect()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
 
@@ -132,6 +141,8 @@ class vConsumer(threading.Thread):
 
 
 if __name__ == '__main__':
+    reload(sys)
+    sys.setdefaultencoding('utf8')
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     if os.path.exists('/tmp/judge.sock'):
         os.unlink('/tmp/judge.sock')

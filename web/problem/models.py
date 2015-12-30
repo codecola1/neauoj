@@ -22,6 +22,7 @@ class Problem(models.Model):
     submit = models.PositiveIntegerField(default=0)
     solved = models.PositiveIntegerField(default=0)
     type = models.CharField(max_length=20, default="")
+    data_number = models.IntegerField(default=-1)
     oj = models.CharField(max_length=20)
     judge_type = models.PositiveIntegerField()
 

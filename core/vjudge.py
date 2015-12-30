@@ -1,3 +1,4 @@
+#coding=utf-8
 __author__ = 'Code_Cola'
 
 from access import Access
@@ -5,49 +6,7 @@ from support.mysql_join import Connect
 from time import sleep
 import re
 
-url_index = {
-    'hdu': 'http://acm.hdu.edu.cn/submit.php?pid=',
-}
-
-url_submit = {
-    'hdu': 'http://acm.hdu.edu.cn/submit.php?action=submit',
-}
-
-url_status = {
-    'hdu': ['http://acm.hdu.edu.cn/status.php', 'http://acm.hdu.edu.cn/status.php?first='],
-}
-
-url_ce = {
-    'hdu': 'http://acm.hdu.edu.cn/viewerror.php?rid=',
-}
-
-re_string = {
-    'hdu': [r'22px>.*?%s', r'22px>(\w+)<', r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K', r'<pre>(.*?)</pre>'],
-}
-
-post_data = {
-    'hdu': {
-        'check': '0',
-        'problemid': '',
-        'language': '',
-        'usercode': '',
-    }
-}
-
-Listmap = {
-    'hdu': ['problemid', 'language', 'usercode']
-}
-
-language_map = {
-    'hdu': {
-        'c': '3',
-        'c++': '2',
-        'gcc': '1',
-        'g++': '0',
-        'java': '5'
-    }
-}
-
+from config import *
 
 class Vjudge:
     def __init__(self, sid, username, password, last_result):
@@ -70,11 +29,11 @@ class Vjudge:
 
     def submit(self):
         url = url_submit[self.oj]
-        referer = url_index[self.oj] + self.pid
+        referer = url_referer[self.oj] + self.pid
         postdata = post_data[self.oj]
-        postdata[Listmap[self.oj][0]] = self.pid
-        postdata[Listmap[self.oj][1]] = language_map[self.oj][self.language]
-        postdata[Listmap[self.oj][2]] = self.code
+        postdata[judge_listmap[self.oj][0]] = self.pid
+        postdata[judge_listmap[self.oj][1]] = language_map[self.oj][self.language]
+        postdata[judge_listmap[self.oj][2]] = self.code
         self.ac.get_html(url, postdata, referer)
 
     def hdu_get_status(self):

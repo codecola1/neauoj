@@ -1,5 +1,6 @@
 from django.db import models
 from problem.models import Problem
+from status.models import Solve
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -9,6 +10,7 @@ class In_Problem(models.Model):
     problem = models.ForeignKey(Problem)
     problem_new_id = models.CharField(max_length=20)
     title = models.CharField(max_length=50)
+    status = models.ManyToManyField(Solve)
 
     def __unicode__(self):
         return self.problem_new_id

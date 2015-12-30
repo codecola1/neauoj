@@ -1,5 +1,5 @@
 # coding=utf-8
-#!/usr/bin/python
+# !/usr/bin/python
 
 from django.contrib.auth.models import User, Permission
 from users.models import Info
@@ -38,7 +38,6 @@ class UserRegisterForm(forms.ModelForm):
         choices=grade_choice,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
 
     class Meta:
         model = Info
@@ -187,7 +186,6 @@ class EditInforForm(forms.Form):
     username = forms.CharField()
     nickname = forms.CharField()
     password = forms.CharField()
-
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
