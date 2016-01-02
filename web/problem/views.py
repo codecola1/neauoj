@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http40
 from django.contrib.auth.decorators import permission_required
 from django.template import RequestContext
 from models import Problem
-from forms import Add_problem_form
+from forms import Add_problem_form, testform
 from django.db.models import Q
 from robot.get_problem import Down_problem
 
@@ -38,6 +38,34 @@ def add_problem(req):
         form = Add_problem_form()
         return render_to_response('add_problem.html', {
             'form': form,
+        }, context_instance=RequestContext(req))
+
+
+@permission_required('problem.add_problem')
+def test(req):
+    p = None
+    if req.method == 'POST':
+        form = testform(req.POST)
+        if form.is_valid():
+            ind = form.cleaned_data['ind']
+            oj = form.cleaned_data['oj']
+            test = Down_problem(oj, ind)
+            if test.right:
+                test.get_info()
+                test.get_img()
+                p = Problem.objects.get(oj=oj, problem_id=ind)
+                test.right = False
+        return render_to_response('problem_test.html', {
+            'form': form,
+            'path': req.path,
+            'p': p,
+        }, context_instance=RequestContext(req))
+    else:
+        form = testform()
+        return render_to_response('problem_test.html', {
+            'form': form,
+            'path': req.path,
+            'p': p,
         }, context_instance=RequestContext(req))
 
 

@@ -22,8 +22,9 @@ class Add_problem_form(forms.ModelForm):
     class Meta:
         model = Problem
         fields = (
-        'title', 'description', 'input', 'output', 'sample_input', 'sample_output', 'hint', 'source', 'memory_limit_c',
-        'time_limit_c')
+            'title', 'description', 'input', 'output', 'sample_input', 'sample_output', 'hint', 'source',
+            'memory_limit_c',
+            'time_limit_c')
 
     def save(self, commit=True):
         problem_id = len(Problem.objects.filter(judge_type='0')) + 1000
@@ -78,3 +79,10 @@ class Add_problem_form(forms.ModelForm):
         fp.write(outputdata)
         fp.close()
         return problem
+
+
+class testform(forms.Form):
+    oj = forms.ChoiceField(
+        choices=(('hdu', 'hdu'), ('poj', 'poj'))
+    )
+    ind = forms.IntegerField()

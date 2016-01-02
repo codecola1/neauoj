@@ -14,17 +14,20 @@
 {% endblock %}
 
 {% block bodytext %}
-    <div class="page-header title">
-        <h1>{{ p.title }}
-            <small>&nbsp;&nbsp;&nbsp;From {{ p.oj|upper }}</small>
-        </h1>
-        <div class="info">
-            <p>
-                <strong>Time Limit:</strong>&nbsp;{{ p.time_limit_c }}MS / {{ p.time_limit_java }}MS (C/Java)&nbsp;
-                <strong>Memory Limit:</strong>&nbsp;{{ p.memory_limit_c }}K / {{ p.memory_limit_java }}K (C/Java)
-            </p>
+    {% block head_form %}{% endblock %}
+    {% if p.title %}
+        <div class="page-header title">
+            <h1>{{ p.title }}
+                <small>&nbsp;&nbsp;&nbsp;From {{ p.oj|upper }}</small>
+            </h1>
+            <div class="info">
+                <p>
+                    <strong>Time Limit:</strong>&nbsp;{{ p.time_limit_c }}MS / {{ p.time_limit_java }}MS (C/Java)&nbsp;
+                    <strong>Memory Limit:</strong>&nbsp;{{ p.memory_limit_c }}K / {{ p.memory_limit_java }}K (C/Java)
+                </p>
+            </div>
         </div>
-    </div>
+    {% endif %}
     {% if p.description %}
         <div class="container">
             <h3>Description</h3>
@@ -80,62 +83,66 @@
             <div class="container"><p>{{ p.source|safe }}</p></div>
         </div>
     {% endif %}
-    <div class="container">
-        <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit"
-                style="margin:0 auto;display:block;">
-            Submit
-        </button>
-    </div>
-    <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                {% if user.is_authenticated %}
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
-                    </div>
-                    <form method="POST" action={% url "submit" %}>
-                        <div class="modal-body">
-                            {% csrf_token %}
+    {% block submit %}
+        <div class="container">
+            <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit"
+                    style="margin:0 auto;display:block;">
+                Submit
+            </button>
+        </div>
+        <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    {% if user.is_authenticated %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
+                        </div>
+                        <form method="POST" action={% url "submit" %}>
                             <div class="modal-body">
-                                <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
-                                <input name="contest" type="hidden" value="-1">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
+                                    <input name="contest" type="hidden" value="-1">
 
-                                <div class="form-group">
-                                    <label for="id_language" style="float: left;width: 20%;font-size: 24px;">Language:</label>
-                                    <select class="form-control" id="id_language" name="language"
-                                            style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
-                                        <option value="" selected="selected">Language</option>
-                                        <option value="c">C</option>
-                                        <option value="c++">C++</option>
-                                        <option value="java">Java</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_code" style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
+                                    <div class="form-group">
+                                        <label for="id_language"
+                                               style="float: left;width: 20%;font-size: 24px;">Language:</label>
+                                        <select class="form-control" id="id_language" name="language"
+                                                style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
+                                            <option value="" selected="selected">Language</option>
+                                            <option value="c">C</option>
+                                            <option value="c++">C++</option>
+                                            <option value="java">Java</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_code"
+                                               style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
                                     <textarea class="form-control" id="id_code" maxlength="5000" name="code" rows="20"
                                               style="margin: auto;width: 99%;resize:none;"></textarea>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                                <input type="hidden" name="uid" value="{{ user.id }}"/>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h2 class="modal-title" id="myModalLabel">Error!</h2>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" value="submit">Submit</button>
-                            <input type="hidden" name="uid" value="{{ user.id }}"/>
+                        <div class="modal-body">
+                            <h3 style="text-align: center;">Please Login First!</h3>
                         </div>
-                    </form>
-                {% else %}
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h2 class="modal-title" id="myModalLabel">Error!</h2>
-                    </div>
-                    <div class="modal-body">
-                        <h3 style="text-align: center;">Please Login First!</h3>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endblock %}
 {% endblock %}

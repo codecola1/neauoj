@@ -1,0 +1,13 @@
+{% extends "problem_main.html" %}
+
+{% block set_title %}Test Problem{% endblock %}
+
+{% block head_form %}
+    <form method="post" style="text-align: center">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
+
+{% block submit %}{% endblock %}
