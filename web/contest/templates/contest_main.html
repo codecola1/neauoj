@@ -274,14 +274,7 @@
                 <div role="tabpanel" class="tab-pane fade" id="status" aria-labelledby="status-tab">
                     {% if not wait_show %}
                         <div class="center">
-                            <div class="alert alert-danger find_error" role="alert" hidden>
-                                <img src="/img/alert.png" width="50" height="50">
-
-                                <h3>
-                                    No Such Page!
-                                </h3>
-                            </div>
-                            <div class="container" hidden>
+                            <div class="container">
                                 <table class="table table-striped table-hover" id="status-tab">
                                     <thead>
                                     <tr style="background-color: #666666;color: #ffffff">
@@ -289,62 +282,74 @@
                                         <th style="width: 15%">Submit Time</th>
                                         <th style="width: 15%">Judge Status</th>
                                         <th style="width: 3%"></th>
-                                        <th style="width: 3%">OJ</th>
                                         <th style="width: 8%">Problem ID</th>
-                                        <th style="width: 5%">Time</th>
+                                        <th style="width: 8%">Time</th>
                                         <th style="width: 8%">Memory</th>
                                         <th style="width: 10%">Code Length</th>
                                         <th style="width: 10%">Language</th>
                                         <th style="width: 15%">User</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-{#                                    <tr>{#  class="{{ i.status|color }}" #}
-{#                                        <th scope="row">{{ i.id }}</th>#}
-{#                                        <td>{{ i.submit_time }}</td>#}
-{#                                        <td style="color: {{ i.status|text_color }}" id="status{{ i.id }}">#}
-{#                                            {% ifequal i.status 'Compilation Error' %}#}
-{#                                                <a href="{% url 'ce_info' i.id %}">#}
-{#                                                    {{ i.status|safe }}</a>{% else %}#}
-{#                                                {{ i.status|safe }}{% endifequal %}</td>#}
-{#                                        <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>#}
-{#                                        <td>{{ i.problem.oj|upper }}</td>#}
-{#                                        <td>#}
-{#                                            <a href="{% url 'problempage' i.problem.id %}">{{ i.problem.problem_id }}</a>#}
-{#                                        </td>#}
-{#                                        <td id="time{{ i.id }}">{{ i.use_time }}</td>#}
-{#                                        <td id="memory{{ i.id }}">{{ i.use_memory }}</td>#}
-{#                                        <td>#}
-{#                                            {% if user.is_authenticated %}#}
-{#                                                {% ifequal user.id i.user.id %}#}
-{#                                                    <a href="{% url 'show_code' i.id %}">{{ i.length }}</a>#}
-{#                                                {% else %}#}
-{#                                                    {% if perms.change_solve %}#}
-{#                                                        <a href="{% url 'show_code' i.id %}">{{ i.length }}</a>#}
-{#                                                    {% else %}#}
-{#                                                        {{ i.length }}#}
-{#                                                    {% endif %}#}
-{#                                                {% endifequal %}#}
-{#                                            {% else %}#}
-{#                                                {{ i.length }}#}
-{#                                            {% endif %}#}
-{#                                        </td>#}
-{#                                        <td>{{ i.language }}</td>#}
-{#                                        <td>#}
-{#                                            <a href="{% url 'userpage' i.user.username %}">{{ i.user.info.nickname }}</a>#}
-{#                                        </td>#}
-{#                                    </tr>#}
+                                    <tbody hidden>
+                                    <tr>{#  class="{{ i.status|color }}" #}
+                                        <th scope="row"></th>
+                                        <td>{{ i.submit_time }}</td>
+                                        <td style="color: {{ i.status|text_color }}" id="status{{ i.id }}">
+                                            {% ifequal i.status 'Compilation Error' %}
+                                                <a href="{% url 'ce_info' i.id %}">
+                                                    {{ i.status|safe }}</a>{% else %}
+                                                {{ i.status|safe }}{% endifequal %}</td>
+                                        <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>
+                                        <td>{{ i.problem.oj|upper }}</td>
+                                        <td>
+                                            <a href="">{{ i.problem.problem_id }}</a>
+                                        </td>
+                                        <td id="time{{ i.id }}">{{ i.use_time }}</td>
+                                        <td id="memory{{ i.id }}">{{ i.use_memory }}</td>
+                                        <td>
+                                            {% if user.is_authenticated %}
+                                                {% ifequal user.id i.user.id %}
+                                                    <a href="">{{ i.length }}</a>
+                                                {% else %}
+                                                    {% if perms.change_solve %}
+                                                        <a href="">{{ i.length }}</a>
+                                                    {% else %}
+                                                        {{ i.length }}
+                                                    {% endif %}
+                                                {% endifequal %}
+                                            {% else %}
+                                                {{ i.length }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ i.language }}</td>
+                                        <td>
+                                            <a href="">{{ i.user.info.nickname }}</a>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
-                                <nav>
-                                    <ul class="pager">
-                                        <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a
-                                                {% ifnotequal page 1 %}href="/status/?page={{ page|add:'-1' }}"{% endifnotequal %}><span
-                                                aria-hidden="true">&larr;</span> Previous</a></li>
-                                        <li class="next {% if over %}disabled{% endif %}"><a
-                                                {% if not over %}href="/status/?page={{ page|add:'1' }}"{% endif %}>Next <span
-                                                aria-hidden="true">&rarr;</span></a></li>
+                                <nav id="status_list" style="text-align: center">
+                                    <ul class="pagination">
+                                        <li class="disabled">
+                                            <a href="javascript:void(0);" aria-label="Previous" id="status-previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li id="status_list_exp"><a href="javascript:void(0);" hidden></a></li>
+                                        <li class="disabled">
+                                            <a href="javascript:void(0);" aria-label="Next" id="status-next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
                                     </ul>
+{#                                        <ul class="pager">#}
+{#                                            <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a#}
+{#                                                    {% ifnotequal page 1 %}href="/status/?page={{ page|add:'-1' }}"{% endifnotequal %}><span#}
+{#                                                    aria-hidden="true">&larr;</span> Previous</a></li>#}
+{#                                            <li class="next {% if over %}disabled{% endif %}"><a#}
+{#                                                    {% if not over %}href="/status/?page={{ page|add:'1' }}"{% endif %}>Next <span#}
+{#                                                    aria-hidden="true">&rarr;</span></a></li>#}
+{#                                        </ul>#}
                                 </nav>
                             </div>
                         </div>
@@ -397,6 +402,7 @@
     {% endif %}
 {% endblock %}
 {% block otherjs %}
+    <script type="text/javascript" src="/js/contest_main.js" charset="UTF-8"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             {% if has_status and not wait_show %}
@@ -410,9 +416,8 @@
                 });
             {% endif %}
             /*$('body').oneTime('1s',function(){
-                window.location.reload();
-            });*/
+             window.location.reload();
+             });*/
         });
     </script>
-    <script type="text/javascript" src="/js/contest_main.js" charset="UTF-8"></script>
 {% endblock %}

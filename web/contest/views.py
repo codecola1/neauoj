@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, render_to_response
 from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
@@ -26,20 +25,41 @@ class ContestForm(forms.Form):
             raise forms.ValidationError(message="Error Password!")
 
 
-def contest_main(req, cid):
+def wait_show(func):
+    def wrapper(*args, **kw):
+        try:
+            cinfo = Contest.objects.get(id=args[1])
+        except:
+            raise Http404()
+        key = 0
+        if args[0].user.has_perm('contest.change_contest') or args[0].user == cinfo.creator:
+            if func.__name__ == 'contest_main':
+                return func(*list(args + (3,)), **kw)
+            return func(*args, **kw)
+        if cinfo.defunct:
+            raise Http404()
+        if args[0].session.get('login' + args[1], False) or not cinfo.private:
+            if time.mktime(cinfo.start_time.timetuple()) < time.time():
+                if func.__name__ == 'contest_main':
+                    return func(*list(args + (3,)), **kw)
+                return func(*args, **kw)
+            else:
+                key = 2
+        if func.__name__ == 'contest_main':
+            return func(*list(args + (key,)), **kw)
+        raise Http404()
+
+    return wrapper
+
+
+@wait_show
+def contest_main(req, cid, key=0):
     now = time.time()
     cinfo = Contest.objects.get(id=cid)
     type = "<nobr style='color:#CC0033'>Private</nobr>" if cinfo.private else "<nobr style='color:#339933'>Public</nobr>"
     status = "<nobr style='color:#9900CC'>Waiting</nobr>" if time.mktime(cinfo.start_time.timetuple()) > now else (
         "<nobr>Ended</nobr>" if time.mktime(
             cinfo.end_time.timetuple()) < now else "<nobr style='color:#3366FF'>Running</nobr>")
-    key = req.session.get('login' + cid, False)
-    wait_show = True if time.mktime(cinfo.start_time.timetuple()) > now else False
-    if req.user.has_perm('contest.change_contest') or req.user == cinfo.creator:
-        key = True
-        wait_show = False
-    if not key and cinfo.private:
-        wait_show = True
     if req.method == 'GET':
         form = ContestForm()
         has_status = req.GET.get('status', 0)
@@ -48,10 +68,10 @@ def contest_main(req, cid):
             'type': type,
             'status': status,
             'has_status': has_status,
-            'wait_show': wait_show,
+            'wait_show': not (key & 1),
             'len': range(len(cinfo.problem.all())),
             'path': req.path,
-            'key': key,
+            'key': key & 2,
             'form': form,
         }, context_instance=RequestContext(req))
     else:
@@ -65,10 +85,10 @@ def contest_main(req, cid):
                 'info': cinfo,
                 'type': type,
                 'status': status,
-                'wait_show': wait_show,
+                'wait_show': key & 1,
                 'len': range(len(cinfo.problem.all())),
                 'path': req.path,
-                'key': key,
+                'key': key & 2,
                 'form': form,
             }, context_instance=RequestContext(req))
 
@@ -196,23 +216,14 @@ def get_contest_info(req, type, page):
     return JsonResponse(data)
 
 
+@wait_show
 def get_problem(req, cid, pid):
     # cid = int(cid)
     # pid = int(pid)
     data = {}
-    now = time.time()
     try:
         cinfo = Contest.objects.get(id=cid)
     except:
-        raise Http404()
-    key = req.session.get('login' + cid, False)
-    wait_show = True if time.mktime(cinfo.start_time.timetuple()) > now else False
-    if req.user.has_perm('contest.change_contest') or req.user == cinfo.creator:
-        key = True
-        wait_show = False
-    if not key and cinfo.private:
-        wait_show = True
-    if not key and wait_show:
         raise Http404()
     pinfo = cinfo.problem.get(problem_new_id=pid)
     data['title'] = pinfo.title
@@ -234,9 +245,9 @@ def f_cmp(x, y):
     return int(y[0].id - x[0].id)
 
 
+@wait_show
 def get_status(req, cid, page):
     data = {}
-    now = time.time()
     try:
         cinfo = Contest.objects.get(id=cid)
     except:
@@ -244,30 +255,22 @@ def get_status(req, cid, page):
     page = int(page)
     if page <= 0:
         raise Http404()
-    key = req.session.get('login' + cid, False)
-    wait_show = True if time.mktime(cinfo.start_time.timetuple()) > now else False
-    if req.user.has_perm('contest.change_contest') or req.user == cinfo.creator:
-        key = True
-        wait_show = False
-    if not key and cinfo.private:
-        wait_show = True
-    if not key and wait_show:
-        raise Http404()
     s = []
     for i in cinfo.problem.all():
         for j in i.status.all():
             # if j.submit_time > cinfo.start_time and j.submit_time < cinfo.end_time:
-            s.append((j, i.title))
-    data['len'] = len(s)
+            s.append((j, i.problem_new_id))
+    data['len'] = len(s) / 20 + 1
     data['status'] = []
-    s.sort(cmp=f_cmp)
-    if page < 1 or page > data['len'] / 20 + 1:
-        data['error'] = 1
+    if page > data['len']:
+        raise Http404()
     else:
-        data['error'] = 0
+        s.sort(cmp=f_cmp)
         s = s[(page - 1) * 20:page * 20]
-        data['first'] = 0 if (page - 1) * 20 else 1
-        data['last'] = 0 if page * 20 < data['len'] else 1
+        # data['first'] = 0 if page - 1 else 1
+        # data['last'] = 0 if page < data['len'] else 1
         for i in s:
-            data['status'].append([i[0].id, i[0].submit_time, i[0].status, i[0].problem.oj, i[1], i[0].use_time, i[0].use_memory, i[0].length, i[0].language, i[0].user.username])
+            data['status'].append(
+                [i[0].id, i[0].submit_time, i[0].status, i[1], i[0].use_time, i[0].use_memory, i[0].length,
+                 i[0].language, i[0].user.username])
     return JsonResponse(data)

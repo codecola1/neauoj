@@ -3,6 +3,7 @@
  */
 $(document).ready(function () {
     var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var status_list_num = 0;
     $("[id^='tab']").click(function () {
         var pid = $(this).attr('id').match(/\d+/);
         var cid = $('#cid').html();
@@ -51,4 +52,62 @@ $(document).ready(function () {
         });
     });
     $("#tab0").trigger("click");
+
+    $("#status-tab").click(function () {
+        var cid = $('#cid').html();
+        $.getJSON("/contest/status/" + cid + "/1", function (ret) {
+            var max_page = ret['len'];
+            var Row;
+            while (status_list_num < max_page) {
+                if (status_list_num) {
+                    Row = $("#status_list_exp").prev();
+                }
+                else {
+                    Row = $("#status_list_exp");
+                }
+                var newRow = Row.clone();
+                var lid = $("a", newRow);
+                if (lid.html().match(/^\s*\d+\s*$/)) {
+                    lid.html(parseInt(lid.html()) + 1);
+                } else {
+                    lid.html("1");
+                }
+                newRow.attr("id", "status_page" + lid.html());
+                //lid.attr("id", "status_page1");
+                lid.removeAttr("hidden");
+                newRow.insertBefore("#status_list_exp").show();
+                status_list_num++;
+            }
+            make_status(1, ret);
+        });
+    });
+    $("#status-previous").click(function () {
+        var page = parseInt($("[id^='status_page'].active a").html()) - 1;
+        $("#status_page" + page).trigger("click");
+    });
+    $("#status-next").click(function () {
+        var page = parseInt($("[id^='status_page'].active a").html()) + 1;
+        $("#status_page" + page).trigger("click");
+    });
 });
+$(document).on("click", "[id^='status_page']", function () {
+    var page = $("a", this).html();
+    var cid = $('#cid').html();
+    $.getJSON("/contest/status/" + cid + "/" + page, function (ret) {
+        make_status(page, ret);
+    });
+});
+function make_status(page, data) {
+    $("[id^='status_page'].active").removeClass("active");
+    var Row = $("#status_list ul li:eq(" + page + ")");
+    Row.addClass("active");
+    //if (ret['description']) {
+    //    var description = $('#description' + pid);
+    //    description.parent().parent().removeAttr('hidden');
+    //    description.html(ret['description']);
+    //}
+
+    //if (!status_list_num) {
+    //    newRow.addClass("active");
+    //}
+}

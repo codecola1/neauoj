@@ -241,7 +241,7 @@ function addProblemRow() {
     } else {
         Row = $("#tr_exp");
     }
-    newRow = Row.clone();
+    var newRow = Row.clone();
     $("[name=oj]", newRow).val($("[name=oj]", Row).val());
     $("[name=title]", newRow).val("");
 

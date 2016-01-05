@@ -29,8 +29,8 @@ class Access:
             self.login()
 
     def get_html(self, url, postdata={}, referer=''):
-        if username and not self.logined():
-            self.login()
+        # if self.username and not self.logined():需要修改
+        #     self.login()
         header = self.header
         if referer:
             header['Referer'] = referer
