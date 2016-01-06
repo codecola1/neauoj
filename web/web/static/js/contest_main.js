@@ -67,7 +67,21 @@ $(document).ready(function () {
         var page = parseInt($("[id^='status_page'].active a").html()) + 1;
         $("#status_page" + page).trigger("click");
     });
-
+    $("#information-tab").click(function () {
+        var cid = $('#cid').html();
+        $.getJSON("/contest/info/" + cid, function (ret) {
+            for (var i in ret) {
+                if (ret[i][0] == 0) {
+                    $("#problem_ac" + i).html("<span class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #CC0000'></span>");
+                }
+                if (ret[i][0] == 1) {
+                    $("#problem_ac" + i).html("<span class='glyphicon glyphicon-ok' aria-hidden='true' style='color: #00CC00'></span>");
+                }
+                $("#problem_submit" + i).html(ret[i][1]);
+                $("#problem_solve" + i).html(ret[i][2]);
+            }
+        });
+    });
 });
 $(document).on("click", "[id^='status_page']", function () {
     var page = $("a", this).html();
@@ -185,15 +199,6 @@ function up_color(Row) {
     status.attr("style", "color:" + color[status.html().substr(0, 7)]);
 }
 function auto_refresh() {
-    /*window.document.getElementById('status-tab');alert(tb);
-     var rows = tb.rows;
-     for (var i = 1; i < rows.length; i++) {
-     var cell = rows[i].cells[2].innerHTML;
-     var sid = rows[i].cells[0].innerHTML;alert(cell);
-     if (cell.indexOf('Judging') != -1 || cell.indexOf('Queuing') != -1 || cell.indexOf('Compiling') != -1 || cell.indexOf('Running') != -1) {
-     fresh_result(sid);
-     }
-     }*/
     $("#status-tab tbody tr").not("#status_exp").each(function () {
         //alert($(this).html());
         var status = $(".status-judge_status", this).html();
@@ -222,3 +227,7 @@ function fresh_result(solution_id, row) {
         }
     });
 }
+/*
+<span class='glyphicon glyphicon-ok' aria-hidden='true' style='color: #00CC00'></span>
+<span class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #CC0000'></span>
+ */

@@ -97,13 +97,12 @@
                                 <tbody>
                                 {% for i in info.problem.all %}
                                     <tr>
-                                        <th><span class="glyphicon glyphicon-remove" aria-hidden="true"
-                                                  style="color: #CC0000"></span></th>
-                                        {# <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: #00CC00"></span> #}
+                                        <th id="problem_ac{{ i.problem_new_id }}"></th>
                                         <th scope="row">{{ i.problem_new_id|problem_list }}</th>
                                         <td><a id="problem_title{{ i.problem_new_id }}"
                                                href="javascript:void(0);">{{ i.title }}</a></td>
-                                        <td>{{ i.solve }}/{{ i.submit }}</td>
+                                        <td><span id="problem_submit{{ i.problem_new_id }}">0</span> / <span
+                                                id="problem_solve{{ i.problem_new_id }}">0</span></td>
                                         {% if perms.contest.change_contest or user == info.creator %}
                                             <td><a href="{% url 'problempage' i.problem_id %}">
                                                 {{ i.problem.oj|upper }}{{ i.problem.problem_id }}</a></td>
@@ -402,15 +401,16 @@
     <script type="text/javascript" src="/js/contest_main.js" charset="UTF-8"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            {% if has_status and not wait_show %}
-                $("#status-tab").trigger("click");
-            {% endif %}
             {% if not wait_show %}
+                $("#information-tab").trigger("click");
                 $("[id^='problem_title']").click(function () {
                     var pid = $(this).attr('id').match(/\d+/);
                     $("#problem-tab").trigger("click");
                     $("#tab" + pid).trigger("click");
                 });
+            {% endif %}
+            {% if has_status and not wait_show %}
+                $("#status-tab").trigger("click");
             {% endif %}
             /*$('body').oneTime('1s',function(){
              window.location.reload();

@@ -102,6 +102,22 @@ def contest_main(req, cid, key=0):
             }, context_instance=RequestContext(req))
 
 
+@wait_show
+def get_some_info(req, cid):
+    cinfo = Contest.objects.get(id=cid)
+    data = {}
+    for i in cinfo.problem.all():
+        problem_new_id = i.problem_new_id
+        data[problem_new_id] = [-1, 0, 0]
+        for j in i.status.all():
+            data[problem_new_id][2] += 1
+            if j.user == req.user and data[problem_new_id][0] != 1:
+                data[problem_new_id][0] = 1 if j.status == 'Accepted' else 0
+            if j.status == 'Accepted':
+                data[problem_new_id][1] += 1
+    return JsonResponse(data)
+
+
 def add_contest(req, type):
     judge_map = {
         'acm': 0,
