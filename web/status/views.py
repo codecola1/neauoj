@@ -36,7 +36,7 @@ def submit(req):
             logger.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             if form.contest_id >= 0:
-                return HttpResponseRedirect("/contest/c/" + str(form.contest_id) + "?status=1")
+                return HttpResponseRedirect("/contest/c/" + str(form.contest_id))# + "?status=1"
             return HttpResponseRedirect("/status")
         else:
             return render_to_response("problem_submit.html", {

@@ -62,7 +62,13 @@ def contest_main(req, cid, key=0):
             cinfo.end_time.timetuple()) < now else "<nobr style='color:#3366FF'>Running</nobr>")
     if req.method == 'GET':
         form = ContestForm()
-        has_status = req.GET.get('status', 0)
+        try:
+            referer = req.META['HTTP_REFERER']
+        except:
+            referer = ""
+        has_status = 0 if req.path not in referer or req.session.get('login_referer' + cid, False) else 1
+        if req.session.get('login_referer' + cid, False):
+            del req.session['login_referer' + cid]
         return render_to_response('contest_main.html', {
             'info': cinfo,
             'type': type,
@@ -79,6 +85,7 @@ def contest_main(req, cid, key=0):
         form.set_cid(cid)
         if form.is_valid():
             req.session['login' + cid] = True
+            req.session['login_referer' + cid] = True
             return HttpResponseRedirect(req.path)
         else:
             return render_to_response('contest_main.html', {
@@ -196,13 +203,16 @@ def get_contest_info(req, type, page):
         else:
             cinfo = Contest.objects.filter(type=2, defunct=False)
     last = last if last < len(cinfo) else len(cinfo)
-    cinfo = cinfo[first:last]
+    if first:
+        cinfo = cinfo[last - 1:first - 1:-1]
+    else:
+        cinfo = cinfo[last - 1::-1]
     ii = (page - 1) * 20 + 1
     now = time.time()
     for i in cinfo:
         s_format = '%Y-%m-%d %H:%M:%S'
         s = html % (
-            ii, "<a href='/contest/c/%d#'>%s</a>" % (i.id, i.title), i.start_time.strftime(s_format),
+            i.id, "<a href='/contest/c/%d'>%s</a>" % (i.id, i.title), i.start_time.strftime(s_format),
             # i.end_time.strftime(s_format),
             i.end_time - i.start_time,
             " style='color:#CC0033'>Private" if i.private else " style='color:#339933'>Public",
@@ -267,8 +277,8 @@ def get_status(req, cid, page):
     else:
         s.sort(cmp=f_cmp)
         s = s[(page - 1) * 20:page * 20]
-        # data['first'] = 0 if page - 1 else 1
-        # data['last'] = 0 if page < data['len'] else 1
+        data['first'] = 1 if page - 1 else 0
+        data['last'] = 1 if page < data['len'] else 0
         for i in s:
             data['status'].append(
                 [i[0].id, i[0].submit_time, i[0].status, i[1], i[0].use_time, i[0].use_memory, i[0].length,

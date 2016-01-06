@@ -28,7 +28,7 @@ def text_color(s):
         'Accepte': '#CC0000',
         'Wrong A': '#00CC00',
         'Present': '#0000CC',
-        'Compila': '#FF6600',
+        'Compila': '#337AB7',
         'Time Li': '#FF6600',
         'Memory ': '#FF6600',
         'Runtime': '#FF6600',

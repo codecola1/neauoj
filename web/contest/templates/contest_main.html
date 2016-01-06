@@ -101,7 +101,7 @@
                                                   style="color: #CC0000"></span></th>
                                         {# <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: #00CC00"></span> #}
                                         <th scope="row">{{ i.problem_new_id|problem_list }}</th>
-                                        <td><a id="problem_title{{ i.problem_new_id }}" href="#">{{ i.title }}</a></td>
+                                        <td><a id="problem_title{{ i.problem_new_id }}" href="javascript:void(0);">{{ i.title }}</a></td>
                                         <td>{{ i.solve }}/{{ i.submit }}</td>
                                         {% if perms.contest.change_contest or user == info.creator %}
                                             <td><a href="{% url 'problempage' i.problem_id %}">
@@ -290,41 +290,18 @@
                                         <th style="width: 15%">User</th>
                                     </tr>
                                     </thead>
-                                    <tbody hidden>
-                                    <tr>{#  class="{{ i.status|color }}" #}
-                                        <th scope="row"></th>
-                                        <td>{{ i.submit_time }}</td>
-                                        <td style="color: {{ i.status|text_color }}" id="status{{ i.id }}">
-                                            {% ifequal i.status 'Compilation Error' %}
-                                                <a href="{% url 'ce_info' i.id %}">
-                                                    {{ i.status|safe }}</a>{% else %}
-                                                {{ i.status|safe }}{% endifequal %}</td>
-                                        <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>
-                                        <td>{{ i.problem.oj|upper }}</td>
-                                        <td>
-                                            <a href="">{{ i.problem.problem_id }}</a>
-                                        </td>
-                                        <td id="time{{ i.id }}">{{ i.use_time }}</td>
-                                        <td id="memory{{ i.id }}">{{ i.use_memory }}</td>
-                                        <td>
-                                            {% if user.is_authenticated %}
-                                                {% ifequal user.id i.user.id %}
-                                                    <a href="">{{ i.length }}</a>
-                                                {% else %}
-                                                    {% if perms.change_solve %}
-                                                        <a href="">{{ i.length }}</a>
-                                                    {% else %}
-                                                        {{ i.length }}
-                                                    {% endif %}
-                                                {% endifequal %}
-                                            {% else %}
-                                                {{ i.length }}
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ i.language }}</td>
-                                        <td>
-                                            <a href="">{{ i.user.info.nickname }}</a>
-                                        </td>
+                                    <tbody>
+                                    <tr id="status_exp" hidden>
+                                        <th scope="row" class="status-row"></th>
+                                        <td class="status-submit_time"></td>
+                                        <td class="status-judge_status"></td>
+                                        <td class="status-judging"></td>
+                                        <td class="status-problem_id"></td>
+                                        <td class="status-time"></td>
+                                        <td class="status-memory"></td>
+                                        <td class="status-length"></td>
+                                        <td class="status-language"></td>
+                                        <td class="status-user"></td>
                                     </tr>
                                     </tbody>
                                 </table>
