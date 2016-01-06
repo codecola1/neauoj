@@ -101,7 +101,8 @@
                                                   style="color: #CC0000"></span></th>
                                         {# <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: #00CC00"></span> #}
                                         <th scope="row">{{ i.problem_new_id|problem_list }}</th>
-                                        <td><a id="problem_title{{ i.problem_new_id }}" href="javascript:void(0);">{{ i.title }}</a></td>
+                                        <td><a id="problem_title{{ i.problem_new_id }}"
+                                               href="javascript:void(0);">{{ i.title }}</a></td>
                                         <td>{{ i.solve }}/{{ i.submit }}</td>
                                         {% if perms.contest.change_contest or user == info.creator %}
                                             <td><a href="{% url 'problempage' i.problem_id %}">
@@ -296,12 +297,12 @@
                                         <td class="status-submit_time"></td>
                                         <td class="status-judge_status"></td>
                                         <td class="status-judging"></td>
-                                        <td class="status-problem_id"></td>
+                                        <td class="status-problem_id"><a href="javascript:void(0);"></a></td>
                                         <td class="status-time"></td>
                                         <td class="status-memory"></td>
                                         <td class="status-length"></td>
                                         <td class="status-language"></td>
-                                        <td class="status-user"></td>
+                                        <td class="status-user"><a href="javascript:void(0);"></a></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -319,14 +320,14 @@
                                             </a>
                                         </li>
                                     </ul>
-{#                                        <ul class="pager">#}
-{#                                            <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a#}
-{#                                                    {% ifnotequal page 1 %}href="/status/?page={{ page|add:'-1' }}"{% endifnotequal %}><span#}
-{#                                                    aria-hidden="true">&larr;</span> Previous</a></li>#}
-{#                                            <li class="next {% if over %}disabled{% endif %}"><a#}
-{#                                                    {% if not over %}href="/status/?page={{ page|add:'1' }}"{% endif %}>Next <span#}
-{#                                                    aria-hidden="true">&rarr;</span></a></li>#}
-{#                                        </ul>#}
+                                    {#                                        <ul class="pager">#}
+                                    {#                                            <li class="previous {% ifequal page 1 %}disabled{% endifequal %}"><a#}
+                                    {#                                                    {% ifnotequal page 1 %}href="/status/?page={{ page|add:'-1' }}"{% endifnotequal %}><span#}
+                                    {#                                                    aria-hidden="true">&larr;</span> Previous</a></li>#}
+                                    {#                                            <li class="next {% if over %}disabled{% endif %}"><a#}
+                                    {#                                                    {% if not over %}href="/status/?page={{ page|add:'1' }}"{% endif %}>Next <span#}
+                                    {#                                                    aria-hidden="true">&rarr;</span></a></li>#}
+                                    {#                                        </ul>#}
                                 </nav>
                             </div>
                         </div>
@@ -373,6 +374,25 @@
                                class="form-control"><br>
                         <button type="submit" value="submit" class="btn btn-primary">Submit</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if not wait_show %}
+        <!-- Modal -->
+        <div class="modal fade bs-example-modal-lg" id="statusModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"></h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>

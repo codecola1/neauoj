@@ -2,10 +2,12 @@ from django.shortcuts import render, render_to_response
 from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
 from models import Contest
+from status.models import Solve
 from forms import AddContestForm
 from django import forms
 from django.contrib.auth.decorators import login_required, permission_required
 import time
+import cgi
 
 # Create your views here.
 # 0   ACM
@@ -279,8 +281,27 @@ def get_status(req, cid, page):
         s = s[(page - 1) * 20:page * 20]
         data['first'] = 1 if page - 1 else 0
         data['last'] = 1 if page < data['len'] else 0
+        vjudge = cinfo.type == 1
+        if vjudge:
+            vjudge = req.user == cinfo.creator
         for i in s:
             data['status'].append(
                 [i[0].id, i[0].submit_time, i[0].status, i[1], i[0].use_time, i[0].use_memory, i[0].length,
-                 i[0].language, i[0].user.username])
+                 i[0].language, i[0].user.username,
+                 1 if req.user == i[0].user or req.user.has_perm('change_solve') or vjudge else 0])
     return JsonResponse(data)
+
+
+@wait_show
+def get_code(req, cid, sid):
+    try:
+        cinfo = Contest.objects.get(id=cid)
+        s = Solve.objects.get(id=sid)
+    except:
+        raise Http404()
+    vjudge = cinfo.type == 1
+    if vjudge:
+        vjudge = req.user == cinfo.creator
+    if s.user != req.user and not req.user.has_perm('change_solve') and not vjudge:
+        raise Http404()
+    return JsonResponse({'data': cgi.escape(s.code)})

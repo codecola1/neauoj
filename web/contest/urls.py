@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'c/([0-9]+)$', views.contest_main, name='contest_main'),
     url(r'problem/([0-9]+)/([0-9]+)$', views.get_problem, name='get_contest_problem'),
     url(r'status/([0-9]+)/([0-9]+)$', views.get_status, name='get_contest_status'),
+    url(r'code/(\d+)/(\d+)/$', views.get_code, name='get_code'),
     url(r'add/(\w+)/$', views.add_contest, name='add_contest'),
     url(r'hide/$', views.hide_contest, name='hide_contest'),
     url(r'show/$', views.show_contest, name='show_contest'),

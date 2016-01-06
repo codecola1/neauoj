@@ -76,6 +76,26 @@ $(document).on("click", "[id^='status_page']", function () {
         make_status(page, ret);
     });
 });
+$(document).on("click", ".status-problem_id a", function () {
+    var pid = $(this).html().charCodeAt(0) - 65;
+    $("#problem-tab").trigger("click");
+    $("#tab" + pid).trigger("click");
+});
+$(document).on("click", ".status-length a", function () {
+    var cid = $('#cid').html();
+    var rid = $(".status-row", $(this).parent().parent()).html();
+    $("#statusModal .modal-title").html("Show Your Code - " + rid);
+    $.getJSON("/contest/code/" + cid + "/" + rid, function (ret) {
+        $("#statusModal .modal-body").html("<pre>" + ret['data'] + "</pre>");
+    });
+});
+$(document).on("click", ".status-judge_status a", function () {
+    var rid = $(".status-row", $(this).parent().parent()).html();
+    $("#statusModal .modal-title").html("Compilation Error - Information - " + rid);
+    $.getJSON("/status/ce_json/" + rid, function (ret) {
+        $("#statusModal .modal-body").html("<pre>" + ret['data'] + "</pre>");
+    });
+});
 function make_status(page, data) {
     var max_page = data['len'];
     var Row;
@@ -125,13 +145,25 @@ function make_status(page, data) {
         $(".status-row", new_row).html(status[i][0]);
         var submit_time = new Date(status[i][1]);
         $(".status-submit_time", new_row).html(submit_time.getFullYear() + "年" + (submit_time.getMonth() + 1) + "月" + submit_time.getDate() + "日 " + (submit_time.getHours() < 10 ? "0" : "") + submit_time.getHours() + ":" + (submit_time.getMinutes() < 10 ? "0" : "") + submit_time.getMinutes());
-        $(".status-judge_status", new_row).html(status[i][2]);
-        $(".status-problem_id", new_row).html(abc[status[i][3]]);
+        if (status[i][2] == 'Compilation Error') {
+            $(".status-judge_status", new_row).html("<a href='javascript:void(0);' data-toggle='modal' data-target='#statusModal'>" + status[i][2] + "</a>");
+        }
+        else {
+            $(".status-judge_status", new_row).html(status[i][2]);
+        }
+        $(".status-problem_id a", new_row).html(abc[status[i][3]]);
         $(".status-time", new_row).html(status[i][4]);
         $(".status-memory", new_row).html(status[i][5]);
-        $(".status-length", new_row).html(status[i][6]);
+        if (status[i][9]) {
+            $(".status-length", new_row).html("<a href='javascript:void(0);' data-toggle='modal' data-target='#statusModal'>" + status[i][6] + "</a>");
+        }
+        else {
+            $(".status-length", new_row).html(status[i][6]);
+        }
         $(".status-language", new_row).html(status[i][7]);
-        $(".status-user", new_row).html(status[i][8]);
+        var user = $(".status-user a", new_row);
+        user.html(status[i][8]);
+        user.attr('href', '/accounts/userpage/' + status[i][8]);
         new_row.insertBefore("#status_exp").show();
     }
     $("#status-tab tbody tr").not("#status_exp").each(function () {
@@ -150,7 +182,7 @@ function up_color(Row) {
         'Runtime': '#FF6600'
     };
     var status = $(".status-judge_status", Row);
-    status.attr("style", "color:" + color[status.html().substr(0,7)]);
+    status.attr("style", "color:" + color[status.html().substr(0, 7)]);
 }
 function auto_refresh() {
     /*window.document.getElementById('status-tab');alert(tb);
@@ -180,9 +212,12 @@ function fresh_result(solution_id, row) {
         if (ret['status'] == "Judging" || ret['status'] == "Queuing" || ret['status'] == "Compiling" || ret['status'] == "Running") {
             window.setTimeout(function () {
                 fresh_result(solution_id, row);
-            }, 1000);//"fresh_result(" + solution_id + ", " + row + ")"
+            }, 1000);
         }
         else {
+            if (ret['status'] == 'Compilation Error') {
+                $(".status-judge_status", row).html("<a href='javascript:void(0);' data-toggle='modal' data-target='#myModal'>Compilation Error</a>");
+            }
             up_color(row);
         }
     });

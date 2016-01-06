@@ -36,7 +36,7 @@ def submit(req):
             logger.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             if form.contest_id >= 0:
-                return HttpResponseRedirect("/contest/c/" + str(form.contest_id))# + "?status=1"
+                return HttpResponseRedirect("/contest/c/" + str(form.contest_id))  # + "?status=1"
             return HttpResponseRedirect("/status")
         else:
             return render_to_response("problem_submit.html", {
@@ -70,6 +70,16 @@ def ce(req, sid):
             'path': req.path,
             'info': c.info
         }, context_instance=RequestContext(req))
+
+
+def ce_json(req, sid):
+    if req.method == 'GET':
+        try:
+            s = Solve.objects.get(id=sid)
+            c = ce_info.objects.get(solve=s)
+        except:
+            raise Http404()
+        return JsonResponse({'data': c.info})
 
 
 def status(req):
