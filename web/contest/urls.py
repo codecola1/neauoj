@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'problem/([0-9]+)/([0-9]+)$', views.get_problem, name='get_contest_problem'),
     url(r'status/([0-9]+)/([0-9]+)$', views.get_status, name='get_contest_status'),
     url(r'info/([0-9]+)$', views.get_some_info, name='get_some_info'),
+    url(r'rank/([0-9]+)$', views.get_rank, name='get_rank'),
     url(r'code/(\d+)/(\d+)/$', views.get_code, name='get_code'),
     url(r'add/(\w+)/$', views.add_contest, name='add_contest'),
     url(r'hide/$', views.hide_contest, name='hide_contest'),

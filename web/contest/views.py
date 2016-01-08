@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.shortcuts import render, render_to_response
 from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
@@ -74,9 +75,11 @@ def contest_main(req, cid, key=0):
         return render_to_response('contest_main.html', {
             'info': cinfo,
             'type': type,
+            'server_time': time.strftime("%Y年%m月%d日 %X", time.localtime(time.time())),
             'status': status,
             'has_status': has_status,
             'wait_show': not (key & 1),
+            'wait_submit': time.mktime(cinfo.start_time.timetuple()) >= time.time(),
             'len': range(len(cinfo.problem.all())),
             'path': req.path,
             'key': key & 2,
@@ -93,8 +96,10 @@ def contest_main(req, cid, key=0):
             return render_to_response('contest_main.html', {
                 'info': cinfo,
                 'type': type,
+                'server_time': time.strftime("%Y年%m月%d日 %X", time.localtime(time.time())),
                 'status': status,
                 'wait_show': key & 1,
+                'wait_submit': time.mktime(cinfo.start_time.timetuple()) >= time.time(),
                 'len': range(len(cinfo.problem.all())),
                 'path': req.path,
                 'key': key & 2,
@@ -105,7 +110,10 @@ def contest_main(req, cid, key=0):
 @wait_show
 def get_some_info(req, cid):
     cinfo = Contest.objects.get(id=cid)
-    data = {}
+    data = {
+        'time': time.strftime("%Y年%m月%d日 %X", time.localtime(time.time())),
+        'end': 1 if time.mktime(cinfo.start_time.timetuple()) < time.time() else 0,
+    }
     for i in cinfo.problem.all():
         problem_new_id = i.problem_new_id
         data[problem_new_id] = [-1, 0, 0]
@@ -185,6 +193,7 @@ def contest_list(req):
     return render_to_response('contest_list.html', {
         'path': req.path,
         'type': type,
+        'server_time': time.strftime("%Y年%m月%d日 %X", time.localtime(time.time())),
         'len': range(leng),
     }, context_instance=RequestContext(req))
 
@@ -283,11 +292,7 @@ def get_status(req, cid, page):
     page = int(page)
     if page <= 0:
         raise Http404()
-    s = []
-    for i in cinfo.problem.all():
-        for j in i.status.all():
-            # if j.submit_time > cinfo.start_time and j.submit_time < cinfo.end_time:
-            s.append((j, i.problem_new_id))
+    s = [(j, i.problem_new_id) for i in cinfo.problem.all() for j in i.status.all()]
     data['len'] = len(s) / 20 + 1
     data['status'] = []
     if page > data['len']:
@@ -321,3 +326,38 @@ def get_code(req, cid, sid):
     if s.user != req.user and not req.user.has_perm('change_solve') and not vjudge:
         raise Http404()
     return JsonResponse({'data': cgi.escape(s.code)})
+
+
+def r_cmp(x, y):
+    return int(x[0].id - y[0].id)
+
+@wait_show
+def get_rank(req, cid):
+    data = {
+        'user': {},
+        'data': [],
+        'fb': [],
+    }
+    cinfo = Contest.objects.get(id=cid)
+    start_time = time.mktime(cinfo.start_time.timetuple())
+    problem_num = len(cinfo.problem.all())
+    user_key = {}
+    data['fb'] = [-1] * problem_num
+    data['end'] = time.mktime(cinfo.end_time.timetuple()) - start_time
+    s = [(j, i.problem_new_id) for i in cinfo.problem.all() for j in i.status.all()]
+    s.sort(cmp=r_cmp)
+    for i in s:
+        user_id = i[0].user.id
+        problem_id = int(i[1])
+        status = 1 if i[0].status == 'Accepted' else 0
+        if user_id not in data['user']:
+            data['user'][user_id] = (i[0].user.username, i[0].user.info.nickname)
+            user_key[user_id] = [0] * problem_num
+        if not user_key[user_id][problem_id]:
+            if status:
+                user_key[user_id][problem_id] = 1
+                if not ~data['fb'][problem_id]:
+                    data['fb'][problem_id] = user_id
+            data['data'].append((user_id, problem_id, status, time.mktime(i[0].submit_time.timetuple()) - start_time))
+    data['user']['0'] = len(user_key)
+    return JsonResponse(data)

@@ -98,7 +98,7 @@
                 {% if user.is_authenticated %}
                     <div class="btn-group welcome">
                         <a type="button" class="btn btn-primary" href="{% url "userpage" user.username %}"
-                           style="letter-spacing:2px;">{{ user.info.nickname }}</a>
+                           target="view_window" style="letter-spacing:2px;">{{ user.info.nickname }}</a>
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>

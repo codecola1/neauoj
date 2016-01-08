@@ -6,7 +6,7 @@
 {% block bodytext %}
     <div class="container" style="margin-top: 20px;margin-bottom: 20px">
         <h1 style="text-align: center">Contest List
-            <small>&nbsp;&nbsp;&nbsp;Type: {{ type }}</small>
+            <small style="margin-left: 1em">Type: {{ type }}</small>
         </h1>
     </div>
     {% if user.is_authenticated %}
@@ -130,6 +130,7 @@
                             <div class="modal-footer">
                                 {#                                <p onclick="alert($('#data').val());"><!--  'key: ' + key.toString(2) + '\nproblems: ' + problems + '\nnumber: ' + number + '\n iii: ' + iii + '\n titiles: ' + titles -->#}
                                 {#                                    test</p>#}
+                                <span style="margin-left: -15px;float: left"><strong>Server time: </strong>{{ server_time }}</span>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 <button id="submit" type="submit" value="submit" class="btn btn-primary"
                                         disabled="true">Error Info!
@@ -142,6 +143,9 @@
         </div>
     {% endif %}
     <div class="container">
+        <p style="text-align: center">
+            <strong>Server time: </strong>{{ server_time }}
+        </p>
         <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
             <ul id="myTabs" class="pagination pagination-lg" role="tablist">
                 {% if user.is_authenticated %}

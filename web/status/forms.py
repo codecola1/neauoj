@@ -5,6 +5,7 @@ from models import Solve
 from problem.models import Problem
 from contest.models import Contest
 from django.contrib.auth.models import User
+import time
 
 
 class SubmitForm(forms.ModelForm):
@@ -47,8 +48,10 @@ class SubmitForm(forms.ModelForm):
             self.contest_id = -1
             return
         try:
-            Contest.objects.get(id=self.contest_id)
+            c = Contest.objects.get(id=self.contest_id)
         except:
+            raise forms.ValidationError(message="")
+        if time.mktime(c.start_time.timetuple()) >= time.time():
             raise forms.ValidationError(message="")
 
     def clean_problem(self):

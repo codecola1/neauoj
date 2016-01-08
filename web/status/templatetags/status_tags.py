@@ -23,20 +23,21 @@ def color(s):
 
 @register.filter(name='text_color')
 def text_color(s):
-    key = s[0:7]
+    key = s[0:8]
     l = {
-        'Accepte': '#CC0000',
-        'Wrong A': '#00CC00',
-        'Present': '#0000CC',
-        'Compila': '#337AB7',
-        'Time Li': '#FF6600',
-        'Memory ': '#FF6600',
-        'Runtime': '#FF6600',
+        'Accepted': '#CC0000',
+        'Wrong An': '#009900',
+        'Presenta': '#0000CC',
+        'Compilat': '#337AB7',
+        'Time Lim': '#FF6600',
+        'Memory L': '#FF6600',
+        'Runtime ': '#FF6600',
+        'Output L': '#FF6600'
     }
-    return l[key] if l.has_key(key) else '#000000'
+    return l[key] if key in l else '#000000'
 
 @register.filter(name='judge_picture')
 def judge_picture(s):
-    key = s[0:7]
-    l = ['Accepte', 'Wrong A', 'Present', 'Compila', 'Time Li', 'Memory ', 'Runtime']
+    key = s[0:8]
+    l = ['Accepted', 'Wrong An', 'Presenta', 'Compilat', 'Time Lim', 'Memory L', 'Runtime ', 'Output L']
     return '' if key in l else '<img src="/img/loading.gif" width="100%">'
