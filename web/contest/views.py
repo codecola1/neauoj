@@ -107,13 +107,17 @@ def contest_main(req, cid, key=0):
             }, context_instance=RequestContext(req))
 
 
-@wait_show
 def get_some_info(req, cid):
     cinfo = Contest.objects.get(id=cid)
+    this_time = time.time()
     data = {
-        'time': time.strftime("%Y年%m月%d日 %X", time.localtime(time.time())),
-        'end': 1 if time.mktime(cinfo.start_time.timetuple()) < time.time() else 0,
+        'time': time.strftime("%Y年%m月%d日 %X", time.localtime(this_time)),
+        'status': 1,
     }
+    if time.mktime(cinfo.start_time.timetuple()) > this_time:
+        data['status'] = -1
+    if time.mktime(cinfo.end_time.timetuple()) > this_time:
+        data['status'] = 0
     for i in cinfo.problem.all():
         problem_new_id = i.problem_new_id
         data[problem_new_id] = [-1, 0, 0]

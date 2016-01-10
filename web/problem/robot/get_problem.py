@@ -26,10 +26,11 @@ r = {
         r'[^ ]Input<.*?t>(.+?)</div>',
         r'[^ ]Output<.*?t>(.+?)</div>',
         r' Input<.*?style.*?>(.+?)</div>',
-        r' Output<.*?style.*?>(.+?)</?div',
+        r' Output<.*?style.*?>(.+?)(<div|</div)',
         r'(?:Hint.*?Hint.*?</div|Hint</i).*?</(?:i>|div>)(.+?)</div>',
         r'>Author<.*?t>(.*?)</div>',
-    ],
+    ],#<div style="font-family:Times New Roman;font-size:14px;background-color:F4FBFF;border:#B7CBFF 1px dashed;padding:6px"><div style="font-family:Arial;font-weight:bold;color:#7CA9ED;border-bottom:#B7CBFF 1px dashed"><i>Hint</i></div>
+#define PI 3.1415927
     'poj': [
         r'Error Occurred(.*?)>',
         r'<div class="ptt".*?>(.*?)</div>',
@@ -115,7 +116,8 @@ class Down_problem:
         self.Soutput = use_re(8, self.html, self.ojname)
         self.Hint = use_re(9, self.html, self.ojname)
         if self.Hint:
-            self.Soutput = self.Soutput[0:-6]
+            if self.ojname == 'hdu':
+                self.Soutput = self.Soutput[0:-4]
             self.Hint = re.sub(replace[self.ojname], path, self.Hint.replace('../', ''))
         self.Source = use_re(10, self.html, self.ojname)
         logger.info("Download Problem: " + self.ojname + "-" + str(self.pid) + " Info Over")

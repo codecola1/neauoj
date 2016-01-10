@@ -81,8 +81,17 @@ $(document).ready(function () {
                 $("#problem_solve" + i).html(ret[i][2]);
             }
             $("#server_time").html(ret['time']);
-            if (ret['end']) {
-                $("#ended").html("Ended");
+            var contest_status = $("#ended");
+            if (ret['status'] == 1) {
+                contest_status.html("Ended");
+            }
+            else if (ret['status'] == -1) {
+                contest_status.attr("style", "color:#9900CC");
+                contest_status.html("Waiting");
+            }
+            else {
+                contest_status.attr("style", "color:#3366FF");
+                contest_status.html("Running");
             }
         });
     });
@@ -115,7 +124,7 @@ $(document).ready(function () {
                 }
             }
             users.sort(function (a, b) {
-                if (a.ac_num != b.ac_num) {
+                if (a.ac_num == b.ac_num) {
                     return a.use_time - b.use_time;
                 }
                 return b.ac_num - a.ac_num;
@@ -321,7 +330,7 @@ function fresh_result(solution_id, row) {
         }
         else {
             if (ret['status'] == 'Compilation Error') {
-                $(".status-judge_status", row).html("<a href='javascript:void(0);' data-toggle='modal' data-target='#myModal'>Compilation Error</a>");
+                $(".status-judge_status", row).html("<a href='javascript:void(0);' data-toggle='modal' data-target='#statusModal'>Compilation Error</a>");
             }
             up_color(row);
             $(".status-judging", row).html('');

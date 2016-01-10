@@ -124,7 +124,7 @@
                                                 id="problem_submit{{ i.problem_new_id }}">0</span> / <span
                                                 id="problem_solve{{ i.problem_new_id }}">0</span></td>
                                         {% if perms.contest.change_contest or user == info.creator %}
-                                            <td><a href="{% url 'problempage' i.problem_id %}" target="view_window">
+                                            <td><a href="{% url 'problempage' i.problem_id %}" target="_blank">
                                                 {{ i.problem.oj|upper }}{{ i.problem.problem_id }}</a></td>
                                         {% endif %}
                                     </tr>
@@ -251,10 +251,8 @@
                                                             <select class="form-control" id="id_language"
                                                                     name="language"
                                                                     style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
-                                                                <option value="" selected="selected">Language
-                                                                </option>
                                                                 <option value="c">C</option>
-                                                                <option value="c++">C++</option>
+                                                                <option value="c++" selected="selected">C++</option>
                                                                 <option value="java">Java</option>
                                                             </select>
                                                         </div>
@@ -262,7 +260,7 @@
                                                             <label for="id_code"
                                                                    style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
                                     <textarea class="form-control" id="id_code" maxlength="5000" name="code" rows="20"
-                                              style="margin: auto;width: 99%;resize:none;"></textarea>
+                                              style="margin: auto;width: 99%;resize:none;" oninput="judge_code()"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -270,7 +268,8 @@
                                                     <button type="button" class="btn btn-default"
                                                             data-dismiss="modal">Close
                                                     </button>
-                                                    <button type="submit" class="btn btn-primary" value="submit">
+                                                    <button type="submit" class="btn btn-primary" value="submit"
+                                                            id="code_submit">
                                                         Submit
                                                     </button>
                                                     <input type="hidden" name="uid" value="{{ user.id }}"/>
@@ -322,7 +321,7 @@
                                     <td class="status-memory"></td>
                                     <td class="status-length"></td>
                                     <td class="status-language"></td>
-                                    <td class="status-user"><a href="javascript:void(0);" target="view_window"></a>
+                                    <td class="status-user"><a href="javascript:void(0);" target="_blank"></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -441,6 +440,18 @@
             /*$('body').oneTime('1s',function(){
              window.location.reload();
              });*/
+            judge_code();
         });
+        function judge_code() {
+            var submit_b = $('#code_submit');
+            if ($('#id_code').val().length >= 50) {
+                submit_b.removeAttr('disabled');
+                submit_b.removeAttr('value');
+            }
+            else {
+                submit_b.attr('disabled', 'true');
+                submit_b.attr('value', 'submit');
+            }
+        }
     </script>
 {% endblock %}

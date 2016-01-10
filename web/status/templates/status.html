@@ -62,7 +62,7 @@
                             <td>{{ i.submit_time }}</td>
                             <td style="color: {{ i.status|text_color }}" id="status{{ i.id }}">
                                 {% ifequal i.status 'Compilation Error' %}
-                                    <a href="{% url 'ce_info' i.id %}" target="view_window">
+                                    <a href="{% url 'ce_info' i.id %}" target="_blank">
                                         {{ i.status|safe }}</a>{% else %}{{ i.status|safe }}{% endifequal %}</td>
                             <td id="picture{{ i.id }}">{{ i.status|judge_picture|safe }}</td>
                             <td>{{ i.problem.oj|upper }}</td>
