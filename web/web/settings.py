@@ -83,10 +83,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'neauoj',
-        'USER' : 'root',
-        'PASSWORD' : '123456',
-        'HOST' : '',
-        'POST' : '3306'
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': '',
+        'POST': '3306'
     }
 }
 
@@ -115,12 +115,12 @@ STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 # AUTH_USER_MODEL = 'users.Info'
 # AUTH_PROFILE_MODULE = 'djangoadmin.myadmin.UserProfile'
 
-#Session
+# Session
 
 # SESSION_COOKIE_AGE = 60*60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-#logging
+# logging
 
 # LOGGING = {
 #     'version': 1,

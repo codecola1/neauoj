@@ -44,15 +44,20 @@ class Access:
             logger.info("get_html:" + url)
             return s
 
-    def save_img(self, url, problem_id=''):
-        filename = url.split('/')[-1]
-        path = os.path.join(STATIC_PATH, 'upload', self.oj, str(problem_id))
+    def add_path(self, path):
         if not os.path.exists(path):
             try:
                 os.mkdir(path)
             except:
                 logger.warning("img mkdir ERROR!!!")
                 return
+
+    def save_img(self, url, problem_id=''):
+        filename = url.split('/')[-1]
+        self.add_path(os.path.join(STATIC_PATH, 'uoload'))
+        self.add_path(os.path.join(STATIC_PATH, 'uoload', self.oj))
+        path = os.path.join(STATIC_PATH, 'upload', self.oj, str(problem_id))
+        self.add_path(path)
         path = os.path.join(path, filename)
         if url[0:4] != 'http':
             url = url_index[self.oj] + url
