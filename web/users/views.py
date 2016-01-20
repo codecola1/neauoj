@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 import logging
 
+from problem.models import Problem
+from contest.models import Contest
+from status.models import Solve
 
 # Create your views here.
 
@@ -41,6 +44,7 @@ def index(req, username):
             'path': req.path,
             'username': username,
         })
+    all_solve = Solve.objects.filter(user=user)
     return render_to_response("user_main.html", {
         'path': req.path,
         'u': user,

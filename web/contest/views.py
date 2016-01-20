@@ -116,7 +116,7 @@ def get_some_info(req, cid):
     }
     if time.mktime(cinfo.start_time.timetuple()) > this_time:
         data['status'] = -1
-    if time.mktime(cinfo.end_time.timetuple()) > this_time:
+    elif time.mktime(cinfo.end_time.timetuple()) > this_time:
         data['status'] = 0
     for i in cinfo.problem.all():
         problem_new_id = i.problem_new_id

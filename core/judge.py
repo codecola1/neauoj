@@ -37,7 +37,7 @@ class Producer(threading.Thread):
     def __init__(self, sid):
         threading.Thread.__init__(self)
         self.sid = sid[0]
-        self.rejudge = sid[1]
+        self.rejudge = int(sid[1])
         self.mysql = Connect()
         result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
         self.pid = result[0][0]

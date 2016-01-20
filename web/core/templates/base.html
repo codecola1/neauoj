@@ -14,37 +14,12 @@
 		<script src="/js/respond.min.js"></script>
 	<![endif]-->
     <link rel="stylesheet" href="/css/base.css" type="text/css"/>
-    <link rel="stylesheet" href="/css/vim.css" type="text/css"/>
-    <script src="/js/modernizr.custom.js"></script>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     {% block othercss %}{% endblock %}
     {% block headjs %}{% endblock %}
 </head>
 <body>
-{#<div class="header">#}
-{#    <div class="container">#}
-{#        <div class="header-main">#}
-{#            <div class="logo">#}
-{#                <h1><a href="index.html">Online<span class="logo-clr">Judge</span></a></h1>#}
-{#            </div>#}
-{#            <div class="head-right">#}
-{#                <div class="top-nav">#}
-{#                    <span class="menu"> <img src="images/icon.png" alt=""/></span>#}
-{#                    <ul class="res">#}
-{#                        <li><a class="active" href="index.html"> Home</a></li>#}
-{#                        <li><a href="about.html"><span data-hover="About">About</span></a></li>#}
-{#                        <li><a href="journal.html"><span data-hover="Journal">Journal</span></a></li>#}
-{#                        <li><a href="features.html"><span data-hover="Features">Features</span></a></li>#}
-{#                        <li><a href="contact.html"><span data-hover="Contact">Contact</span></a></li>#}
-{#                        <div class="clearfix"></div>#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </div>#}
-{#            <div class="clearfix"></div>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
 <nav class="navbar navbar-default navbar-fixed-top header">
     <div class="container">
         <div class="navbar-header">
@@ -217,15 +192,6 @@
         </p>
     </footer>
 </div>
-{#<script src="/js/trianglify.min.js"></script>#}
-{#<script>#}
-{#    var pattern = Trianglify({#}
-{#        width: window.innerWidth,#}
-{#        height: Math.max($(document.body).outerHeight(true), window.innerHeight)#}
-{#    });#}
-{#    document.body.style.background = "no-repeat scroll 0% 0% / cover"#}
-{#    document.body.style.backgroundImage = 'url("' + pattern.canvas().toDataURL() + '")';#}
-{#</script>#}
 {% block otherjs %}{% endblock %}
 </body>
 </html>

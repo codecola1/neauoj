@@ -125,7 +125,7 @@ $(document).ready(function () {
             }
             users.sort(function (a, b) {
                 if (a.ac_num == b.ac_num) {
-                    return a.use_time - b.use_time;
+                    return a.all_time - b.all_time;
                 }
                 return b.ac_num - a.ac_num;
             });

@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-ojnamelist = ['neau', 'hdu']
+ojnamelist = ['neau', 'hdu', 'poj']
 
 url = {
     'hdu': 'http://acm.hdu.edu.cn/showproblem.php?pid=',
