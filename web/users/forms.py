@@ -214,3 +214,16 @@ class EditInforForm(forms.Form):
         u = User.objects.get(username=username)
         u.info.nickname = nickname
         u.info.save()
+
+class AccountForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField()
+    oj = forms.CharField()
+
+    def save(self):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        oj = self.cleaned_data.get("oj")
+
+        return [username, password, oj.lower()]
+

@@ -66,5 +66,5 @@ class Access:
     def logined(self):
         url = oj_index[self.oj]
         html = self.get_html(url)
-        match = re.search(login_error[self.oj], html, re.M)
+        match = re.search(not_login[self.oj], html, re.M)
         return False if match else True

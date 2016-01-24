@@ -31,6 +31,7 @@
 
         .charts {
             width: 95%;
+            height: 400px;
             text-align: center;
             margin: 0 auto;
         }
@@ -38,6 +39,14 @@
         #problem {
             margin-top: 50px;
             margin-bottom: 100px;
+        }
+
+        #problem tbody th {
+            width: 10%;
+        }
+
+        #problem tbody td {
+            width: 9%;
         }
 
         .main {
@@ -52,9 +61,13 @@
 
         .list-group-item span {
             position: absolute;
-            left: 7em;
+            left: 110px;
         }
+
     </style>
+{% endblock %}
+{% block headjs %}
+    <script src="/js/echarts.min.js"></script>
 {% endblock %}
 
 {% block bodytext %}
@@ -70,112 +83,204 @@
                 <li role="presentation"><a href="#contest" class="smooth" onclick="return false">In Contest</a></li>
             </ul>
             <ul class="list-group" style="position: relative">
-                <li class="list-group-item">Submit:<span>{{ u.info.submit }}</span></li>
-                <li class="list-group-item">Solved:<span>{{ u.info.solve }}</span></li>
+                <li class="list-group-item">Solved:<span>{{ num_solved }}</span></li>
+                <li class="list-group-item">Submissions:<span>{{ num_submissions }}</span></li>
                 <li class="list-group-item">School:<span>{{ u.info.school|school }}</span></li>
                 <li class="list-group-item">Grade:<span>{{ u.info.grade }}级</span></li>
                 <li class="list-group-item">In Team:<span>{{ u.info.team|team }}</span></li>
                 <li class="list-group-item">Email:<span>{{ u.email }}</span></li>
+                <li class="list-group-item" style="display: none">Updating:
+                    <div class="progress">
+                        <div id="updating" class="progress-bar progress-bar-striped active" role="progressbar"
+                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                             style="min-width: 2em;width: 0%">
+                            <span class="sr-only"></span>0%
+                        </div>
+                    </div>
+                </li>
+                {% ifequal u user %}
+                    <li class="list-group-item">OJ Account:<span>{{ accounts }}</span></li>
+                    <li class="list-group-item text-center"><a id="add_account" href="javascript:void(0);"
+                                                               data-toggle='modal' data-target='#accountModal'>
+                        <div style="width: 100%">Add account</div>
+                    </a></li>
+                {% endifequal %}
             </ul>
         </div>
         <div class="inform">
-            <div id="survey" class="charts" style="height:400px"></div>
-            <div id="statistics" class="charts" style="height: 300px;"></div>
-            <div id="problem">
-                <h2 style="text-align: center">Problem<br/></h2>
-                <table class="table table-striped" style="width: 95%;margin:0 auto;">
-                    <thead>
-                    <tr>
-                        <th>Solved</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">HDU</th>
-                        <td>1000</td>
-                        <td>1001</td>
-                        <td>1002</td>
-                        <td>1003</td>
-                        <td>1004</td>
-                        <td>1005</td>
-                        <td>1006</td>
-                        <td>1007</td>
-                        <td>1008</td>
-                        <td>1009</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"></th>
-                        <td>1010</td>
-                        <td>1011</td>
-                        <td>1012</td>
-                        <td>1013</td>
-                        <td>1014</td>
-                        <td>1015</td>
-                        <td>1016</td>
-                        <td>1017</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">POJ</th>
-                        <td>1000</td>
-                        <td>1001</td>
-                        <td>1002</td>
-                        <td>1003</td>
-                        <td>1004</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <table class="table table-striped" style="width: 95%;margin:0 auto;">
-                    <thead>
-                    <tr>
-                        <th>UnSolved</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">HDU</th>
-                        <td>2000</td>
-                        <td>2001</td>
-                        <td>2002</td>
-                        <td>2003</td>
-                        <td>2004</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">POJ</th>
-                        <td>1005</td>
-                        <td>1006</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div id="survey" class="charts"></div>
+            <div id="statistics" class="charts" style="display:none;"></div>
+            {% if solved or unsolved %}
+                <div id="problem" style="min-height: 200px">
+                    <h2 style="text-align: center">Problem<br/></h2>
+                    {% if solved %}
+                        <table class="table table-striped" style="width: 95%;margin:0 auto;">
+                            <thead>
+                            <tr>
+                                <th>Solved</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for oj, problems in solved.items %}
+                                {% for i in problems %}
+                                    <tr>
+                                        <th scope="row">{% if forloop.first %}{{ oj|upper }}{% endif %}</th>
+                                        {% for j in i %}
+                                            <td><a href="javascript:void(0);" data-toggle='modal'
+                                                   data-target='#statusModal'
+                                                   onclick="problem_status(find_oj($(this)), $(this).html(), 0)">{{ j }}</a>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    {% if unsolved %}
+                        <table class="table table-striped" style="width: 95%;margin:0 auto;">
+                            <thead>
+                            <tr>
+                                <th>UnSolved</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for oj, problems in unsolved.items %}
+                                {% for i in problems %}
+                                    <tr>
+                                        <th scope="row">{% if forloop.first %}{{ oj|upper }}{% endif %}</th>
+                                        {% for j in i %}
+                                            <td><a href="javascript:void(0);" data-toggle='modal'
+                                                   data-target='#statusModal'
+                                                   onclick="problem_status(find_oj($(this)), $(this).html(), 0)">{{ j }}</a>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div id="score" class="charts" style="display:none;"></div>
+            <div id="school" class="charts" style="display:none;"></div>
+            <div id="contest" class="charts" style="display:none;"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="statusModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-hover" id="status-tab">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%">Run ID</th>
+                            <th style="width: 20%">Submit Time</th>
+                            <th style="width: 20%">Judge Status</th>
+                            <th style="width: 10%">Time</th>
+                            <th style="width: 10%">Memory</th>
+                            <th style="width: 15%">Code Length</th>
+                            <th style="width: 15%">Language</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="status_exp" hidden>
+                            <th scope="row" class="status-row"></th>
+                            <td class="status-submit_time"></td>
+                            <td class="status-judge_status"></td>
+                            <td class="status-time"></td>
+                            <td class="status-memory"></td>
+                            <td class="status-length"></td>
+                            <td class="status-language"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <nav id="status_list" style="text-align: center">
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="javascript:void(0);" aria-label="Previous" id="status-previous">
+                                    <span aria-hidden="true">&larr;</span> Previous
+                                </a>
+                            </li>
+                            <li class="next">
+                                <a href="javascript:void(0);" aria-label="Next" id="status-next">
+                                    Next <span aria-hidden="true">&rarr;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div id="score" class="charts"></div>
-            <div id="school" class="charts" style="height: 400px"></div>
-            <div id="contest" class="charts" style="height: 400px"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="accountModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 450px">
+                <form method="POST" action="{% url 'add_account' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Add Other OJ Account</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>OJ</label>
+                        <select class="form-control" name="oj">
+                            <option selected="selected">HDU</option>
+                            {#                            <option>POJ</option>#}
+                        </select>
+                        <label>Username</label>
+                        <input type="username" name="username" class="form-control" id="username"
+                               placeholder="Username" oninput="judge_info();">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" id="password"
+                               placeholder="Password" oninput="judge_info();">
+                    </div>
+                    <div class="modal-footer">
+                        <span>Click here first -></span>
+
+                        <p id="test_account" class="btn btn-primary" disabled="true">Test</p>
+                        <button id="submit" type="submit" value="submit" class="btn btn-primary" disabled="true">Click
+                            Test
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block otherjs %}
-    <script src="/js/echarts.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('body').scrollspy({
@@ -188,277 +293,285 @@
             var pos = $(href).offset().top - 80;
             $("html,body").animate({scrollTop: pos}, 500);
         });
+        function problem_status(oj, problem_id, page) {
+            $("#statusModal .modal-title").html("Status - Problem - " + oj + " - " + problem_id);
+            $.getJSON("/status/get_problem_status/" + {{ u.id }} +"/" + oj + "/" + problem_id + "/" + page, function (ret) {
+                var exp_row = $("#status_exp");
+                $("tr", exp_row.parent()).not("#status_exp").remove("");
+                var status = ret['data'];
+                for (var i in status) {
+                    var new_row = exp_row.clone();
+                    new_row.removeAttr("hidden");
+                    new_row.removeAttr("id");
+                    $(".status-row", new_row).html(status[i][0]);
+                    var submit_time = new Date(status[i][1]);
+                    $(".status-submit_time", new_row).html(submit_time.getFullYear() + "年" + (submit_time.getMonth() + 1) + "月" + submit_time.getDate() + "日 " + (submit_time.getHours() < 10 ? "0" : "") + submit_time.getHours() + ":" + (submit_time.getMinutes() < 10 ? "0" : "") + submit_time.getMinutes());
+                    if (status[i][2] == 'Compilation Error') {
+                        var ce_url = '/status/ce/' + status[i][0] + '/';
+                        $(".status-judge_status", new_row).html("<a href='" + ce_url + "' target='_blank'>" + status[i][2] + "</a>");
+                    }
+                    else {
+                        $(".status-judge_status", new_row).html(status[i][2]);
+                    }
+                    $(".status-time", new_row).html(status[i][3]);
+                    $(".status-memory", new_row).html(status[i][4]);
+                    if (status[i][7]) {
+                        var code_url = '/status/code/' + status[i][0] + '/';
+                        $(".status-length", new_row).html("<a href='" + code_url + "' target='_blank'>" + status[i][5] + "</a>");
+                    }
+                    else {
+                        $(".status-length", new_row).html(status[i][5]);
+                    }
+                    $(".status-language", new_row).html(status[i][6]);
+                    new_row.insertBefore("#status_exp").show();
+                    if (ret['previous']) {
+                        $("#status-previous").parent().removeClass("disabled");
+                    }
+                    else {
+                        $("#status-previous").parent().addClass("disabled");
+                    }
+                    if (ret['next']) {
+                        $("#status-next").parent().removeClass("disabled");
+                    }
+                    else {
+                        $("#status-next").parent().addClass("disabled");
+                    }
+                }
+                $("#status-tab tbody tr").not("#status_exp").each(function () {
+                    up_color(this);
+                });
+            });
+        }
+        function up_color(Row) {
+            var color = {
+                'Accepted': '#CC0000',
+                'Wrong An': '#009900',
+                'Presenta': '#0000CC',
+                'Compilat': '#337AB7',
+                'Time Lim': '#FF6600',
+                'Memory L': '#FF6600',
+                'Runtime ': '#FF6600',
+                'Output L': '#FF6600'
+            };
+            var status = $(".status-judge_status", Row);
+            status.attr("style", "color:" + color[status.html().substr(0, 8)]);
+        }
+        function find_oj(Row) {
+            var t = Row.parent().parent();
+            while ($("th", t).html() == "") {
+                t = t.prev();
+            }
+            return $("th", t).html();
+        }
+        $("#status-previous").click(function () {
+            if ($(this).parent().hasClass("disabled")) {
+                return;
+            }
+            var head = new Array();
+            head = $('#statusModal .modal-title').html().split(" - ");
+            var oj = head[2];
+            var problem_id = head[3];
+            var page = $('th', $('#status-tab tbody tr:first')).html() + 0;
+            problem_status(oj, problem_id, page);
+        });
+        $("#status-next").click(function () {
+            if ($(this).parent().hasClass("disabled")) {
+                return;
+            }
+            var head = new Array();
+            head = $('#statusModal .modal-title').html().split(" - ");
+            var oj = head[2];
+            var problem_id = head[3];
+            var page = $('th', $('#status_exp').prev()).html() + 1;
+            problem_status(oj, problem_id, page);
+        });
     </script>
     <script type="text/javascript">
-        // 路径配置
-        require.config({
-            paths: {
-                echarts: '/js/dist'
-            }
+        $(document).ready(function () {
+            judge_info();
+            _updating(5);
         });
-
-        // 使用
-        require(
-                [
-                    'echarts',
-                    'echarts/chart/line',
-                    'echarts/chart/radar',
-                    'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
-                ],
-                Draw
-        );
-        function Draw(ec) {
-            survey(ec);
-            statistics(ec);
-            school(ec);
-            contest(ec);
+        $("#test_account").click(function () {
+            judge_account();
+        });
+        $("#submit").click(function () {
+            if ($(this).attr('disabled') == 'disabled') {
+                return;
+            }
+            $('#accountModal select').removeAttr('disabled');
+        });
+        function judge_account() {
+            var oj = $('#accountModal select').val().toLocaleLowerCase();
+            var username = $('#accountModal input[name="username"]').val();
+            var password = $('#accountModal input[name="password"]').val();
+            var b = $("#test_account");
+            if (b.attr('disabled') == 'disabled') {
+                return;
+            }
+            if (!username.length || !password.length) {
+                judge_info();
+                return;
+            }
+            b.html('Waiting...');
+            b.attr('disabled', 'true');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "judge_account" %}',
+                data: {
+                    'username': username,
+                    'password': password,
+                    'oj': oj,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function (ret) {
+                    if (ret['data'] == '1') {
+                        var b = $("#submit");
+                        b.removeAttr('disabled');
+                        b.html('Submit');
+                        $('#accountModal select').attr('disabled', 'disabled');
+                        $('#accountModal input[name="username"]').attr('readonly', 'readonly');
+                        $('#accountModal input[name="password"]').attr('readonly', 'readonly');
+                        b = $("#test_account").html('OK!');
+                        //alert("为界面友好 特此提示：点击Submit后会进行同步数据 可能会卡顿几十秒（根据题数决定）\nPS：这算毛线友好。。。应该弄个进度条才对=。=");
+                    }
+                    else {
+                        var b = $("#submit");
+                        b.attr('disabled', 'true');
+                        b.html('Click Test');
+                        judge_info();
+                        $("#test_account").html('Try again');
+                    }
+                }
+            });
         }
-        function survey(ec) {
-            // 基于准备好的dom，初始化echarts图表
-            var myChart = ec.init(document.getElementById('survey'));
-
-            var option = {
-                title: {
-                    text: 'Survey',
-                    subtext: '概况'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['submit']
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        mark: {show: false},
-                        dataView: {show: true, readOnly: false},
-                        magicType: {show: true, type: ['line', 'bar']},
-                        restore: {show: true},
-                        saveAsImage: {show: true}
-                    }
-                },
-                calculable: true,
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    }
-                ],
-                series: [
-                    {
-                        name: 'submit',
-                        type: 'line',
-                        data: [11, 11, 15, 13, 12, 13, 10],
-                        markPoint: {
-                            data: [
-                                {type: 'max', name: 'Max'},
-                                {type: 'min', name: 'Min'}
-                            ]
-                        },
-                        markLine: {
-                            data: [
-                                {type: 'average', name: 'Average'}
-                            ]
-                        }
-                    }
-                ]
-            };
-            // 为echarts对象加载数据
-            myChart.setOption(option);
+        function judge_info() {
+            var username = $('#accountModal input[name="username"]').val();
+            var password = $('#accountModal input[name="password"]').val();
+            if (!username.length || !password.length) {
+                set_error();
+            }
+            else {
+                set_ok();
+            }
         }
-        function statistics(ec) {
-            // 基于准备好的dom，初始化echarts图表
-            var myChart = ec.init(document.getElementById('statistics'));
-
-            var option = {
-                title: {
-                    text: 'Statistics',
-                    subtext: '统计'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'right',
-                    y: 'bottom',
-                    data: ['题目类型']
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        mark: {show: false},
-                        dataView: {show: true, readOnly: false},
-                        restore: {show: true},
-                        saveAsImage: {show: true}
-                    }
-                },
-                polar: [
-                    {
-                        indicator: [
-                            {text: '图论（Graph Theory）', max: 6000},
-                            {text: '数据结构（Data Structure）', max: 16000},
-                            {text: '动态规划（Dynamic Programming）', max: 30000},
-                            {text: '数论（Math）', max: 38000},
-                            {text: '计算几何（Computational Geometry）', max: 52000},
-                            {text: '水题（Practice）', max: 25000}
-                        ]
-                    }
-                ],
-                calculable: true,
-                series: [
-                    {
-                        name: '题目类型',
-                        type: 'radar',
-                        data: [
-                            {
-                                value: [4300, 10000, 28000, 35000, 50000, 19000],
-                                name: '题目类型'
-                            }
-                        ]
-                    }
-                ]
-            };
-            // 为echarts对象加载数据
-            myChart.setOption(option);
+        function set_error() {
+            var b = $("#test_account");
+            b.attr('disabled', 'true');
+            b.html('Error Info!');
+            b = $("#submit");
+            b.attr('disabled', 'true');
+            b.html('Click Test');
         }
-        function school(ec) {
-            // 基于准备好的dom，初始化echarts图表
-            var myChart = ec.init(document.getElementById('school'));
-            var option = {
-                title: {
-                    text: 'School Team',
-                    subtext: '集训队'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['朱原熯', '李鹏越', '李维娜', '江锦', '郑昕']
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        mark: {show: false},
-                        dataView: {show: false, readOnly: false},
-                        magicType: {show: false, type: ['line', 'bar', 'stack', 'tiled']},
-                        restore: {show: true},
-                        saveAsImage: {show: true}
-                    }
-                },
-                calculable: true,
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value'
-                    }
-                ],
-                series: [
-                    {
-                        name: '朱原熯',
-                        type: 'line',
-                        stack: '总量',
-                        data: [120, 132, 101, 134, 90, 230, 210]
-                    },
-                    {
-                        name: '李鹏越',
-                        type: 'line',
-                        stack: '总量',
-                        data: [220, 182, 191, 234, 290, 330, 310]
-                    },
-                    {
-                        name: '李维娜',
-                        type: 'line',
-                        stack: '总量',
-                        data: [150, 232, 201, 154, 190, 330, 410]
-                    },
-                    {
-                        name: '江锦',
-                        type: 'line',
-                        stack: '总量',
-                        data: [320, 332, 301, 334, 390, 330, 320]
-                    },
-                    {
-                        name: '郑昕',
-                        type: 'line',
-                        stack: '总量',
-                        data: [820, 932, 901, 934, 1290, 1330, 1320]
-                    }
-                ]
-            };
-            // 为echarts对象加载数据
-            myChart.setOption(option);
+        function set_ok() {
+            var b = $("#test_account");
+            b.removeAttr('disabled');
+            b.html('Test');
         }
-        function contest(ec) {
-            // 基于准备好的dom，初始化echarts图表
-            var myChart = ec.init(document.getElementById('contest'));
-            var option = {
-                title: {
-                    text: 'Contest',
-                    subtext: '比赛'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['Rank', 'Solved']
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        mark: {show: false},
-                        dataView: {show: false, readOnly: false},
-                        magicType: {show: false, type: ['line', 'bar', 'stack', 'tiled']},
-                        restore: {show: true},
-                        saveAsImage: {show: true}
+        function _updating(key) {
+            if (key) {
+                updating(0);
+                window.setTimeout("_updating(" + (key - 1) + ")", 1000);
+            }
+        }
+        function updating(key) {
+            var url = "/accounts/updating/{{ u.username }}/";
+            $.getJSON(url, function (ret) {
+                var data = ret['data'];
+                var row = $('#updating');
+                row.attr('aria-valuenow', data);
+                row.css('width', data + '%');
+                row.html('<span class="sr-only"></span>' + data + '%');
+                if (ret['over']) {
+                    row.parent().parent().css('display', 'none');
+                    if (key) {
+                        window.location.reload();
                     }
-                },
-                calculable: true,
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['1000', '1001', '1002', '1003', '1004', '1005', '1006']
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value'
-                    }
-                ],
-                series: [
-                    {
-                        name: 'Rank',
-                        type: 'line',
-                        stack: '总量',
-                        data: [120, 132, 101, 134, 90, 230, 210]
-                    },
-                    {
-                        name: 'Solved',
-                        type: 'line',
-                        stack: '总量',
-                        data: [220, 182, 191, 234, 290, 330, 310]
-                    }
-                ]
-            };
-            // 为echarts对象加载数据
-            myChart.setOption(option);
+                }
+                else {
+                    row.parent().parent().removeAttr('style');
+                    window.setTimeout("updating(1)", 1000);
+                }
+            });
         }
     </script>
+    <script type="text/javascript">
+        var surveyChart = echarts.init(document.getElementById('survey'));
+        var option = {
+            title: {
+                text: 'Survey',
+                subtext: '概况'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Solved', 'Submit']
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [{% for i in survey_date %}{% if not forloop.first %}, {% endif %}'{{ i }} 号'{% endfor %}]
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} 道'
+                    }
+                }
+            ],
+            dataZoom: [
+                {
+                    type: 'slider',
+                    start: 80,
+                    end: 100
+                },
+                {
+                    type: 'inside',
+                    start: 80,
+                    end: 100
+                }
+            ],
+            series: [
+                {
+                    name: 'Solved',
+                    type: 'line',
+                    data: [{% for i in survey_solved %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}],
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                },
+                {
+                    name: 'Submit',
+                    type: 'line',
+                    data: [{% for i in survey_submit %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}],
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                }
+
+            ]
+        };
+        surveyChart.setOption(option);
+    </script>
 {% endblock %}
+

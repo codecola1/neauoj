@@ -202,7 +202,8 @@ $(document).on("click", ".status-length a", function () {
     var rid = $(".status-row", $(this).parent().parent()).html();
     $("#statusModal .modal-title").html("Show Code - " + rid);
     $.getJSON("/contest/code/" + cid + "/" + rid, function (ret) {
-        $("#statusModal .modal-body").html("<pre>" + ret['data'] + "</pre>");
+        $("#statusModal .modal-body").html('<pre class="prettyprint linenums">' + ret['data'] + "</pre>");
+        prettyPrint();
     });
 });
 $(document).on("click", ".status-judge_status a", function () {

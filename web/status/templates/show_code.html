@@ -2,6 +2,7 @@
 {% load status_tags %}
 {% block set_title %}Show Code{% endblock %}
 {% block othercss %}
+    <link href="/css/prettify.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         .find_error {
             margin-top: 250px;
@@ -27,6 +28,10 @@
     </style>
 {% endblock %}
 
+{% block headjs %}
+    <script src="/js/prettify.js"></script>
+{% endblock %}
+
 {% block bodytext %}
     {% if error %}
         <div class="alert alert-danger find_error" role="alert">
@@ -49,7 +54,15 @@
                 <p><strong>OJ: </strong>{{ s.problem.oj|upper }} <strong>Problem Id: </strong><a href="{% url 'problempage' s.problem.id %}">{{ s.problem.problem_id }}</a>
                     <strong>User Name: </strong><a href="{% url 'userpage' s.user.username %}">{{ s.user.username }}</a></p>
             </div>
-            <pre>{{ code }}</pre>
+            <pre class="prettyprint linenums">{{ code }}</pre>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block otherjs %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            prettyPrint();
+        });
+    </script>
 {% endblock %}

@@ -28,7 +28,7 @@ class Connect:
         try:
             self.cursor.execute(sql)
         except:
-            logging.warning('MySQL update ERROR!!!')
+            logging.warning('MySQL update ERROR!!! SQL: %s' % sql)
         else:
             self.db.commit()
 
@@ -36,7 +36,16 @@ class Connect:
         try:
             self.cursor.execute(sql)
         except:
-            logging.warning('MySQL query ERROR!!!')
+            logging.warning('MySQL query ERROR!!! SQL: %s' % sql)
             return ''
         else:
             return self.cursor.fetchall()
+
+    def get_id(self):
+        try:
+            id = self.cursor.lastrowid
+        except:
+            logging.warning('MySQL get_id ERROR!!!')
+            return ''
+        else:
+            return id

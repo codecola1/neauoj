@@ -13,6 +13,7 @@ from support.mysql_join import Connect
 from support.log_judge import Log
 from vjudge import Vjudge
 from Queue import Queue
+from account import Update
 import threading
 import socket
 import os
@@ -45,8 +46,8 @@ class Producer(threading.Thread):
         self.last_result = 0
         if not self.rejudge:
             self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
-            self.mysql.update("UPDATE problem_problem SET submit = submit + 1 WHERE id = '%s'" % self.pid)
-            self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
+            # self.mysql.update("UPDATE problem_problem SET submit = submit + 1 WHERE id = '%s'" % self.pid)
+            # self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
         else:
             result = self.mysql.query("SELECT status FROM status_solve WHERE id = '%s'" % self.sid)
             self.last_result = 1 if result == 'Accepted' else 0
@@ -111,9 +112,8 @@ class Consumer(threading.Thread):
         self.mysql.update(
             "UPDATE status_solve SET status = '%s', use_time = '%s', use_memory = '%s' WHERE id = '%s'" % (
                 judge_status, use_time, use_memory, self.sid))
-        if judge_status == 'Accepted' and not self.last_result:
-            self.mysql.update("UPDATE problem_problem SET solved = solved + 1 WHERE id = '%s'" % self.pid)
-            self.mysql.update("UPDATE users_info SET solve = solve + 1 WHERE id = '%s'" % self.uid)
+        # if judge_status == 'Accepted' and not self.last_result:
+        #     self.mysql.update("UPDATE problem_problem SET solved = solved + 1 WHERE id = '%s'" % self.pid)
 
 
 class vConsumer(threading.Thread):
@@ -163,8 +163,12 @@ if __name__ == '__main__':
     while True:
         connection, address = server.accept()
         sid = connection.recv(1024).split(' ')
-        new_judge = Producer(sid)
-        new_judge.start()
-        connection.send('Receive SID: %s!' % sid[0])
+        if sid[0] == '0':
+            new_judge = Producer(sid[1:])
+            new_judge.start()
+        else:
+            u = Update(sid[1])
+            u.start()
+        connection.send('Receive!')
         connection.close()
     server.close()

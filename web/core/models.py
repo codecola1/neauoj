@@ -13,13 +13,6 @@ class News(models.Model):
     def __unicode__(self):
         return self.title
 
-class Judge(models.Model):
-    solve = models.ForeignKey(Solve)
-    problem_id = models.CharField(max_length=20)
-    code = models.TextField(max_length=5000)
-    def __unicode__(self):
-        return self.code
-
 class Judge_account(models.Model):
     oj = models.CharField(max_length=20)
     user_index = models.IntegerField(default=-1)

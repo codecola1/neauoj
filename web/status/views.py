@@ -4,6 +4,8 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import SubmitForm
 from models import Solve, ce_info
+from users.models import User
+from problem.models import Problem
 import socket
 import logging
 
@@ -29,7 +31,7 @@ def submit(req):
             new_submit = form.save()
             client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             client.connect("/tmp/judge.sock")
-            client.send(str(new_submit.id) + " 0")
+            client.send("0 " + str(new_submit.id) + " 0")
             receive = client.recv(1024)
             client.close()
             logger.info(receive)
@@ -85,7 +87,7 @@ def ce_json(req, sid):
 def status(req):
     if req.method == 'GET':
         page = int(req.GET.get('page', 1))
-        all_solve = Solve.objects.order_by('-id')
+        all_solve = Solve.objects.order_by('-submit_time')
         l = len(all_solve)
         if page < 1 or page > l / 20 + 1:
             error = 1
@@ -112,6 +114,58 @@ def get_status(req, sid):
         }
     except:
         data = {}
+    return JsonResponse(data)
+
+
+def get_problem_status(req, uid, oj, problem_id, page):
+    try:
+        u = User.objects.get(id=uid)
+        p = Problem.objects.get(oj=oj, problem_id=problem_id)
+        s = Solve.objects.filter(user=u, problem=p).order_by('-submit_time')
+    except:
+        raise Http404()
+    else:
+        data = {
+            'data': [],
+            'previous': 0,
+            'next': 0
+        }
+        f = lambda x: (
+        x.id, x.submit_time, x.status, x.use_time, x.use_memory, len(x.code), x.language, 1 if req.user == u else 0)
+        if page != '0':
+            direction = int(page[-1])
+            last_rid = int(page[:-1])
+            num = 0
+            k = 0
+            if direction:
+                for i in s:
+                    num += 1
+                    if k:
+                        k += 1
+                        data['data'].append(f(i))
+                    if k == 11:
+                        break
+                    if i.id == last_rid:
+                        k = 1
+                data['previous'] = 1
+                data['next'] = 0 if num == len(s) else 1
+            else:
+                for i in reversed(s):
+                    num += 1
+                    if k:
+                        k += 1
+                        data['data'].insert(0, f(i))
+                    if k == 11:
+                        break
+                    if i.id == last_rid:
+                        k = 1
+                data['previous'] = 0 if num == len(s) else 1
+                data['next'] = 1
+        else:
+            l = len(s) > 10
+            for i in range(10 if l else len(s)):
+                data['data'].append(f(s[i]))
+            data['next'] = 1 if l else 0
     return JsonResponse(data)
 
 

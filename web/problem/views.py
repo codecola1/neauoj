@@ -17,6 +17,15 @@ def problem_main(req, pid):
             p = Problem.objects.get(id=pid)
         except:
             return render_to_response('problem_error.html')
+        if p.defunct:
+            if p.judge_type == 1:
+                test = Down_problem(p.oj, p.problem_id)
+                if test.right:
+                    test.get_info()
+                    test.get_img()
+                    p = Problem.objects.get(id=pid)
+            else:
+                return render_to_response('problem_error.html')
         return render_to_response('problem_main.html', {
             'path': req.path,
             'p': p,

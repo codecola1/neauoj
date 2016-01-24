@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 __author__ = 'Code_Cola'
 
 from access import Access
@@ -7,6 +7,7 @@ from time import sleep
 import re
 
 from config import *
+
 
 class Vjudge:
     def __init__(self, sid, username, password, last_result):
@@ -20,10 +21,11 @@ class Vjudge:
 
     def get_info(self, sid):
         result = self.mysql.query("SELECT problem_id, language, code, user_id FROM status_solve WHERE id = '%s'" % sid)
+        self.problem_id = result[0][0]
         self.language = result[0][1]
         self.code = result[0][2]
         self.uid = result[0][3]
-        result = self.mysql.query("SELECT oj, problem_id FROM problem_problem WHERE id = '%s'" % result[0][0])
+        result = self.mysql.query("SELECT oj, problem_id FROM problem_problem WHERE id = '%s'" % self.problem_id)
         self.oj = result[0][0]
         self.pid = result[0][1]
 
@@ -83,6 +85,17 @@ class Vjudge:
             else:
                 sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
                 self.mysql.update(sql)
-        if o[0] == 'Accepted' and not self.last_result:
-            self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.pid)
-            self.mysql.update("UPDATE users_info SET solve = solve + '1' WHERE id = '%s'" % self.uid)
+        sql = "SELECT ac FROM users_submit_problem WHERE user_id = '%s' AND problem_id = '%s'" % (self.uid, self.problem_id)
+        result = self.mysql.query(sql)
+        if result:
+            if o[0] == 'Accepted' and int(result[0][0]) == 0:
+                sql = "UPDATE users_submit_problem SET ac = '1' WHERE user_id = '%s' AND problem_id = '%s'" % (
+                    self.uid, self.problem_id)
+                self.mysql.update(sql)
+        else:
+            sql = "INSERT INTO users_submit_problem (ac, problem_id, user_id) VALUES('%s', '%s', '%s')" % (
+            '1' if o[0] == 'Accepted' else '0', self.problem_id, self.uid)
+            self.mysql.update(sql)
+            # if o[0] == 'Accepted' and not self.last_result:
+            #     self.mysql.update("UPDATE problem_problem SET solved = solved + '1' WHERE id = '%s'" % self.pid)
+            #     self.mysql.update("UPDATE users_info SET solve = solve + '1' WHERE id = '%s'" % self.uid)
