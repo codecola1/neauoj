@@ -78,8 +78,8 @@ class Access:
 
     def save_img(self, url, problem_id=''):
         filename = url.split('/')[-1]
-        self.add_path(os.path.join(STATIC_PATH, 'uoload'))
-        self.add_path(os.path.join(STATIC_PATH, 'uoload', self.oj))
+        self.add_path(os.path.join(STATIC_PATH, 'upload'))
+        self.add_path(os.path.join(STATIC_PATH, 'upload', self.oj))
         path = os.path.join(STATIC_PATH, 'upload', self.oj, str(problem_id))
         self.add_path(path)
         path = os.path.join(path, filename)

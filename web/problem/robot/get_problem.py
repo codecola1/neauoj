@@ -29,8 +29,9 @@ r = {
         r' Output<.*?style.*?>(.+?)(<div|</div)',
         r'(?:Hint.*?Hint.*?</div|Hint</i).*?</(?:i>|div>)(.+?)</div>',
         r'>Author<.*?t>(.*?)</div>',
-    ],#<div style="font-family:Times New Roman;font-size:14px;background-color:F4FBFF;border:#B7CBFF 1px dashed;padding:6px"><div style="font-family:Arial;font-weight:bold;color:#7CA9ED;border-bottom:#B7CBFF 1px dashed"><i>Hint</i></div>
-#define PI 3.1415927
+    ],
+    # <div style="font-family:Times New Roman;font-size:14px;background-color:F4FBFF;border:#B7CBFF 1px dashed;padding:6px"><div style="font-family:Arial;font-weight:bold;color:#7CA9ED;border-bottom:#B7CBFF 1px dashed"><i>Hint</i></div>
+    # define PI 3.1415927
     'poj': [
         r'Error Occurred(.*?)>',
         r'<div class="ptt".*?>(.*?)</div>',
