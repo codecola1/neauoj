@@ -2,7 +2,7 @@
 __author__ = 'Code_Cola'
 
 from access import Access
-from support.mysql_join import Connect
+from support.mysql_join import MySQL
 from time import sleep
 import re
 
@@ -11,7 +11,7 @@ from config import *
 
 class Vjudge:
     def __init__(self, sid, username, password, last_result):
-        self.mysql = Connect()
+        self.mysql = MySQL()
         self.sid = sid
         self.get_info(sid)
         self.username = username

@@ -199,7 +199,7 @@ def test_account(oj, username, password):
 
 def updata_user(user):
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    client.connect("/tmp/judge.sock")
+    client.connect("/tmp/neauoj.sock")
     client.send("1 " + str(user.info.id))
     receive = client.recv(1024)
     client.close()

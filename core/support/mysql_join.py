@@ -13,8 +13,10 @@ password = DATABASES['default']['PASSWORD']
 database = DATABASES['default']['NAME']
 logging = Log()
 
+class MySQLQueryError(IndexError):
+    pass
 
-class Connect:
+class MySQL:
     def __init__(self):
         try:
             self.db = MySQLdb.connect(host, username, password, database, charset="utf8")
