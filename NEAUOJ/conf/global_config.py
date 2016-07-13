@@ -100,39 +100,47 @@ Login_ERROR = {
 
 NOT_Login = {
     'hdu': r'name=username',
-    'poj': r'',
+    'poj': r'User ID:',
 }
 
 RE_Last_Submit = {
-    'hdu': r'22px>(\w+)<'
+    'hdu': r'22px>(\w+)<',
+    'poj': r'<tr align=center><td>(\w+)<'
 }
 
 URL_Last_Submit = {
-    'hdu': 'http://acm.hdu.edu.cn/status.php?user='
+    'hdu': 'http://acm.hdu.edu.cn/status.php?user=',
+    'poj': 'http://poj.org/status?user_id='
 }
 
 URL_Referer = {
     'hdu': 'http://acm.hdu.edu.cn/submit.php?pid=',
+    'poj': 'http://poj.org/submit'
 }  # referer
 
 URL_Submit = {
     'hdu': 'http://acm.hdu.edu.cn/submit.php?action=submit',
+    'poj': 'http://poj.org/submit'
 }  # submit
 
 URL_Status = {
     'hdu': 'http://acm.hdu.edu.cn/status.php?user=',
+    'poj': 'http://poj.org/status?user_id='
 }  # 查看status
 
 URL_CE = {
     'hdu': 'http://acm.hdu.edu.cn/viewerror.php?rid=',
+    'poj': 'http://poj.org/showcompileinfo?solution_id='
 }  # 查看CE详情
 
 RE_Judge_Status = {
-    'hdu': r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K'
+    'hdu': r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K',
+    'poj': r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K',
 }
 
 RE_Get_CE = {
-    'hdu': r'<pre>(.*?)</pre>'
+    'hdu': r'<pre>(.*?)</pre>',
+    'poj': r'<pre>(.*?)</pre>'
 }
 
 Submit_POST_Data = {
@@ -141,11 +149,19 @@ Submit_POST_Data = {
         'problemid': '',
         'language': '',
         'usercode': '',
+    },
+    'poj': {
+        'problem_id': '',
+        'language': '',
+        'source': '',
+        'submit': 'submit',
+        'encoded': '1'
     }
 }  # POST的相关数据
 
 Submit_POST_Data_List = {
-    'hdu': ['problemid', 'language', 'usercode']
+    'hdu': ['problemid', 'language', 'usercode'],
+    'poj': ['problem_id', 'language', 'source']
 }  # POST数据项对应关系
 
 VJ_Language_Map = {
@@ -160,5 +176,17 @@ VJ_Language_Map = {
         'G++': '0',
         'java': '5',
         'Java': '5'
+    },
+    'poj': {
+        'c': '5',
+        'C': '5',
+        'c++': '4',
+        'C++': '4',
+        'gcc': '1',
+        'GCC': '1',
+        'g++': '0',
+        'G++': '0',
+        'java': '2',
+        'Java': '2'
     }
 }  # 语言与对应需POST的数据

@@ -114,7 +114,7 @@
             for (var i = 1; i < rows.length; i++) {
                 var cell = rows[i].cells[2].innerHTML;
                 var sid = rows[i].cells[0].innerHTML;
-                if (cell.indexOf('Judging') != -1 || cell.indexOf('Queuing') != -1 || cell.indexOf('Compiling') != -1 || cell.indexOf('Running') != -1) {
+                if (cell.indexOf('Judging') != -1 || cell.indexOf('Queuing') != -1 || cell.indexOf('Compiling') != -1 || cell.indexOf('Running') != -1 || cell.indexOf('Running & Judging') != -1) {
                     fresh_result(sid);
                 }
             }
@@ -128,7 +128,7 @@
                 $(status).html(ret['status']);
                 $(time).html(ret['time']);
                 $(memory).html(ret['memory']);
-                if (ret['status'] == "Judging" || ret['status'] == "Queuing" || ret['status'] == "Compiling" || ret['status'] == "Running") {
+                if (ret['status'] == "Judging" || ret['status'] == "Queuing" || ret['status'] == "Compiling" || ret['status'] == "Running" || ret['status'] == "Running & Judging") {
                     window.setTimeout("fresh_result(" + solution_id + ")", 1000);
                 }
                 else {

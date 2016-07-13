@@ -6,7 +6,7 @@ from forms import SubmitForm
 from models import Solve, ce_info
 from users.models import User
 from problem.models import Problem
-import socket
+from core.connect import Connect
 import logging
 
 
@@ -29,13 +29,10 @@ def submit(req):
         form.set_contest(req.POST.get('contest', -1))
         if form.is_valid():
             new_submit = form.save()
-            client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            client.connect("/tmp/neauoj.sock")
-            client.send("0 " + str(new_submit.id) + " 0")
-            receive = client.recv(1024)
-            client.close()
+            con = Connect()
+            receive = con.judge_code(new_submit.id)
             logger.info(receive)
-            logger.info(u"User: " + req.user.username + u" Submited Problem: <" + new_submit.problem.oj + str(
+            logger.info(u"User: " + req.user.username + u"s Submited Problem: <" + new_submit.problem.oj + str(
                 new_submit.problem.problem_id) + u"> Title: " + new_submit.problem.title)
             if form.contest_id >= 0:
                 return HttpResponseRedirect("/contest/c/" + str(form.contest_id))  # + "?status=1"
@@ -50,11 +47,8 @@ def submit(req):
 @login_required
 def rejudge(req, sid):
     if req.method == 'GET':
-        client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        client.connect("/tmp/neauoj.sock")
-        client.send(str(sid) + " 1")
-        receive = client.recv(1024)
-        client.close()
+        con = Connect()
+        receive = con.judge_code(sid)
         logger.info(receive)
         logger.info(u"User: " + req.user.username + u" Rejudge Solve ID: <" + sid + u">")
         return HttpResponseRedirect("/status")

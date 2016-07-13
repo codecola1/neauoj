@@ -39,5 +39,5 @@ def text_color(s):
 @register.filter(name='judge_picture')
 def judge_picture(s):
     key = s[0:8]
-    l = ['Accepted', 'Wrong An', 'Presenta', 'Compilat', 'Time Lim', 'Memory L', 'Runtime ', 'Output L']
+    l = ['Accepted', 'Wrong An', 'Presenta', 'Compilat', 'Time Lim', 'Memory L', 'Runtime ', 'Output L', 'Judge ER']
     return '' if key in l else '<img src="/img/loading.gif" width="100%">'

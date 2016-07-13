@@ -10,7 +10,6 @@ from bin.judge import VirtualJudge
 from bin.access import JudgeAccess
 from db.mysql import MySQL, MySQLQueryError
 from conf.global_config import *
-from vjudge import Vjudge
 
 
 class JudgeServer(threading.Thread):
@@ -239,3 +238,4 @@ def make_dir(path):
     if not os.path.exists(path):
         make_dir('/'.join(os.path.join(path.split('/')[:-1])))
         os.mkdir(path)
+

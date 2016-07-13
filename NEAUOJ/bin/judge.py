@@ -36,6 +36,9 @@ class LocalJudge(Judge):
 class VirtualJudge(Judge):
     def __init__(self, username, password, last_sid, language, code, oj, problem_id, sid):
         super(VirtualJudge, self).__init__(language, code)
+        if oj == 'poj':
+            import base64
+            self.code = base64.encodestring(self.code)
         self.oj = oj
         self.pid = problem_id
         self.last_sid = last_sid
@@ -82,14 +85,19 @@ class VirtualJudge(Judge):
         url = URL_Status[self.oj] + self.username
         html = self.ac.visit(url)
         match = re.search(RE_Judge_Status[self.oj] % self.last_sid, html, re.M | re.I | re.S)
-        status = match.group(1)
-        use_time = match.group(2)
-        use_memory = match.group(3)
+        if match:
+            status = match.group(1)
+            use_time = match.group(2)
+            use_memory = match.group(3)
+        else:
+            status = "Judge ERROR"
+            use_time = 0
+            use_memory = 0
         self.update(status, use_time, use_memory)
         return status, use_time, use_memory
 
     def refresh_again(self, s):
-        if s == 'Queuing' or s == 'Compiling' or s == 'Running':
+        if s == 'Queuing' or s == 'Compiling' or s == 'Running' or s == 'Running & Judging' or s == 'Waiting':
             return True
         return False
 
@@ -107,8 +115,8 @@ class VirtualJudge(Judge):
         sql = "SELECT info FROM status_ce_info WHERE solve_id = '%s'" % self.sid
         result = self.mysql.query(sql)
         if result:
-            sql = "UPDATE status_ce_info SET info = '%s' WHERE solve_id = '%s'" % (self.ce_info, self.sid)
+            sql = "UPDATE status_ce_info SET info = '%s' WHERE solve_id = '%s'" % (ce_info, self.sid)
             self.mysql.update(sql)
         else:
-            sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (self.ce_info, self.sid)
+            sql = "INSERT INTO status_ce_info (info, solve_id) VALUES('%s', '%s')" % (ce_info, self.sid)
             self.mysql.update(sql)
