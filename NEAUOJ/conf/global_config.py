@@ -1,16 +1,46 @@
-# coding=utf-8
+# -*- coding:utf-8 -*-
+# !/usr/bin/python
+
 __author__ = 'Code_Cola'
+
+import os
+from local_config import *
+
+OJ_NAME = 'neauoj'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'neauoj',
         'USER': 'root',
         'PASSWORD': '123456',
-        'HOST': '',
+        'HOST': 'localhost',
         'POST': '3306'
     }
 }
+
+Local_PATH = '/'.join(os.getcwd().split('/')[0:-1])
+Daemon_PATH = "/tmp/" + OJ_NAME + ".pid"
+Socket_PATH = "/tmp/" + OJ_NAME + ".sock"
+Log_PATH = Local_PATH + "/log/" + OJ_NAME + ".log"
+Work_PATH = Local_PATH + "/work/run"
+Data_PATH = Local_PATH + "/data/"
+
+Task_Limit = 100
+Local_Judge_Limit = 5
+
+Language_Map = {
+    'c': ['0', 'c'],
+    'C': ['0', 'c'],
+    'c++': ['1', 'cpp'],
+    'C++': ['1', 'cpp'],
+    'g++': ['2', 'cc'],
+    'G++': ['2', 'cc'],
+    'java': ['3', 'java'],
+    'Java': ['3', 'java'],
+}
+
+Judge_Map = ['Accepted', 'Wrong Answer', 'Presentation Error', 'Compilation Error', 'Time Limit Exceeded',
+             'Memory Limit Exceeded', 'Runtime Error']
 
 Headers = {
     'hdu': {
@@ -29,13 +59,22 @@ Headers = {
     }
 }
 
-oj_index = {
+OJ_Index = {
     'hdu': 'http://acm.hdu.edu.cn',
     'poj': 'http://poj.org'
 }
 
-# Access
-login_data = {
+OJ_Decode = {
+    'hdu': True,
+    'poj': False
+}
+
+Login_URL = {
+    'hdu': 'http://acm.hdu.edu.cn/userloginex.php?action=login',
+    'poj': 'http://poj.org/login'
+}
+
+Login_Data = {
     'hdu': {
         'username': '',
         'userpass': '',
@@ -49,58 +88,54 @@ login_data = {
     }
 }
 
-Login_url = {
-    'hdu': 'http://acm.hdu.edu.cn/userloginex.php?action=login',
-    'poj': 'http://poj.org/login'
-}
-
-Listmap = {
+Login_Data_List = {
     'hdu': ['username', 'userpass'],
     'poj': ['user_id1', 'password1']
 }
 
-decode = {
-    'hdu': True,
-    'poj': False
-}
-
-login_error = {
+Login_ERROR = {
     'hdu': r'No\ssuch\suser\sor\swrong\spassword',
     'poj': r'User\sID',
 }
 
-not_login = {
+NOT_Login = {
     'hdu': r'name=username',
     'poj': r'',
 }
 
-# vjudge
-url_referer = {
+RE_Last_Submit = {
+    'hdu': r'22px>(\w+)<'
+}
+
+URL_Last_Submit = {
+    'hdu': 'http://acm.hdu.edu.cn/status.php?user='
+}
+
+URL_Referer = {
     'hdu': 'http://acm.hdu.edu.cn/submit.php?pid=',
 }  # referer
 
-url_submit = {
+URL_Submit = {
     'hdu': 'http://acm.hdu.edu.cn/submit.php?action=submit',
 }  # submit
 
-url_status = {
-    'hdu': ['http://acm.hdu.edu.cn/status.php', 'http://acm.hdu.edu.cn/status.php?first='],
+URL_Status = {
+    'hdu': 'http://acm.hdu.edu.cn/status.php?user=',
 }  # 查看status
 
-url_ce = {
+URL_CE = {
     'hdu': 'http://acm.hdu.edu.cn/viewerror.php?rid=',
 }  # 查看CE详情
 
-re_string = {
-    'hdu': [r'22px>.*?%s', r'22px>(\w+)<', r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K', r'<pre>(.*?)</pre>'],
-    # 各种匹配的正则
-    # 0:缩小查找范围 以当前用户名为第一条记录
-    # 1:确定所提交的RunID
-    # 2:获取本RunID的提交结果
-    # 3:抓取CE信息
+RE_Judge_Status = {
+    'hdu': r'%s<.+?<font.*?>(.*?)</font>.*?(\d+)MS.*?(\d+)K'
 }
 
-post_data = {
+RE_Get_CE = {
+    'hdu': r'<pre>(.*?)</pre>'
+}
+
+Submit_POST_Data = {
     'hdu': {
         'check': '0',
         'problemid': '',
@@ -109,44 +144,21 @@ post_data = {
     }
 }  # POST的相关数据
 
-judge_listmap = {
+Submit_POST_Data_List = {
     'hdu': ['problemid', 'language', 'usercode']
 }  # POST数据项对应关系
 
-language_map = {
+VJ_Language_Map = {
     'hdu': {
         'c': '3',
+        'C': '3',
         'c++': '2',
+        'C++': '2',
         'gcc': '1',
+        'GCC': '1',
         'g++': '0',
-        'java': '5'
+        'G++': '0',
+        'java': '5',
+        'Java': '5'
     }
 }  # 语言与对应需POST的数据
-
-user_status = {
-    'hdu': r'http://acm.hdu.edu.cn/status.php?first=%s&user=%s',
-}
-
-user_last_rid = {
-    'hdu': r'</form></td></tr><tr align=center ><td height=22px>([0-9]*)</td><td>',
-}
-
-get_status = {
-    'hdu': r'<td height=22px>([0-9]*)</td><td>(.{19})</td>.*?<font.+?>(.+?)</font>.+?pid=([0-9]*).+?<td>([0-9]*)MS.+?<td>([0-9]*)K.+?>([0-9]*).B</td><td>(.*?)</td><td class',
-}
-
-get_code_url = {
-    'hdu': 'http://acm.hdu.edu.cn/viewcode.php?rid=%s',
-}
-
-get_code_re = {
-    'hdu': r'none;text-align:left;">(.*)</textarea>',
-}
-
-get_ce_url = {
-    'hdu': 'http://acm.hdu.edu.cn/viewerror.php?rid=%s',
-}
-
-get_ce_re = {
-    'hdu': r'<pre>(.*?)</pre>',
-}

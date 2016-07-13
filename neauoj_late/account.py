@@ -6,7 +6,7 @@ import HTMLParser
 import MySQLdb
 from datetime import date
 from access import Access
-from support.mysql_join import Connect
+from support.mysql_join import MySQL
 
 from config import *
 
@@ -28,7 +28,7 @@ class Update(threading.Thread):
     def __init__(self, user_id):
         threading.Thread.__init__(self)
         self.user_id = user_id
-        self.mysql = Connect()
+        self.mysql = MySQL()
 
     def run(self):
         data = self.mysql.query("SELECT oj_account_id FROM users_info_oj_account WHERE info_id = '%s'" % self.user_id)

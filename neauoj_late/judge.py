@@ -1,15 +1,17 @@
 # coding=utf-8
 __author__ = 'Code_Cola'
 
-'''
-0   ACM判题模式
-1   vjudge
-2   单组数据判题
-3   程序填空
-4   看程序写输出
-'''
+"""
+题目类型：
+    0   ACM判题模式
+    1   vjudge
+    2   单组数据判题
+    3   程序填空
+    4   看程序写输出
 
-from support.mysql_join import Connect
+"""
+
+from support.mysql_join import *
 from support.log_judge import Log
 from vjudge import Vjudge
 from Queue import Queue
@@ -18,6 +20,7 @@ import threading
 import socket
 import os
 import sys
+import stat
 import random
 
 logging = Log()
@@ -34,15 +37,78 @@ judge_map = ['Accepted', 'Wrong Answer', 'Presentation Error', 'Compilation Erro
              'Memory Limit Exceeded', 'Runtime Error']
 
 
-class Producer(threading.Thread):
+class Connect:
+    def __init__(self):
+        self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        if os.path.exists('/tmp/neauoj.sock'):
+            os.unlink('/tmp/neauoj.sock')
+        self.server.bind('/tmp/neauoj.sock')
+        os.chmod("/tmp/neauoj.sock", stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
+        self.server.listen(0)
+
+    def get_message(self):
+        self.connection, address = self.server.accept()
+        message = self.connection.recv(1024).split(' ')
+        return message
+
+    def receive_message(self, message='Receive!'):
+        self.connection.send(message)
+        self.connection.close()
+
+    def __del__(self):
+        self.server.close()
+
+
+def thread():
+    threads = []
+    vthreads = []
+    for i in range(5):
+        threads.append(Consumer(i))
+        vthreads.append(vConsumer(i))
+    for i in range(5):
+        threads[i].setDaemon(True)
+        threads[i].start()
+        vthreads[i].setDaemon(True)
+        vthreads[i].start()
+
+
+class Judge:
+    def __init__(self):
+        pass
+
+
+class JudgeConsumer(threading.Thread):
+    """
+
+    """
+
+    index = 0
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.mysql = MySQL()
+        self.run_path = local_path + '/work/run' + str(Judge.index)
+        Judge.index += 1
+
+
+class JudgeProducer(threading.Thread):
     def __init__(self, sid):
         threading.Thread.__init__(self)
         self.sid = sid[0]
         self.rejudge = int(sid[1])
-        self.mysql = Connect()
-        result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
-        self.pid = result[0][0]
-        self.uid = result[0][1]
+        try:
+            self.mysql = MySQL()
+        except MySQLConnectError:
+            raise Exception
+        try:
+            result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
+        except MySQLQueryError:
+            raise Exception
+        try:
+            self.pid = result[0][0]
+            self.uid = result[0][1]
+        except IndexError:
+            raise Exception
         self.last_result = 0
         if not self.rejudge:
             self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
@@ -50,9 +116,15 @@ class Producer(threading.Thread):
             # self.mysql.update("UPDATE users_info SET submit = submit + 1 WHERE id = '%s'" % self.uid)
         else:
             result = self.mysql.query("SELECT status FROM status_solve WHERE id = '%s'" % self.sid)
-            self.last_result = 1 if result == 'Accepted' else 0
+            try:
+                self.last_result = 1 if result[0] == 'Accepted' else 0
+            except IndexError:
+                raise Exception
         result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
-        self.judge_type = result[0][0]
+        try:
+            self.judge_type = result[0][0]
+        except IndexError:
+            raise MySQLQueryError
 
     def run(self):
         if self.judge_type == 0:
@@ -76,7 +148,7 @@ class Consumer(threading.Thread):
     def run(self):
         while True:
             self.sid, self.pid, self.uid, self.judge_type, self.last_result = queue.get()
-            self.mysql = Connect()
+            self.mysql = MySQL()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
             self.save()
@@ -124,7 +196,7 @@ class vConsumer(threading.Thread):
     def run(self):
         while True:
             self.sid, self.pid, self.uid, self.last_result = vqueue.get()
-            self.mysql = Connect()
+            self.mysql = MySQL()
             self.mysql.update("UPDATE status_solve SET status = 'Judging' WHERE id = '%s'" % self.sid)
             self.judge()
 
@@ -140,35 +212,40 @@ class vConsumer(threading.Thread):
         v.run()
 
 
-if __name__ == '__main__':
+def main():
+    """
+        0: 判题请求
+            参数：提交id 是否重判    ps:192 0（solve_id为192的提交 非重判）
+        1：更新User信息
+            参数：用户id
+        2: Down题请求
+            参数：OJ缩写 Problem_id
+    """
     reload(sys)
     sys.setdefaultencoding('utf8')
-    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    if os.path.exists('/tmp/judge.sock'):
-        os.unlink('/tmp/judge.sock')
-    server.bind('/tmp/judge.sock')
-    server.listen(0)
-    threads = []
-    vthreads = []
-    for i in range(5):
-        t = Consumer(i)
-        threads.append(t)
-        t = vConsumer(i)
-        vthreads.append(t)
-    for i in range(5):
-        threads[i].setDaemon(True)
-        threads[i].start()
-        vthreads[i].setDaemon(True)
-        vthreads[i].start()
+    connect = Connect()
+    thread()
     while True:
-        connection, address = server.accept()
-        sid = connection.recv(1024).split(' ')
-        if sid[0] == '0':
-            new_judge = Producer(sid[1:])
-            new_judge.start()
+        message = connect.get_message()
+        try:
+            if message[0] == '0':
+                new_judge = JudgeProducer(message[1:])
+                new_judge.start()
+            elif message[0] == '1':
+                u = Update(message[1])
+                u.start()
+            elif message[0] == '2':
+                pass
+            else:
+                raise IndexError
+        except IndexError:
+            logging.error("Error message!!! message: " + ' '.join(message))
         else:
-            u = Update(sid[1])
-            u.start()
-        connection.send('Receive!')
-        connection.close()
-    server.close()
+            connect.receive_message()
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass

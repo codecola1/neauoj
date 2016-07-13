@@ -30,7 +30,7 @@ def submit(req):
         if form.is_valid():
             new_submit = form.save()
             client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            client.connect("/tmp/judge.sock")
+            client.connect("/tmp/neauoj.sock")
             client.send("0 " + str(new_submit.id) + " 0")
             receive = client.recv(1024)
             client.close()
@@ -51,7 +51,7 @@ def submit(req):
 def rejudge(req, sid):
     if req.method == 'GET':
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        client.connect("/tmp/judge.sock")
+        client.connect("/tmp/neauoj.sock")
         client.send(str(sid) + " 1")
         receive = client.recv(1024)
         client.close()

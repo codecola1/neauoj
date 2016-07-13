@@ -33,7 +33,7 @@ def updata_user(user):
             if ret != i.last_rid and not i.is_using:
                 k = 1
                 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-                client.connect("/tmp/judge.sock")
+                client.connect("/tmp/neauoj.sock")
                 client.send("1 " + str(user.id) + str(i.id))
                 receive = client.recv(1024)
                 client.close()
