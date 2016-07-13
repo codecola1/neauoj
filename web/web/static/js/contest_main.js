@@ -9,7 +9,7 @@ $(document).ready(function () {
         var cid = $('#cid').html();
         $('#id_problem').attr('value', pid);
         $.getJSON("/contest/problem/" + cid + "/" + pid, function (ret) {
-            $('#title' + pid).html(abc[pid] + " - " + ret['title']);
+            $('#title' + pid).html(abc[pid] + ". " + ret['title']);
             $('#tlc' + pid).html(ret['tlc']);
             $('#tlj' + pid).html(ret['tlj']);
             $('#mlc' + pid).html(ret['mlc']);

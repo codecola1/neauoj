@@ -72,18 +72,43 @@ def thread():
         vthreads[i].start()
 
 
-class Producer(threading.Thread):
+class Judge:
+    def __init__(self):
+        pass
+
+
+class JudgeConsumer(threading.Thread):
+    """
+
+    """
+
+    index = 0
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.mysql = MySQL()
+        self.run_path = local_path + '/work/run' + str(Judge.index)
+        Judge.index += 1
+
+
+class JudgeProducer(threading.Thread):
     def __init__(self, sid):
         threading.Thread.__init__(self)
         self.sid = sid[0]
         self.rejudge = int(sid[1])
-        self.mysql = MySQL()
-        result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
+        try:
+            self.mysql = MySQL()
+        except MySQLConnectError:
+            raise Exception
+        try:
+            result = self.mysql.query("SELECT problem_id, user_id FROM status_solve WHERE id = '%s'" % sid[0])
+        except MySQLQueryError:
+            raise Exception
         try:
             self.pid = result[0][0]
             self.uid = result[0][1]
         except IndexError:
-            raise MySQLQueryError
+            raise Exception
         self.last_result = 0
         if not self.rejudge:
             self.mysql.update("UPDATE status_solve SET status = 'Queuing' WHERE id = '%s'" % self.sid)
@@ -94,7 +119,7 @@ class Producer(threading.Thread):
             try:
                 self.last_result = 1 if result[0] == 'Accepted' else 0
             except IndexError:
-                raise MySQLQueryError
+                raise Exception
         result = self.mysql.query("SELECT judge_type FROM problem_problem WHERE id = '%s'" % self.pid)
         try:
             self.judge_type = result[0][0]
@@ -204,7 +229,7 @@ def main():
         message = connect.get_message()
         try:
             if message[0] == '0':
-                new_judge = Producer(message[1:])
+                new_judge = JudgeProducer(message[1:])
                 new_judge.start()
             elif message[0] == '1':
                 u = Update(message[1])

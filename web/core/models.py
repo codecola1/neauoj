@@ -10,8 +10,10 @@ class News(models.Model):
     content = models.TextField(max_length=500)
     defunct = models.BooleanField(default=False)
     time = models.TimeField()
+
     def __unicode__(self):
         return self.title
+
 
 class Judge_account(models.Model):
     oj = models.CharField(max_length=20)
@@ -19,5 +21,6 @@ class Judge_account(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     defunct = models.BooleanField(default=False)
+
     def __unicode__(self):
         return self.oj

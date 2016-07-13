@@ -8,7 +8,9 @@ import os
 import time
 import atexit
 from signal import SIGTERM
-from judge import main
+# from judge import main
+from core.main import Main
+from conf.global_config import Daemon_PATH
 
 
 class Daemon:
@@ -140,11 +142,12 @@ class Daemon:
 
 class MyDaemon(Daemon):
     def run(self):
-        main()
+        main = Main()
+        main.start()
 
 
 if __name__ == '__main__':
-    daemon = MyDaemon('/tmp/neauoj.pid')
+    daemon = MyDaemon(Daemon_PATH)
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
