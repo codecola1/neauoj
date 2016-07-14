@@ -6,7 +6,8 @@ from django.template import RequestContext
 from models import Problem
 from forms import Add_problem_form, testform
 from django.db.models import Q
-from robot.get_problem import Down_problem
+from web.connect import Connect
+from time import sleep
 
 # Create your views here.
 
@@ -17,18 +18,19 @@ def problem_main(req, pid):
             p = Problem.objects.get(id=pid)
         except:
             return render_to_response('problem_error.html')
-        if p.defunct:
-            if p.judge_type == 1:
-                test = Down_problem(p.oj, p.problem_id)
-                if test.right:
-                    test.get_info()
-                    test.get_img()
-                    p = Problem.objects.get(id=pid)
+        wait = True
+        if p.judge_type == 1:
+            if p.defunct <= 0:
+                c = Connect()
+                c.download_problem(p.oj, p.problem_id, p.id)
             else:
-                return render_to_response('problem_error.html')
+                wait = False
+                p.defunct = p.defunct - 1
+                p.save()
         return render_to_response('problem_main.html', {
             'path': req.path,
             'p': p,
+            'wait': wait
         }, context_instance=RequestContext(req))
 
 
@@ -54,19 +56,28 @@ def add_problem(req):
 def test(req):
     p = None
     if req.method == 'POST':
+        wait = True
         form = testform(req.POST)
         if form.is_valid():
             ind = form.cleaned_data['ind']
             oj = form.cleaned_data['oj']
-            test = Down_problem(oj, ind)
-            if test.right:
-                test.get_info()
-                test.get_img()
+            try:
                 p = Problem.objects.get(oj=oj, problem_id=ind)
-                test.right = False
+            except:
+                p = Problem(oj=oj, problem_id=ind, judge_type=1)
+                p.save()
+                c = Connect()
+                c.download_problem(oj, ind, p.id)
+            else:
+                if p.defunct <= 0:
+                    c = Connect()
+                    c.download_problem(oj, ind, p.id)
+                else:
+                    wait = False
         return render_to_response('problem_test.html', {
             'form': form,
             'path': req.path,
+            'wait': wait,
             'p': p,
         }, context_instance=RequestContext(req))
     else:
@@ -74,6 +85,7 @@ def test(req):
         return render_to_response('problem_test.html', {
             'form': form,
             'path': req.path,
+            'wait': True,
             'p': p,
         }, context_instance=RequestContext(req))
 
@@ -95,6 +107,22 @@ def problem_list(req):
         'len': range(leng),
     }, context_instance=RequestContext(req))
 
+def get_problem(req, pid):
+    data = {
+        'wait': 1
+    }
+    try:
+        p = Problem.objects.get(id=pid)
+    except:
+        raise Http404()
+    if p.defunct <= 0:
+        c = Connect()
+        c.download_problem(p.oj, p.problem_id, p.id)
+    else:
+        data = {
+            'wait': 0
+        }
+    return JsonResponse(data)
 
 def get_problem_info(req, oj, problem_id, index):
     problem_id = int(problem_id)
@@ -110,10 +138,11 @@ def get_problem_info(req, oj, problem_id, index):
         pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
     except:
         if oj != 'neau':
-            dpinfo = Down_problem(oj, problem_id)
-            if dpinfo.right:
-                dpinfo.get_info()
-                dpinfo.get_img()
+            # p = Problem(oj=oj, problem_id=problem_id, judge_type=1)
+            # p.save()
+            # c = Connect()
+            # c.download_problem(oj, problem_id, p.id)
+            # sleep(0.5)
             try:
                 pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
             except:

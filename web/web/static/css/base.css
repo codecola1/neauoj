@@ -3,6 +3,10 @@
     /*padding: 15px 0;*/
 }
 
+body {
+    height: 100%;
+}
+
 .logo {
     float: left;
     width: 50%;

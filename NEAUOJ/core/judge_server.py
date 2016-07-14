@@ -166,7 +166,6 @@ class JudgeConsumer(threading.Thread):
         if username is not None and password is not None:
             self.username = username
             self.password = password
-            self.last_sid = self.get_last_sid()
 
     def get_ready(self, info):
         self.sid, self.pid, self.uid, self.last_result = info
@@ -204,7 +203,7 @@ class JudgeConsumer(threading.Thread):
             vj = VirtualJudge(
                 self.username,
                 self.password,
-                self.last_sid,
+                self.get_last_sid(),
                 self.language,
                 self.code,
                 self.oj,
@@ -219,8 +218,6 @@ class JudgeConsumer(threading.Thread):
         if self.run_path is not None:
             if self.run_path is not "":
                 os.system("rm -rf %s/*" % self.run_path)
-        else:
-            self.last_sid = self.get_last_sid()
 
     def run(self):
         while True:
@@ -238,4 +235,3 @@ def make_dir(path):
     if not os.path.exists(path):
         make_dir('/'.join(os.path.join(path.split('/')[:-1])))
         os.mkdir(path)
-

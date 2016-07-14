@@ -18,7 +18,7 @@ class Problem(models.Model):
     time_limit_java = models.IntegerField(default=0)
     memory_limit_c = models.IntegerField(default=0)
     memory_limit_java = models.IntegerField(default=0)
-    defunct = models.BooleanField(default=0)
+    defunct = models.IntegerField(default=0)
     submit = models.PositiveIntegerField(default=0)
     solved = models.PositiveIntegerField(default=0)
     type = models.CharField(max_length=20, default="")

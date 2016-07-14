@@ -36,7 +36,7 @@ class Access(object):
             return ''
         else:
             logging.info("get_html:" + url)
-            return s
+            return s.decode('gbk', 'ignore').encode('utf8') if OJ_Decode[self.oj] else s
 
 
 class JudgeAccess(Access):
@@ -52,9 +52,8 @@ class JudgeAccess(Access):
 
     def visit(self, url, post_data=None, referer=''):
         s = super(JudgeAccess, self).visit(url, post_data, referer)
-        if OJ_Decode[self.oj]:
-            s = s.decode('gbk', 'ignore').encode('utf8')
-        return s
+        match = re.search(Forbidden[self.oj], s, re.M)
+        return "" if match else s
 
     def login(self):
         url = Login_URL[self.oj]
@@ -87,3 +86,34 @@ class JudgeAccess(Access):
     def judge_password(self, html):
         match = re.search(Login_ERROR[self.oj], html, re.M)
         return False if match else True
+
+
+class ProblemAccess(Access):
+    def __init__(self, oj):
+        super(ProblemAccess, self).__init__(header=Headers[oj])
+        self.oj = oj
+
+    def visit(self, url, post_data=None, referer=''):
+        s = super(ProblemAccess, self).visit(url, post_data, referer)
+        match = re.search(RE_Problem[self.oj][0], s, re.M)
+        return "" if match else s
+
+    def save_img(self, url, problem_id=''):
+        filename = url.split('/')[-1]
+        path = os.path.join(STATIC_PATH, 'upload', self.oj, str(problem_id))
+        make_dir(path)
+        path = os.path.join(path, filename)
+        if url[0:4] != 'http':
+            url = OJ_Index[self.oj] + url
+        try:
+            urllib.urlretrieve(url, path)
+        except:
+            logging.warning("Get Image ERROR!!!")
+        else:
+            logging.info("Download image <%s> over" % (filename))
+
+
+def make_dir(path):
+    if not os.path.exists(path):
+        make_dir('/'.join(os.path.join(path.split('/')[:-1])))
+        os.mkdir(path)

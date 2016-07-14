@@ -8,6 +8,10 @@ from local_config import *
 
 OJ_NAME = 'neauoj'
 
+VJ_LIST = ['neau', 'hdu', 'poj']
+
+STATIC_PATH = "/Users/Code_Cola/Documents/Code/neauoj/web/web/static"
+
 DATABASES = {
     'default': {
         'NAME': 'neauoj',
@@ -57,6 +61,11 @@ Headers = {
         'Referer': 'http://poj.org/',
         'Connection': 'keep-alive'
     }
+}
+
+Forbidden = {
+    'hdu': 'Exercise Is Closed Now!',
+    'poj': 'Exercise Is Closed Now!',
 }
 
 OJ_Index = {
@@ -190,3 +199,42 @@ VJ_Language_Map = {
         'Java': '2'
     }
 }  # 语言与对应需POST的数据
+
+RE_Problem = {
+    'hdu': [
+        r'(?:No such problem|Invalid Parameter)(.*?)</div>',
+        r'<h1.*?>(.+?)</h1>',
+        r'Time Limit: (\d*?)/(\d*?) MS',
+        r'Memory Limit: (\d*?)/(\d*?) K',
+        r'Desc.*?t>(.+?)</div>',
+        r'[^ ]Input<.*?t>(.+?)</div>',
+        r'[^ ]Output<.*?t>(.+?)</div>',
+        r' Input<.*?style.*?>(.+?)</div>',
+        r' Output<.*?style.*?>(.+?)(<div|</div)',
+        r'(?:Hint.*?Hint.*?</div|Hint</i).*?</(?:i>|div>)(.+?)</div>',
+        r'>Author<.*?t>(.*?)</div>',
+    ],
+    'poj': [
+        r'Error Occurred(.*?)>',
+        r'<div class="ptt".*?>(.*?)</div>',
+        r'Time Limit:</b> (.*?)MS',
+        r'Memory Limit:</b> (.*?)K',
+        r'Desc.*?">(.*?)</div>',
+        r'>Input.*?">(.*?)</div>',
+        r'>Output.*?">(.*?)</div>',
+        r' Input<.*?">(.*?)</pre>',
+        r' Output<.*?">(.*?)</pre>',
+        r'Hint(.*?)</div>',
+        r'Source.*?<a.*?">(.*?)</',
+    ]
+}
+
+IMG_Replace = {
+    'hdu': r'/data/images/|data/images/|http://bestcoder.hdu.edu.cn/data/images/',
+    'poj': r'images([/\d]*)/'
+}
+
+URL_Problem = {
+    'hdu': 'http://acm.hdu.edu.cn/showproblem.php?pid=',
+    'poj': 'http://poj.org/problem?id=',
+}

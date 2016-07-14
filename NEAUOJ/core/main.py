@@ -8,6 +8,9 @@ from bin.log import Log
 from db.mysql import MySQL
 from core.connect import Connect
 from core.judge_server import JudgeServer
+from core.problem_server import ProblemServer
+
+logging = Log()
 
 
 class BuildQueueError(Exception):
@@ -20,22 +23,25 @@ class Main:
         Web端通信格式：
             0: 判题模块
                 参数：[操作数 (任务消息)]
-            1：更新模块
+            1：Down题模块
+                参数：OJ缩写 Problem_id pid
+            2: 更新模块
                 参数：用户id
-            2: Down题模块
-                参数：OJ缩写 Problem_id
     """
 
     def __init__(self):
         self.mysql = MySQL()
         self.Judging = JudgeServer()
+        self.Download = ProblemServer()
         self.Judging.setDaemon(True)
+        self.Download.setDaemon(True)
 
     def __del__(self):
         self.Judging.judge_stop()
 
     def start(self):
         self.Judging.start()
+        self.Download.start()
         connect = Connect()
         while True:
             message = connect.get_message()
@@ -43,7 +49,7 @@ class Main:
                 if message[0] == '0':
                     JudgeServer.judge_task.put(message[1:])
                 elif message[0] == '1':
-                    pass
+                    ProblemServer.problem_task.put(message[1:])
                 elif message[0] == '2':
                     pass
                 else:

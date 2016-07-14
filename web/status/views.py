@@ -6,7 +6,7 @@ from forms import SubmitForm
 from models import Solve, ce_info
 from users.models import User
 from problem.models import Problem
-from core.connect import Connect
+from web.connect import Connect
 import logging
 
 

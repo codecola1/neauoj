@@ -15,134 +15,161 @@
 
 {% block bodytext %}
     {% block head_form %}{% endblock %}
-    {% if p.title %}
-        <div class="page-header title">
-            <h1>{{ p.title }}
-                <small style="margin-left: 1em">From {{ p.oj|upper }}</small>
-            </h1>
-            <div class="info">
-                <p>
-                    <strong>Time Limit:</strong>&nbsp;{{ p.time_limit_c }}MS / {{ p.time_limit_java }}MS (C/Java)&nbsp;
-                    <strong>Memory Limit:</strong>&nbsp;{{ p.memory_limit_c }}K / {{ p.memory_limit_java }}K (C/Java)
-                </p>
-            </div>
+    {% if wait %}
+        <div class="container" style="text-align: center;min-height: 600px">
+            <img src="/img/wait.gif" title="menu" style="margin-top: 10%"/>
         </div>
-    {% endif %}
-    {% if p.description %}
-        <div class="container">
-            <h3>Description</h3>
-
-            <div class="container"><p>{{ p.description|safe }}</p></div>
-        </div>
-    {% endif %}
-    {% if p.input %}
-        <div class="container">
-            <h3>Input</h3>
-
-            <div class="container"><p>{{ p.input|safe }}</p></div>
-        </div>
-    {% endif %}
-    {% if p.output %}
-        <div class="container">
-            <h3>Output</h3>
-
-            <div class="container"><p>{{ p.output|safe }}</p></div>
-        </div>
-    {% endif %}
-    {% if p.sample_input %}
-        <div class="container">
-            <h3>Sample Input</h3>
-
-            <div class="container">
-                <pre>{{ p.sample_input|safe }}</pre>
-            </div>
-        </div>
-    {% endif %}
-    {% if p.sample_output %}
-        <div class="container">
-            <h3>Sample Output</h3>
-
-            <div class="container">
-                <pre>{{ p.sample_output|safe }}</pre>
-            </div>
-        </div>
-    {% endif %}
-    {% if p.hint %}
-        <div class="container">
-            <blockquote style="margin-left: 15px;margin-top: 15px">
-                <h3>Hint</h3>
-
-                <div class="container" style="width: auto"><p>{{ p.hint|safe }}</p></div>
-            </blockquote>
-        </div>
-    {% endif %}
-    {% if p.source %}
-        <div class="container">
-            <h3>Source</h3>
-
-            <div class="container"><p>{{ p.source|safe }}</p></div>
-        </div>
-    {% endif %}
-    {% block submit %}
-        <div class="container">
-            <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit"
-                    style="margin:0 auto;display:block;">
-                Submit
-            </button>
-        </div>
-        <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    {% if user.is_authenticated %}
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
-                        </div>
-                        <form method="POST" action={% url "submit" %}>
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
-                                    <input name="contest" type="hidden" value="-1">
-
-                                    <div class="form-group">
-                                        <label for="id_language"
-                                               style="float: left;width: 20%;font-size: 24px;">Language:</label>
-                                        <select class="form-control" id="id_language" name="language"
-                                                style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
-                                            <option value="" selected="selected">Language</option>
-                                            <option value="c">C</option>
-                                            <option value="c++">C++</option>
-                                            <option value="java">Java</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_code"
-                                               style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
-                                    <textarea class="form-control" id="id_code" maxlength="5000" name="code" rows="20"
-                                              style="margin: auto;width: 99%;resize:none;"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" value="submit">Submit</button>
-                                <input type="hidden" name="uid" value="{{ user.id }}"/>
-                            </div>
-                        </form>
-                    {% else %}
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <h2 class="modal-title" id="myModalLabel">Error!</h2>
-                        </div>
-                        <div class="modal-body">
-                            <h3 style="text-align: center;">Please Login First!</h3>
-                        </div>
-                    {% endif %}
+    {% else %}
+        {% if p.title %}
+            <div class="page-header title">
+                <h1>{{ p.title }}
+                    <small style="margin-left: 1em">From {{ p.oj|upper }}</small>
+                </h1>
+                <div class="info">
+                    <p>
+                        <strong>Time Limit:</strong>&nbsp;{{ p.time_limit_c }}MS / {{ p.time_limit_java }}MS (C/Java)&nbsp;
+                        <strong>Memory Limit:</strong>&nbsp;{{ p.memory_limit_c }}K / {{ p.memory_limit_java }}K
+                        (C/Java)
+                    </p>
                 </div>
             </div>
-        </div>
-    {% endblock %}
+        {% endif %}
+        {% if p.description %}
+            <div class="container">
+                <h3>Description</h3>
+
+                <div class="container"><p>{{ p.description|safe }}</p></div>
+            </div>
+        {% endif %}
+        {% if p.input %}
+            <div class="container">
+                <h3>Input</h3>
+
+                <div class="container"><p>{{ p.input|safe }}</p></div>
+            </div>
+        {% endif %}
+        {% if p.output %}
+            <div class="container">
+                <h3>Output</h3>
+
+                <div class="container"><p>{{ p.output|safe }}</p></div>
+            </div>
+        {% endif %}
+        {% if p.sample_input %}
+            <div class="container">
+                <h3>Sample Input</h3>
+
+                <div class="container">
+                    <pre>{{ p.sample_input|safe }}</pre>
+                </div>
+            </div>
+        {% endif %}
+        {% if p.sample_output %}
+            <div class="container">
+                <h3>Sample Output</h3>
+
+                <div class="container">
+                    <pre>{{ p.sample_output|safe }}</pre>
+                </div>
+            </div>
+        {% endif %}
+        {% if p.hint %}
+            <div class="container">
+                <blockquote style="margin-left: 15px;margin-top: 15px">
+                    <h3>Hint</h3>
+
+                    <div class="container" style="width: auto"><p>{{ p.hint|safe }}</p></div>
+                </blockquote>
+            </div>
+        {% endif %}
+        {% if p.source %}
+            <div class="container">
+                <h3>Source</h3>
+
+                <div class="container"><p>{{ p.source|safe }}</p></div>
+            </div>
+        {% endif %}
+        {% block submit %}
+            <div class="container">
+                <button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#submit"
+                        style="margin:0 auto;display:block;">
+                    Submit
+                </button>
+            </div>
+            <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        {% if user.is_authenticated %}
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Submit Your Code</h4>
+                            </div>
+                            <form method="POST" action={% url "submit" %}>
+                                <div class="modal-body">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <input id="id_problem" name="problem" type="hidden" value="{{ p.id }}">
+                                        <input name="contest" type="hidden" value="-1">
+
+                                        <div class="form-group">
+                                            <label for="id_language"
+                                                   style="float: left;width: 20%;font-size: 24px;">Language:</label>
+                                            <select class="form-control" id="id_language" name="language"
+                                                    style="float: left;width: 20%;margin-top: 5px;margin-left: 20px">
+                                                <option value="" selected="selected">Language</option>
+                                                <option value="c">C</option>
+                                                <option value="c++">C++</option>
+                                                <option value="java">Java</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_code"
+                                                   style="margin-top: 20px;margin-left: -235px;font-size: 32px;">Code:</label>
+                                    <textarea class="form-control" id="id_code" maxlength="5000" name="code" rows="20"
+                                              style="margin: auto;width: 99%;resize:none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                                    <input type="hidden" name="uid" value="{{ user.id }}"/>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h2 class="modal-title" id="myModalLabel">Error!</h2>
+                            </div>
+                            <div class="modal-body">
+                                <h3 style="text-align: center;">Please Login First!</h3>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endif %}
+{% endblock %}
+{% block otherjs %}
+    {% if wait %}
+        <script type="text/javascript">
+            function fresh_problem() {
+                var url = "/problem/get_problem/" + {{ p.id }};
+                $.getJSON(url, function (ret) {
+                    if (ret['wait'] == '1') {
+                        window.setTimeout("fresh_problem()", 1000);
+                    }
+                    else {
+                        window.location.reload();
+                    }
+                });
+            }
+            $(document).ready(function () {
+                fresh_problem();
+            });
+        </script>
+    {% endif %}
 {% endblock %}

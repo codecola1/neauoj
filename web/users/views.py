@@ -3,7 +3,6 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from users.forms import *
 from users.models import OJ_account, submit_problem
-from problem.robot.access import Access
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 import logging

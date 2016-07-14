@@ -32,3 +32,6 @@ class Connect:
 
     def rejudge_code(self, sid):
         return self.send("0 3 " + str(sid) + " 1")
+
+    def download_problem(self, oj, problem_id, pid):
+        return self.send("1 %s %s %d" % (oj, problem_id, pid))
