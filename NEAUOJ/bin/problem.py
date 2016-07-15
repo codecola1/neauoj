@@ -24,6 +24,13 @@ class Problem(object):
         global img
         img = []
 
+    def get_title(self):
+        html = self.ac.visit(URL_Problem[self.oj] + str(self.problem_id))
+        if html == '':
+            return ""
+        title = use_re(RE_Problem[self.oj][1], html)
+        return title
+
     def find_img(self, s):
         parser = IMGParser()
         parser.feed(s)

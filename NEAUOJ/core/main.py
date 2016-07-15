@@ -5,6 +5,7 @@ __author__ = 'Code_Cola'
 
 import sys
 from bin.log import Log
+from bin.problem import Problem
 from db.mysql import MySQL
 from core.connect import Connect
 from core.judge_server import JudgeServer
@@ -25,7 +26,9 @@ class Main:
                 参数：[操作数 (任务消息)]
             1：Down题模块
                 参数：OJ缩写 Problem_id pid
-            2: 更新模块
+            2: 获取题目信息
+                参数：OJ缩写 Problem_id
+            3: 更新模块
                 参数：用户id
     """
 
@@ -51,13 +54,20 @@ class Main:
                 elif message[0] == '1':
                     ProblemServer.problem_task.put(message[1:])
                 elif message[0] == '2':
-                    pass
+                    try:
+                        p = Problem(message[1], message[2], 0)
+                    except IndexError:
+                        pass
+                    else:
+                        title = p.get_title()
+                        connect.receive_message("%s" % title)
                 else:
                     raise IndexError
             except IndexError:
                 logging.error("Error message!!! message: " + ' '.join(message))
             else:
                 connect.receive_message()
+                connect.close_connect()
 
 
 if __name__ == '__main__':

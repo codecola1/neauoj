@@ -95,7 +95,7 @@ class ProblemAccess(Access):
 
     def visit(self, url, post_data=None, referer=''):
         s = super(ProblemAccess, self).visit(url, post_data, referer)
-        match = re.search(RE_Problem[self.oj][0], s, re.M)
+        match = re.search(RE_Problem[self.oj][0], s, re.M | re.I)
         return "" if match else s
 
     def save_img(self, url, problem_id=''):

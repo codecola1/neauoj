@@ -18,14 +18,20 @@ class Connect:
         self.server.bind(Socket_PATH)
         os.chmod(Socket_PATH, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
         self.server.listen(0)
+        self.receive = False
 
     def get_message(self):
         self.connection, address = self.server.accept()
         message = self.connection.recv(1024).split(' ')
+        self.receive = False
         return message
 
     def receive_message(self, message='Receive!'):
-        self.connection.send(message)
+        if not self.receive:
+            self.connection.send(message)
+            self.receive = True
+
+    def close_connect(self):
         self.connection.close()
 
     def __del__(self):

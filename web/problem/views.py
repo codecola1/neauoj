@@ -107,6 +107,7 @@ def problem_list(req):
         'len': range(leng),
     }, context_instance=RequestContext(req))
 
+
 def get_problem(req, pid):
     data = {
         'wait': 1
@@ -124,10 +125,9 @@ def get_problem(req, pid):
         }
     return JsonResponse(data)
 
+
 def get_problem_info(req, oj, problem_id, index):
     problem_id = int(problem_id)
-    new = 0
-    pinfo = ''
     data = {
         'pid': 0,
         'title': '',
@@ -138,25 +138,22 @@ def get_problem_info(req, oj, problem_id, index):
         pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
     except:
         if oj != 'neau':
-            # p = Problem(oj=oj, problem_id=problem_id, judge_type=1)
-            # p.save()
-            # c = Connect()
-            # c.download_problem(oj, problem_id, p.id)
-            # sleep(0.5)
-            try:
-                pinfo = Problem.objects.get(oj=oj, problem_id=problem_id)
-            except:
-                pinfo = ''
-            else:
-                new = 1
-        else:
-            pinfo = ''
-    if pinfo:
+            c = Connect()
+            title = c.test_problem(oj, problem_id).decode('UTF-8')
+            if len(title):
+                p = Problem(oj=oj, problem_id=problem_id, judge_type=1)
+                p.save()
+                c = Connect()
+                c.download_problem(oj, problem_id, p.id)
+                data['pid'] = p.id
+                data['title'] = title
+                data['new'] = 1
+    else:
         data = {
             'pid': pinfo.id,
             'title': pinfo.title,
             'index': index,
-            'new': new
+            'new': 0
         }
     return JsonResponse(data)
 

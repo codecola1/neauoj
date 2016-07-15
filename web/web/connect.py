@@ -33,5 +33,8 @@ class Connect:
     def rejudge_code(self, sid):
         return self.send("0 3 " + str(sid) + " 1")
 
+    def test_problem(self, oj, problem_id):
+        return self.send("2 %s %s" % (oj, problem_id))
+
     def download_problem(self, oj, problem_id, pid):
         return self.send("1 %s %s %d" % (oj, problem_id, pid))
