@@ -5,23 +5,20 @@ __author__ = 'Code_Cola'
 
 import MySQLdb
 from conf.global_config import DATABASES
-from bin.log import Log
+from bin.log import logging
 
 host = DATABASES['default']['HOST']
 username = DATABASES['default']['USER']
 password = DATABASES['default']['PASSWORD']
 database = DATABASES['default']['NAME']
-logging = Log()
 
 
 class MySQLConnectError(Exception):
-    def __init__(self, arg):
-        self.args = arg
+    pass
 
 
 class MySQLQueryError(Exception):
-    def __init__(self, arg):
-        self.args = arg
+    pass
 
 
 class MySQL:

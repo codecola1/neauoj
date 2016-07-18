@@ -8,7 +8,6 @@ import os
 import time
 import atexit
 from signal import SIGTERM
-# from judge import main
 from core.main import Main
 from conf.global_config import Daemon_PATH
 

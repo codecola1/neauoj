@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 import logging
 import time
-import socket
+from web.connect import Connect
 
 from status.models import Solve
 
@@ -187,21 +187,20 @@ def add_account(req):
         else:
             raise Http404()
 
+
 def test_account(oj, username, password):
     try:
         na = OJ_account.objects.get(oj=oj, username=username, password=password)
     except:
-        ac = Access(oj, username, password)
-        return ac.logined()
+        c = Connect()
+        return True if c.test_user(oj, username, password) == '1' else False
     else:
         return False
 
+
 def updata_user(user):
-    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    client.connect("/tmp/neauoj.sock")
-    client.send("1 " + str(user.info.id))
-    receive = client.recv(1024)
-    client.close()
+    c = Connect()
+    c.update_user(str(user.info.id))
 
 
 def updating(req, username):
@@ -279,3 +278,21 @@ def useradmin(req):
         }, context_instance=RequestContext(req))
     else:
         form = AddUserForm(req.POST)
+
+
+@permission_required('contest.add_contest')
+def clone_contest(req):
+    if req.method == 'GET':
+        form = CloneContestFrom()
+        return render_to_response("clone_contest.html", {
+            'form': form,
+        }, context_instance=RequestContext(req))
+    else:
+        form = CloneContestFrom(req.POST)
+        if form.is_valid():
+            form.save(req.user)
+            return HttpResponseRedirect("/")
+        else:
+            return render_to_response("clone_contest.html", {
+                'form': form,
+            }, context_instance=RequestContext(req))

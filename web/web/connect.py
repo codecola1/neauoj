@@ -3,8 +3,8 @@
 
 __author__ = 'Code_Cola'
 
-
 import socket
+
 
 class Connect:
     def __init__(self):
@@ -38,3 +38,19 @@ class Connect:
 
     def download_problem(self, oj, problem_id, pid):
         return self.send("1 %s %s %d" % (oj, problem_id, pid))
+
+    def test_user(self, oj, username, password):
+        return self.send("3 %s %s %s" % (oj, username, password))
+
+    def update_user(self, sid):
+        return self.send("4 %s" % sid)
+
+    def test_contest(self, cid):
+        from core.models import Judge_account
+        account = Judge_account.objects.get(oj='hdu_std')
+        return self.send("5 hdu_std %s %s %d" % (account.username, account.password, cid))
+
+    def clone_contest(self, cid, contest_id):
+        from core.models import Judge_account
+        account = Judge_account.objects.get(oj='hdu_std')
+        return self.send("6 hdu_std %s %s %d %d" % (account.username, account.password, cid, contest_id))

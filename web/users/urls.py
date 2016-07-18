@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^updating/([a-zA-Z0-9_]+)/$', views.updating, name='updating'),
     url(r'^permission/$', views.permission, name='permission'),
     url(r'^useradmin/$', views.useradmin, name='useradmin'),
+    url(r'^clone_contest/$', views.clone_contest, name='clone_contest'),
 ]

@@ -5,7 +5,7 @@ __author__ = 'Code_Cola'
 
 from Queue import Queue
 import threading
-from bin.log import Log
+from bin.log import logging
 from bin.judge import VirtualJudge
 from bin.access import JudgeAccess
 from db.mysql import MySQL, MySQLQueryError
@@ -57,7 +57,7 @@ class JudgeServer(threading.Thread):
         JudgeServer.judge_queue[OJ_NAME] = Queue(Local_Judge_Limit)
         JudgeServer.judge_consumers[OJ_NAME] = []
         for i in range(Local_Judge_Limit):
-            JudgeServer.judge_consumers[OJ_NAME].append(JudgeConsumer(OJ_NAME, path_index=i))
+            JudgeServer.judge_consumers[OJ_NAME].append(LocalJudgeConsumer(OJ_NAME, path_index=i))
             JudgeServer.judge_consumers[OJ_NAME][-1].setDaemon(True)
             JudgeServer.judge_consumers[OJ_NAME][-1].start()
         oj_list = self.mysql.query("SELECT DISTINCT oj FROM core_judge_account WHERE defunct=0")
@@ -68,7 +68,7 @@ class JudgeServer(threading.Thread):
                 "SELECT username, password FROM core_judge_account WHERE oj='%s' AND defunct=0" % oj)
             JudgeServer.judge_queue[oj] = Queue(len(judge_account))
             for username, password in judge_account:
-                JudgeServer.judge_consumers[oj].append(JudgeConsumer(oj, username=username, password=password))
+                JudgeServer.judge_consumers[oj].append(VirtualJudgeConsumer(oj, username=username, password=password))
                 JudgeServer.judge_consumers[oj][-1].setDaemon(True)
                 JudgeServer.judge_consumers[oj][-1].start()
 
@@ -147,11 +147,10 @@ class JudgeConsumer(threading.Thread):
             1 (sid, pid, uid, judge_type)     判题任务请求
     """
 
-    def __init__(self, oj, path_index=None, username=None, password=None):
+    def __init__(self, oj):
         super(JudgeConsumer, self).__init__()
         self.mysql = MySQL()
         self.oj = oj
-        self.run_path = None
         self.sid = None
         self.pid = None
         self.uid = None
@@ -159,13 +158,6 @@ class JudgeConsumer(threading.Thread):
         self.last_result = None
         self.language = None
         self.code = None
-        if path_index is not None:
-            self.run_path = Local_PATH + '/work/run' + str(path_index)
-            if not os.path.exists(self.run_path):
-                make_dir(self.run_path)
-        if username is not None and password is not None:
-            self.username = username
-            self.password = password
 
     def get_ready(self, info):
         self.sid, self.pid, self.uid, self.last_result = info
@@ -175,49 +167,12 @@ class JudgeConsumer(threading.Thread):
         self.code = result[0][1]
         result = self.mysql.query("SELECT problem_id  FROM problem_problem WHERE id = '%s'" % self.pid)
         self.problem_id = result[0][0]
-        if self.run_path is not None:
-            result = self.mysql.query(
-                "SELECT time_limit_c, time_limit_java, memory_limit_c, memory_limit_java, data_number FROM problem_problem WHERE id = '%s'" % self.pid)
-            time_limit_c = result[0][0]
-            time_limit_java = result[0][1]
-            memory_limit_c = result[0][2]
-            memory_limit_java = result[0][3]
-            data_number = result[0][4]
-            data_path = Data_PATH + str(self.pid)
-            if not os.path.exists(data_path):
-                make_dir(data_path)
-            code_path = self.run_path + '/Main.' + Language_Map[result[0][0]][1]
-            file(code_path, 'w+').write("%s" % code)
-            # f = os.popen('./night %s %s %s %s %s %s %s %s' % (
-            #     self.language, self.run_path, self.data_path, self.judge_type, self.time_limit_c, self.time_limit_java,
-            #     self.memory_limit_c, self.data_number))
-            # self.data = f.readline()
-            # f.close()
-
-    def get_last_sid(self):
-        ac = JudgeAccess(self.oj, self.username, self.password)
-        return ac.get_last_sid()
 
     def judge(self):
-        if self.run_path is None:
-            vj = VirtualJudge(
-                self.username,
-                self.password,
-                self.get_last_sid(),
-                self.language,
-                self.code,
-                self.oj,
-                self.problem_id,
-                self.sid
-            )
-            vj.judge()
-        else:
-            pass
+        pass
 
     def judge_over(self):
-        if self.run_path is not None:
-            if self.run_path is not "":
-                os.system("rm -rf %s/*" % self.run_path)
+        pass
 
     def run(self):
         while True:
@@ -231,7 +186,73 @@ class JudgeConsumer(threading.Thread):
                 self.judge_over()
 
 
-def make_dir(path):
-    if not os.path.exists(path):
-        make_dir('/'.join(os.path.join(path.split('/')[:-1])))
-        os.mkdir(path)
+class LocalJudgeConsumer(JudgeConsumer):
+    def __init__(self, oj, path_index):
+        super(LocalJudgeConsumer, self).__init__(oj)
+        self.run_path = Local_PATH + '/work/run' + str(path_index)
+        self.time_limit_c = None
+        self.time_limit_java = None
+        self.memory_limit_c = None
+        self.memory_limit_java = None
+        self.data_number = None
+        if not os.path.exists(self.run_path):
+            self.make_dir(self.run_path)
+
+    def make_dir(self, path):
+        if not os.path.exists(path):
+            self.make_dir('/'.join(os.path.join(path.split('/')[:-1])))
+            os.mkdir(path)
+
+    def get_ready(self, info):
+        super(LocalJudgeConsumer, self).get_ready(info)
+        result = self.mysql.query(
+            "SELECT time_limit_c, time_limit_java, memory_limit_c, memory_limit_java, data_number FROM problem_problem WHERE id = '%s'" % self.pid)
+        self.time_limit_c = result[0][0]
+        self.time_limit_java = result[0][1]
+        self.self.memory_limit_c = result[0][2]
+        self.memory_limit_java = result[0][3]
+        self.data_number = result[0][4]
+        data_path = Data_PATH + str(self.pid)
+        if not os.path.exists(data_path):
+            self.make_dir(data_path)
+        code_path = self.run_path + '/Main.' + Language_Map[result[0][0]][1]
+        file(code_path, 'w+').write("%s" % code)
+
+    def judge(self):
+        self.mysql.update("UPDATE status_solve SET status = 'Judge Error' WHERE id = '%s'" % self.sid)
+
+    def judge_over(self):
+        if self.run_path is not "":
+            os.system("rm -rf %s/*" % self.run_path)
+
+
+class VirtualJudgeConsumer(JudgeConsumer):
+    def __init__(self, oj, username, password):
+        super(VirtualJudgeConsumer, self).__init__(oj)
+        self.username = username
+        self.password = password
+        self.cid = None
+
+    def get_ready(self, info):
+        super(VirtualJudgeConsumer, self).get_ready(info)
+        if self.oj == 'hdu_std':
+            sql = "SELECT data_number FROM problem_problem WHERE id='%d'" % self.pid
+            self.cid = int(self.mysql.query(sql)[0][0])
+
+    def get_last_sid(self):
+        ac = JudgeAccess(self.oj, self.username, self.password, self.cid)
+        return ac.get_last_sid()
+
+    def judge(self):
+        vj = VirtualJudge(
+            self.username,
+            self.password,
+            self.get_last_sid(),
+            self.language,
+            self.code,
+            self.oj,
+            self.problem_id,
+            self.sid,
+            self.cid
+        )
+        vj.judge()

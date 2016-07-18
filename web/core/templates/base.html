@@ -99,6 +99,9 @@
                             {% if perms.auth.change_user %}
                                 <li><a href="{% url "useradmin" %}">Users</a></li>
                             {% endif %}
+                            {% if perms.contest.add_contest %}
+                                <li><a href="{% url "clone_contest" %}">Clone Contest</a></li>
+                            {% endif %}
                             <li role="separator" class="divider"></li>
                             <li><a href="{% url "logout" %}">Logout</a></li>
                         </ul>
@@ -190,6 +193,7 @@
         <p class="text-center">Any questions,please contact the <a
                 href="mailto:code_cola@163.com"><strong>Author</strong></a>.
         </p>
+
         <p class="text-center"><a href="http://www.miitbeian.gov.cn" target="_blank">京ICP备16001627号-1</a></p>
     </footer>
 </div>

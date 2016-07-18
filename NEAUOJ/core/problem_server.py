@@ -5,13 +5,10 @@ __author__ = 'Code_Cola'
 
 from Queue import Queue
 import threading
-from bin.log import Log
+from bin.log import logging
 from bin.problem import Problem
-from bin.access import ProblemAccess
 from db.mysql import MySQL, MySQLQueryError
 from conf.global_config import *
-
-logging = Log()
 
 
 class ProblemServer(threading.Thread):

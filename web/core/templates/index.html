@@ -172,6 +172,9 @@
                                     {% if perms.auth.change_user %}
                                         <li><a href="{% url "useradmin" %}">Users</a></li>
                                     {% endif %}
+                                    {% if perms.contest.add_contest %}
+                                        <li><a href="{% url "clone_contest" %}">Clone Contest</a></li>
+                                    {% endif %}
                                     <li role="separator" class="divider"></li>
                                     <li><a href="{% url "logout" %}">Logout</a></li>
                                 </ul>
@@ -306,7 +309,8 @@
                     <div class="e-left-inner-grid-right">
                         <h4>竞赛形式</h4>
 
-                        <p>ACM-ICPC以团队的形式代表各学校参赛，每队最多由3名队员组成。比赛期间，每队使用1台电脑需要在5个小时内使用C、C++、Pascal或Java中的一种编写程序解决7到11个问题，试题描述为英文。</p>
+                        <p>
+                            ACM-ICPC以团队的形式代表各学校参赛，每队最多由3名队员组成。比赛期间，每队使用1台电脑需要在5个小时内使用C、C++、Pascal或Java中的一种编写程序解决7到11个问题，试题描述为英文。</p>
                     </div>
                     <div class="clearfix"></div>
                 </div>

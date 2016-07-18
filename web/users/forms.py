@@ -4,6 +4,7 @@
 from django.contrib.auth.models import User, Permission
 from users.models import Info
 from django import forms
+from web.connect import Connect
 import re
 
 
@@ -215,6 +216,7 @@ class EditInforForm(forms.Form):
         u.info.nickname = nickname
         u.info.save()
 
+
 class AccountForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField()
@@ -227,3 +229,46 @@ class AccountForm(forms.Form):
 
         return [username, password, oj.lower()]
 
+
+class CloneContestFrom(forms.Form):
+    cid = forms.IntegerField()
+
+    def clean_cid(self):
+        cid = self.cleaned_data.get("cid")
+        c = Connect()
+        number = int(c.test_contest(cid))
+        if number == 0:
+            raise forms.ValidationError("No Such Contest")
+        self.number = number
+        return cid
+
+    def save(self, user):
+        cid = self.cleaned_data.get("cid")
+        from datetime import datetime
+        from problem.models import Problem
+        from contest.models import Contest, In_Problem
+
+        contest = Contest(
+            title="None",
+            start_time=datetime.now(),
+            end_time=datetime.now(),
+            description="",
+            private=0,
+            impose=0,
+            type=1,
+            password="",
+            creator=user,
+        )
+        contest.save()
+        for i in range(self.number):
+            p = Problem(oj="hdu_std", problem_id=i + 1001, judge_type=1, data_number=cid)
+            p.save()
+            new_problem = In_Problem(
+                problem=p,
+                problem_new_id=i,
+                title="None",
+            )
+            new_problem.save()
+            contest.problem.add(new_problem)
+        c = Connect()
+        c.clone_contest(cid, contest.id)

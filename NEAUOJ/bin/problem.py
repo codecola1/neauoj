@@ -4,13 +4,12 @@
 __author__ = 'Code_Cola'
 
 import re
+from bin.log import logging
 from HTMLParser import HTMLParser
-from bin.log import Log
 from db.mysql import MySQL
-from bin.access import ProblemAccess
+from bin.access import *
 from conf.global_config import *
 
-logging = Log()
 img = []
 
 
@@ -21,12 +20,16 @@ class Problem(object):
         self.problem_id = problem_id
         self.pid = pid
         self.ac = ProblemAccess(oj)
+        self.problem_url = URL_Problem[self.oj] + str(self.problem_id)
         global img
         img = []
 
     def get_title(self):
-        html = self.ac.visit(URL_Problem[self.oj] + str(self.problem_id))
-        if html == '':
+        try:
+            html = self.ac.visit(self.problem_url)
+        except VisitError:
+            return ""
+        except NoSuchProblem:
             return ""
         title = use_re(RE_Problem[self.oj][1], html)
         return title
@@ -38,8 +41,7 @@ class Problem(object):
             i = i.replace('../', '')
             self.ac.save_img(i if i[0] == '/' or i[0] == 'h' else '/' + i, self.problem_id)
 
-    def run(self):
-        html = self.ac.visit(URL_Problem[self.oj] + str(self.problem_id))
+    def match_info(self, html):
         title = use_re(RE_Problem[self.oj][1], html)
         if self.oj == 'poj':
             time_limit_c = use_re(RE_Problem[self.oj][2], html)
@@ -99,6 +101,23 @@ class Problem(object):
         )
         self.mysql.update(sql)
         logging.info("Download Problem: " + self.oj + "-" + str(self.problem_id) + " Info Over")
+
+    def run(self, flag=0):
+        try:
+            html = self.ac.visit(self.problem_url)
+        except VisitError:
+            if flag < 5:
+                self.run(flag=flag + 1)
+            return
+        except NoSuchProblem:
+            return
+        self.match_info(html)
+
+class ContestProblem(Problem):
+    def __init__(self, oj, username, password, cid, problem_id, pid):
+        super(ContestProblem, self).__init__(oj, problem_id, pid)
+        self.ac = ContestProblemAccess(oj, username, password, cid)
+        self.problem_url = URL_Problem[self.oj] % (problem_id, cid)
 
 
 class IMGParser(HTMLParser):
