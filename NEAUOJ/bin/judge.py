@@ -101,7 +101,6 @@ class VirtualJudge(Judge):
         else:
             url = URL_Status[self.oj] + self.username
         html = self.ac.visit(url)
-        print html
         match = re.search(RE_Judge_Status[self.oj] % self.last_sid, html, re.M | re.I | re.S)
         if match:
             status = match.group(1)
