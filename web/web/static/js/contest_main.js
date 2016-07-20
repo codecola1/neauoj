@@ -14,20 +14,27 @@ $(document).ready(function () {
             $('#tlj' + pid).html(ret['tlj']);
             $('#mlc' + pid).html(ret['mlc']);
             $('#mlj' + pid).html(ret['mlj']);
+            var math = null;
             if (ret['description']) {
                 var description = $('#description' + pid);
                 description.parent().parent().removeAttr('hidden');
                 description.html(ret['description']);
+                math = document.getElementById("description" + pid);
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,math]);
             }
             if (ret['input']) {
                 var input = $('#input' + pid);
                 input.parent().parent().removeAttr('hidden');
                 input.html(ret['input']);
+                math = document.getElementById("input" + pid);
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,math]);
             }
             if (ret['output']) {
                 var output = $('#output' + pid);
                 output.parent().parent().removeAttr('hidden');
                 output.html(ret['output']);
+                math = document.getElementById("output" + pid);
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,math]);
             }
             if (ret['sinput']) {
                 var sinput = $('#sinput' + pid);
@@ -43,6 +50,8 @@ $(document).ready(function () {
                 var hint = $('#hint' + pid);
                 hint.parent().parent().parent().removeAttr('hidden');
                 hint.html(ret['hint']);
+                math = document.getElementById("hint" + pid);
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,math]);
             }
             if (ret['source']) {
                 var source = $('#source' + pid);
@@ -168,6 +177,7 @@ $(document).ready(function () {
         this.penalty = penalty;
         this.ac = 0;
     }
+
     function User(user_id, problem_num) {
         this.user_id = user_id;
         this.problems = new Array(problem_num);
@@ -177,6 +187,7 @@ $(document).ready(function () {
         this.ac_num = 0;
         this.all_time = 0;
     }
+
     function to_time(time_s) {
         var s = time_s % 60;
         time_s = parseInt(time_s / 60);

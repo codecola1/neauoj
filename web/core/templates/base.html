@@ -16,6 +16,33 @@
     <link rel="stylesheet" href="/css/base.css" type="text/css"/>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [
+            ['$', '$'],
+            ['\\(', '\\)']
+          ]
+        },
+        TeX: {
+          equationNumbers: {
+            autoNumber: ["AMS"],
+            useLabelIds: true
+          }
+        },
+        "HTML-CSS": {
+          linebreaks: {
+            automatic: true
+          }
+        },
+        SVG: {
+          linebreaks: {
+            automatic: true
+          }
+        }
+      });
+    </script>
+    <script src="//cdn.bootcss.com/mathjax/2.4.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     {% block othercss %}{% endblock %}
     {% block headjs %}{% endblock %}
 </head>

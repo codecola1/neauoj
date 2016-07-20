@@ -124,6 +124,7 @@ class JudgeAccess(UserAccess):
         super(JudgeAccess, self).__init__(oj, username, password)
         self.cid = cid
         self.login(cid)
+        self.is_login(cid)
 
     def get_last_sid(self):
         if self.cid is not None:
