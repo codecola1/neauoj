@@ -64,11 +64,11 @@ class VirtualJudge(Judge):
         while self.refresh_again(status[0]):
             sleep(0.2)
             status = self.refresh_status()
-        if self.is_ce(status):
+        if self.is_ce(status[0]):
             if self.cid is not None:
-                url = URL_CE[self.oj] % (self.cid, self.rid)
+                url = URL_CE[self.oj] % (self.cid, self.last_sid)
             else:
-                url = URL_CE[self.oj] + self.rid
+                url = URL_CE[self.oj] + self.last_sid
             html = self.ac.visit(url)
             t = re.search(RE_Get_CE[self.oj], html, re.M | re.I | re.S)
             ce_info = t.group(1)
