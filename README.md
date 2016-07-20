@@ -1,7 +1,7 @@
 # neauoj
 The NEAU Online Judge
 
-必备环境：Python 2.7、Django 1.8.7、MySQL、MySQLdb
+必备环境：Python 2.7、Django 1.8.7、MySQL、MySQLdb、PyExecJS
 
 python manage.py syncdb
 python manage.py makemigrations
