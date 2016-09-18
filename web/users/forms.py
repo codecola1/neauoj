@@ -22,22 +22,22 @@ class UserRegisterForm(forms.ModelForm):
         (u'others', u'其他'),
     )
     grade_choice = [(u'', u'Grade')]
-    grade_choice.extend([(unicode(year), unicode(year)) for year in range(2010, 2016)])
+    grade_choice.extend([(unicode(year), unicode(year)) for year in range(2010, 2017)])
     username = forms.CharField(
-        error_messages={'required': 'Your username is Required'}
+            error_messages={'required': 'Your username is Required'}
     )
     email = forms.EmailField(error_messages={'required': 'Your email is Required'})
     password1 = forms.CharField(error_messages={'required': 'Your password is Required'})
     password2 = forms.CharField(error_messages={'required': 'Your password confirmation is Required'})
     school = forms.ChoiceField(
-        error_messages={'required': 'Your school is Required'},
-        choices=school_choice,
-        widget=forms.Select(attrs={'class': 'form-control'})
+            error_messages={'required': 'Your school is Required'},
+            choices=school_choice,
+            widget=forms.Select(attrs={'class': 'form-control'})
     )
     grade = forms.ChoiceField(
-        error_messages={'required': 'Your grade is Required'},
-        choices=grade_choice,
-        widget=forms.Select(attrs={'class': 'form-control'})
+            error_messages={'required': 'Your grade is Required'},
+            choices=grade_choice,
+            widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:
@@ -49,8 +49,8 @@ class UserRegisterForm(forms.ModelForm):
         ma = re.match('^[a-zA-Z0-9_]+$', username)
         if not ma:
             raise forms.ValidationError(
-                self.error_messages['username_mismatch'],
-                code='username_mismatch',
+                    self.error_messages['username_mismatch'],
+                    code='username_mismatch',
             )
         try:
             u = User.objects.get(username=username)
@@ -58,8 +58,8 @@ class UserRegisterForm(forms.ModelForm):
             return username
         else:
             raise forms.ValidationError(
-                self.error_messages['username_mismatch_have'],
-                code='username_mismatch_have',
+                    self.error_messages['username_mismatch_have'],
+                    code='username_mismatch_have',
             )
 
     def clean_password2(self):
@@ -67,27 +67,21 @@ class UserRegisterForm(forms.ModelForm):
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(
-                self.error_messages['password_mismatch'],
-                code='password_mismatch',
+                    self.error_messages['password_mismatch'],
+                    code='password_mismatch',
             )
         return password2
 
     def clean_school(self):
         school = self.cleaned_data.get("school")
         if not school or school == 'School':
-            raise forms.ValidationError(
-                self.error_messages['school_mismatch'],
-                code='school_mismatch',
-            )
+            school = u"东北农业大学"
         return school
 
     def clean_grade(self):
         grade = self.cleaned_data.get("grade")
         if not grade or not grade.isdigit():
-            raise forms.ValidationError(
-                self.error_messages['grade_mismatch'],
-                code='grade_mismatch',
-            )
+            grade = "2016"
         return grade
 
     def save(self, commit=True):
@@ -108,13 +102,13 @@ class UserRegisterForm(forms.ModelForm):
 class PermissionForm(forms.Form):
     username = forms.CharField()
     permission = forms.ChoiceField(
-        choices=(
-            ('1', 'Can add permission'),
-            ('8', 'Can change user'),
-            ('43', 'Can add problem'),
-            ('47', 'Can change solve'),
-            ('40', 'Can add Contest'),
-        )
+            choices=(
+                ('1', 'Can add permission'),
+                ('8', 'Can change user'),
+                ('43', 'Can add problem'),
+                ('47', 'Can change solve'),
+                ('40', 'Can add Contest'),
+            )
     )
 
     def clean_username(self):
@@ -123,8 +117,8 @@ class PermissionForm(forms.Form):
             User.objects.get(username=username)
         except:
             raise forms.ValidationError(
-                "No such User",
-                code='username_mismatch',
+                    "No such User",
+                    code='username_mismatch',
             )
         return username
 
@@ -151,13 +145,13 @@ class ChangePasswd(forms.Form):
             self.user = User.objects.get(username=username)
         except:
             raise forms.ValidationError(
-                "No such User",
-                code='username_mismatch',
+                    "No such User",
+                    code='username_mismatch',
             )
         if not self.permission and self.user != self.this_user:
             raise forms.ValidationError(
-                "Access denied!",
-                code='username_mismatch',
+                    "Access denied!",
+                    code='username_mismatch',
             )
         return username
 
@@ -166,8 +160,8 @@ class ChangePasswd(forms.Form):
         password2 = self.cleaned_data.get("password2")
         if not self.permission and not self.user.check_password(password1):
             raise forms.ValidationError(
-                "Incorrect password!",
-                code='password_mismatch',
+                    "Incorrect password!",
+                    code='password_mismatch',
             )
         return password2
 
@@ -183,6 +177,50 @@ class AddUserForm(forms.Form):
     pass
 
 
+class SignUpForm(forms.Form):
+    name = forms.CharField()
+    student_id = forms.CharField()
+    classes = forms.CharField()
+    telephone = forms.CharField()
+    qq = forms.CharField()
+
+    def clean_student_id(self):
+        student_id = self.cleaned_data.get("student_id")
+        ma = re.match('^[0-9]{8}$', student_id)
+        if not ma:
+            student_id = "None"
+        return student_id
+
+    def clean_telephone(self):
+        telephone = self.cleaned_data.get("telephone")
+        ma = re.match('^[0-9]{11}$', telephone)
+        if not ma:
+            telephone = "None"
+        return telephone
+
+    def clean_qq(self):
+        qq = self.cleaned_data.get("qq")
+        ma = re.match('^[0-9]+$', qq)
+        if not ma:
+            qq = "None"
+        return qq
+
+    def save(self, user):
+        name = self.cleaned_data.get("name")
+        student_id = self.cleaned_data.get("student_id")
+        classes = self.cleaned_data.get("classes")
+        telephone = self.cleaned_data.get("telephone")
+        qq = self.cleaned_data.get("qq")
+
+        user.info.real_name = name
+        user.info.student_id = student_id
+        user.info.classes = classes
+        user.info.telephone = telephone
+        user.info.qq = qq
+        user.info.status = 1
+        user.info.save()
+
+
 class EditInforForm(forms.Form):
     username = forms.CharField()
     nickname = forms.CharField()
@@ -194,8 +232,8 @@ class EditInforForm(forms.Form):
             self.user = User.objects.get(username=username)
         except:
             raise forms.ValidationError(
-                "No such User",
-                code='username_mismatch',
+                    "No such User",
+                    code='username_mismatch',
             )
         return username
 
@@ -203,8 +241,8 @@ class EditInforForm(forms.Form):
         password = self.cleaned_data.get('password')
         if not self.user.check_password(password):
             raise forms.ValidationError(
-                "Incorrect password!",
-                code='password_mismatch',
+                    "Incorrect password!",
+                    code='password_mismatch',
             )
         return password
 
@@ -248,27 +286,33 @@ class CloneContestFrom(forms.Form):
         from problem.models import Problem
         from contest.models import Contest, In_Problem
 
-        contest = Contest(
-            title="None",
-            start_time=datetime.now(),
-            end_time=datetime.now(),
-            description="",
-            private=0,
-            impose=0,
-            type=1,
-            password="",
-            creator=user,
-        )
-        contest.save()
-        for i in range(self.number):
-            p = Problem(oj="hdu_std", problem_id=i + 1001, judge_type=1, data_number=cid)
-            p.save()
-            new_problem = In_Problem(
-                problem=p,
-                problem_new_id=i,
-                title="None",
+        try:
+            contest = Contest.objects.get(clone=cid)
+            flag = True
+        except:
+            contest = Contest(
+                    title="None",
+                    start_time=datetime.now(),
+                    end_time=datetime.now(),
+                    description="",
+                    private=0,
+                    impose=0,
+                    type=1,
+                    password="",
+                    creator=user,
             )
-            new_problem.save()
-            contest.problem.add(new_problem)
+            contest.save()
+            flag = False
+        if not flag:
+            for i in range(self.number):
+                p = Problem(oj="hdu_std", problem_id=i + 1001, judge_type=1, data_number=cid)
+                p.save()
+                new_problem = In_Problem(
+                        problem=p,
+                        problem_new_id=i,
+                        title="None",
+                )
+                new_problem.save()
+                contest.problem.add(new_problem)
         c = Connect()
         c.clone_contest(cid, contest.id)

@@ -41,6 +41,7 @@ class Contest(models.Model):
     password = models.CharField(max_length=50, blank=True)
     impose = models.BooleanField(default=False)
     type = models.IntegerField()
+    clone = models.IntegerField(default=-1)
     creator = models.ForeignKey(User, default=None)
     problem = models.ManyToManyField(In_Problem)
     judger = models.ManyToManyField(Judger)

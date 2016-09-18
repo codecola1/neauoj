@@ -175,7 +175,8 @@ nav a#pull {
 @media only screen and (max-width: 768px) {
     nav {
         border-bottom: 0;
-        float: none;
+        float: right;
+        width: 40%;
     }
 
     nav ul {
@@ -223,7 +224,7 @@ nav a#pull {
 /*Smartphone*/
 @media only screen and (max-width: 320px) {
     nav {
-        float: none;
+        float: right;
     }
 
     nav li {

@@ -30,10 +30,16 @@ class OJ_account(models.Model):
 class Info(models.Model):
     user = models.OneToOneField(User)
     nickname = models.CharField(max_length=50)
-    school = models.CharField(max_length=20)
+    school = models.CharField(max_length=20, default="None")
     grade = models.PositiveIntegerField()
     team = models.BooleanField(default=False)
+    classes = models.CharField(max_length=20, default="None")
+    real_name = models.CharField(max_length=20, default="None")
+    qq = models.CharField(max_length=15, default="None")
+    status = models.IntegerField(default=0)
     oj_account = models.ManyToManyField(OJ_account)
+    telephone = models.CharField(max_length=20, default="None")
+    student_id = models.CharField(max_length=20, default="None")
 
     def __unicode__(self):
         return self.user.username

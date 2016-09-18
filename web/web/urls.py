@@ -19,7 +19,7 @@ import os
 
 urlpatterns = [
     url(r'^$', 'core.views.index', name='home'),
-    url(r'^index/$', 'core.views.index', name='home'),
+    url(r'^index/$', 'core.views.oj_index', name='index'),
     url(r'^submit/$', 'status.views.submit', name='submit'),
     url(r'^rejudge/([0-9]+)/$', 'status.views.rejudge', name='rejudge'),
     url(r'status/', include('status.urls')),

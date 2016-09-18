@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+
+    <title>NEAU Online Judge</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" media="screen"/>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+		<script src="/js/html5shiv.js"></script>
+		<script src="/js/respond.min.js"></script>
+	<![endif]-->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- stylesheets css -->
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+
+    <link rel="stylesheet" href="/css/et-line-font.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="/css/vegas.min.css">
+    <link rel="stylesheet" href="/css/sign_up_style.css">
+
+
+</head>
+<body>
+
+<!-- preloader section -->
+<section class="preloader">
+    <div class="sk-circle">
+        <div class="sk-circle1 sk-child"></div>
+        <div class="sk-circle2 sk-child"></div>
+        <div class="sk-circle3 sk-child"></div>
+        <div class="sk-circle4 sk-child"></div>
+        <div class="sk-circle5 sk-child"></div>
+        <div class="sk-circle6 sk-child"></div>
+        <div class="sk-circle7 sk-child"></div>
+        <div class="sk-circle8 sk-child"></div>
+        <div class="sk-circle9 sk-child"></div>
+        <div class="sk-circle10 sk-child"></div>
+        <div class="sk-circle11 sk-child"></div>
+        <div class="sk-circle12 sk-child"></div>
+    </div>
+</section>
+
+<!-- home section -->
+<section id="home">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-offset-2 col-md-8 col-sm-12">
+                <div class="home-thumb">
+                    <h1 class="wow fadeInUp" data-wow-delay="0.4s">卓尔不凡</h1>
+                    <h3 class="wow fadeInUp" data-wow-delay="0.6s">东北农业大学 <strong>ACM集训队</strong> 十一集训
+                        <strong>开始报名！！！</strong></h3>
+                    {% if user.is_authenticated %}
+                        <a href="{% url "index" %}" class="btn btn-lg btn-default smoothScroll wow fadeInUp"
+                           data-wow-delay="0.8s">进入OJ</a>
+                        <a href="{% url "sign_up" %}" class="btn btn-lg btn-success smoothScroll wow fadeInUp" data-wow-delay="1.0s">报名培训</a>
+                    {% else %}
+                        <a href="#contact" class="btn btn-lg btn-default smoothScroll wow fadeInUp"
+                           data-wow-delay="0.8s">加入我们</a>
+                        <a href="#" data-toggle="modal" data-target="#modal1"
+                           class="btn btn-lg btn-success smoothScroll wow fadeInUp" data-wow-delay="1.0s">已有账号</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- about section -->
+<section id="about">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-6 col-sm-12">
+                <img src="/img/about-img.png" class="img-responsive wow fadeInUp" alt="About">
+            </div>
+
+            <div class="col-md-6 col-sm-12">
+                <div class="about-thumb">
+                    <div class="section-title">
+                        <h1 class="wow fadeIn" data-wow-delay="0.2s"><span>ABOUT</span> ACM/ICPC</h1>
+                        <h3 class="wow fadeInUp" data-wow-delay="0.4s"></h3>
+                    </div>
+                    <div class="wow fadeInUp" data-wow-delay="0.6s">
+                        <p>ACM国际大学生程序设计竞赛（ACM/ICPC）是由ACM（Association for Computing
+                            Machinery，美国计算机协会）主办的，一项旨在展示大学生创新能力、团队精神和在压力下编写程序、分析和解决问题能力的年度竞赛，竞赛的历史可以上溯到1970年，是全世界历史最悠久、规模最大、最负盛名且最具影响力的程序设计竞赛，被誉为计算机软件领域的奥林匹克竞赛，目前全球赛事由IBM公司赞助，我国上海交通大学和浙江大学曾荣获全球总冠军。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- feature section -->
+<section id="feature">
+    <div class="container">
+        <div class="row">
+
+            <svg preserveAspectRatio="none" viewBox="0 0 100 102" height="100" width="100%" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg" class="svgcolor-light">
+                <path d="M0 0 L50 100 L100 0 Z"></path>
+            </svg>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="media wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="media-object media-left">
+                        <i class="icon icon-laptop"></i>
+                    </div>
+                    <div class="media-body">
+                        <h2 class="media-heading">竞赛形式</h2>
+                        <p>
+                            ACM-ICPC以团队的形式代表各学校参赛，每队最多由3名队员组成。比赛期间，每队使用1台电脑需要在5个小时内使用C、C++、Pascal或Java中的一种编写程序解决7到11个问题，试题描述为英文。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="media wow fadeInUp" data-wow-delay="0.8s">
+                    <div class="media-object media-left">
+                        <i class="icon icon-flag"></i>
+                    </div>
+                    <div class="media-body">
+                        <h2 class="media-heading">评分标准</h2>
+                        <p>程序提交裁判运行，结果会及时通知参赛队。获胜者为正确解答题目最多且总用时最少的队伍。每道的试题用时将从竞赛开始到试题解答被判定为正确为止，其间每一次错误结果将被加罚20分钟时间。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-8">
+                <div class="media wow fadeInUp" data-wow-delay="1.2s">
+                    <div class="media-object media-left">
+                        <i class="icon icon-happy"></i>
+                    </div>
+                    <div class="media-body">
+                        <h2 class="media-heading">奖励情况</h2>
+                        <p>区域赛一般分别按10%，20%，30%的比例颁发金，银，铜奖，2010年亚洲区域赛中国大陆5大赛区由阿里巴巴公司赞助，获得金牌的选手可以享受绿色通道，进入阿里巴巴实习或参加工作。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% if not user.is_authenticated %}
+    <!-- contact section -->
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-offset-2 col-md-8 col-sm-12">
+                    <div class="section-title">
+                        <h1 class="wow fadeInUp" data-wow-delay="0.3s">加入我们</h1>
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">下面全部填写哦(＞﹏＜)</p>
+                    </div>
+                    <div class="contact-form wow fadeInUp" data-wow-delay="1.0s">
+                        <form id="contact-form" method="POST" action={% url "register" %}>
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <div class="wow fadeInLeft" data-wow-delay="0.4s">
+                                    <input type="text" name="username" class="text form-control" placeholder="用户名">
+                                    <input type="password" name="password1" class="text form-control" placeholder="密码">
+                                    <input type="password" name="password2" class="text form-control"
+                                           placeholder="确认密码">
+
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="wow fadeInRight" data-wow-delay="0.4s">
+                                    <input type="text" name="nickname" class="text form-control" placeholder="姓名">
+                                    <input type="text" name="email" class="text form-control" placeholder="邮箱">
+                                    <input name="submit" type="submit" class="form-control submit" id="submit"
+                                           value="注册">
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div hidden>
+                                <select class="form-control" id="id_school" name="school">
+                                    <option value="neau" selected="selected"></option>
+                                </select>
+                                <select class="form-control" id="id_grade" name="grade">
+                                    <option value="2016" selected="selected"></option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endif %}
+<!-- footer section -->
+<footer>
+    <div class="container">
+        <div class="row">
+            {% if not user.is_authenticated %}
+                <svg class="svgcolor-light" preserveAspectRatio="none" viewBox="0 0 100 102" height="100" width="100%"
+                     version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0 L50 100 L100 0 Z"></path>
+                </svg>
+            {% endif %}
+            <div class="container">
+                <p class="text-center">Copyright&copy; 2015 - {% now "Y" %} <a href="mailto:neauacm@163.com"><strong>NEAU
+                    ACM
+                    Team</strong></a> All Rights Reserved.</p>
+
+                <p class="text-center">Any questions,please contact the <a
+                        href="mailto:code_cola@163.com"><strong>Author</strong></a>.
+                </p>
+
+                <p class="text-center"><a href="http://www.miitbeian.gov.cn" target="_blank">京ICP备16001627号-1</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- modal -->
+{% if not user.is_authenticated %}
+    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-popup">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h2 class="modal-title">登录</h2>
+                </div>
+
+                <form id="login" method="POST" action={% url "login" %}>
+                    {% csrf_token %}
+                    <input name="username" type="username" class="form-control" id="username" placeholder="用户名">
+                    <input name="password" type="password" class="form-control" id="password" placeholder="密码">
+                    <input name="submit" type="submit" class="form-control" id="submit" value="Submit">
+                    <input type="hidden" name="next" value="{{ path|escape }}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Back top -->
+<a href="#back-top" class="go-top"><i class="fa fa-angle-up"></i></a>
+
+<!-- javscript js -->
+<script src="/js/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/wow.min.js"></script>
+
+
+<script src="/js/vegas.min.js"></script>
+<script src="/js/smoothscroll.js"></script>
+<script src="/js/custom.js"></script>
+
+</body>
+</html>

@@ -23,7 +23,7 @@ def register(req):
         if form.is_valid():
             new_user = form.save()
             logger.info("User: " + new_user.username + "Registered")
-            return HttpResponseRedirect("/index")
+            return HttpResponseRedirect("/")
         else:
             return render_to_response("register.html", {
                 'path': req.path,
@@ -113,7 +113,10 @@ def index(req, username):
     for i in user.info.oj_account.all():
         if not i.defunct:
             num_accounts += 1
-    updata_user(user)
+    try:
+        updata_user(user)
+    except:
+        pass
     return render_to_response("user_main.html", {
         'path': req.path,
         'u': user,
@@ -186,6 +189,106 @@ def add_account(req):
                 return HttpResponseRedirect(req.META['HTTP_REFERER'])
         else:
             raise Http404()
+
+
+@login_required
+def sign_up(req):
+    if req.method == 'GET':
+        update = have_info = wait_review = info_error = reviewed = confirm = over = False
+        name = student_id = classes = telephone = qq = None
+        user_list = Info.objects.filter(status__gt=2)
+        user_number = 100 - len(user_list)
+        status = req.user.info.status
+        if req.user.info.student_id == 'None' or req.user.info.telephone == 'None' or req.user.info.classes == 'None' or req.user.info.real_name == 'None' or req.user.info.qq == 'None':
+            status = 0
+            req.user.info.status = 0
+            req.user.info.save()
+        if status == 0:
+            update = True
+        elif status == 1:
+            have_info = True
+        elif status == 2:
+            info_error = True
+        elif status == 3:
+            wait_review = True
+        elif status == 4:
+            reviewed = True
+        elif status == 5:
+            confirm = True
+        elif status == 6:
+            over = True
+        if not update:
+            name = req.user.info.real_name
+            student_id = req.user.info.student_id
+            classes = req.user.info.classes
+            telephone = req.user.info.telephone
+            qq = req.user.info.qq
+        try:
+            refer = True
+            t = req.GET['refer']
+        except:
+            refer = False
+        return render_to_response('sign_up.html', {
+            'path': req.path,
+            'refer': refer,
+            'user_list': user_list,
+            'user_number': user_number,
+            'update': update,
+            'wait_review': wait_review,
+            'have_info': have_info,
+            'info_error': info_error,
+            'reviewed': reviewed,
+            'confirm': confirm,
+            'over': over,
+            'name': name,
+            'student_id': student_id,
+            'classes': classes,
+            'telephone': telephone,
+            'qq': qq,
+        }, context_instance=RequestContext(req))
+    else:
+        if req.user.info.status < 4:
+            form = SignUpForm(req.POST)
+            if form.is_valid():
+                form.save(req.user)
+        return HttpResponseRedirect(req.META['HTTP_REFERER'])
+
+
+@login_required
+def signing(req):
+    if req.META['HTTP_REFERER'][-18:] == "/accounts/sign_up/":
+        if req.user.info.status == 1:
+            req.user.info.status = 3
+            req.user.info.save()
+        elif req.user.info.status == 5:
+            req.user.info.status = 6
+            req.user.info.save()
+        return HttpResponseRedirect(req.META['HTTP_REFERER'])
+    raise Http404()
+
+
+@permission_required('auth.change_user')
+def accept(req, uid):
+    try:
+        u = User.objects.get(id=uid)
+    except:
+        raise Http404()
+    if u.info.status == 3:
+        u.info.status = 4
+        u.info.save()
+    return HttpResponseRedirect(req.META['HTTP_REFERER'] + '?refer')
+
+
+@permission_required('auth.change_user')
+def reject(req, uid):
+    try:
+        u = User.objects.get(id=uid)
+    except:
+        raise Http404()
+    if u.info.status > 3:
+        u.info.status = 2
+        u.info.save()
+    return HttpResponseRedirect(req.META['HTTP_REFERER'] + '?refer')
 
 
 def test_account(oj, username, password):

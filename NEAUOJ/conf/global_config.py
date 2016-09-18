@@ -10,7 +10,9 @@ OJ_NAME = 'neauoj'
 
 VJ_LIST = ['neau', 'hdu', 'poj']
 
-STATIC_PATH = "/Users/Code_Cola/Documents/Code/neauoj/web/web/static"
+Project_PATH = '/Users/codecola/Documents/Code/neauoj'
+Local_PATH = Project_PATH + '/NEAUOJ'
+STATIC_PATH = Project_PATH + "/web/web/static"
 
 DATABASES = {
     'default': {
@@ -22,7 +24,7 @@ DATABASES = {
     }
 }
 
-Local_PATH = '/'.join(os.getcwd().split('/')[0:-1])
+
 Daemon_PATH = "/tmp/" + OJ_NAME + ".pid"
 Socket_PATH = "/tmp/" + OJ_NAME + ".sock"
 Log_PATH = Local_PATH + "/log/" + OJ_NAME + ".log"

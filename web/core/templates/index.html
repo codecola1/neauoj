@@ -133,12 +133,13 @@
         <div class="top-header">
             <div class="container">
                 <div class="logo">
-                    <a href="/"><h1>Online<span class="logo-clr">Judge</span></h1></a>
+                    <a href="/"><h1>返回<span class="logo-clr">首页</span></h1></a>
+{#                    <a href="/"><h1>Online<span class="logo-clr">Judge</span></h1></a>#}
                 </div>
                 <!----start-top-nav---->
                 <nav class="top-nav">
                     <ul class="top-nav">
-                        <li class="active"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="active"><a href="{% url 'index' %}">Home</a></li>
                         <li><a href="{% url 'problem_acmlist' %}">Problem</a></li>
                         <li><a href="{% url 'contest_acmlist' %}">Contest</a></li>
                         <li><a href="{% url 'status' %}">Status</a></li>

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load user_tags %}
+{% block set_title %}Sign Up{% endblock %}
+{% block bodytext %}
+    <h1 class="text-center">十一培训报名</h1>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#users" id="users-tab" role="tab" data-toggle="tab"
+                                                  aria-controls="users" aria-expanded="true">我的报名</a></li>
+        <li class="" role="presentation"><a aria-expanded="false" href="#list" role="tab" id="list-tab"
+                                            data-toggle="tab" aria-controls="add">报名列表</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade active in" id="users" aria-labelledby="users-tab">
+            <div class="col-md-4">
+                <p></p>
+                {% if update %}
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
+                                class="sr-only">Close</span></button>
+                        <h4>注意</h4>
+                        <p>报名前请先点击下方按钮 更新个人信息!!!</p>
+                    </div>
+                {% endif %}
+                {% if info_error %}
+                    <div class="alert alert-warning alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
+                                class="sr-only">Close</span></button>
+                        <h4>个人信息错误</h4>
+                        <p>请填写正确的个人信息!!!</p>
+                    </div>
+                {% endif %}
+                {% if confirm %}
+                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
+                                class="sr-only">Close</span></button>
+                        <h4>确认报名</h4>
+                        <p>请点击下方按钮 确认参加ACM十一集训!!!</p>
+                    </div>
+                {% endif %}
+                <blockquote style="border-left-color: #1FADC5">
+                    <p>我的报名状态:
+                        {% if update or have_info %}<span class="label label-danger">未报名</span>{% endif %}
+                        {% if info_error %}<span class="label label-warning">未通过</span>{% endif %}
+                        {% if wait_review %}<span class="label label-info">待审核</span>{% endif %}
+                        {% if reviewed %}<span class="label label-primary">审核通过</span>{% endif %}
+                        {% if confirm %}<span class="label label-info">待确认</span>{% endif %}
+                        {% if over %}<span class="label label-success">报名成功</span>{% endif %}
+                    </p>
+                    <p>当前课程余量: <span class="badge">{{ user_number }}</span></p>
+                </blockquote>
+                <form class="form-horizontal" role="form" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">姓名:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control judge" id="name" name="name" placeholder="真实姓名"
+                                   {% if name %}value="{{ name }}"{% endif %}{% if reviewed or confirm or over %}
+                                   readonly="readonly"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="student_id" class="col-sm-2 control-label">学号:</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <div class="input-group-addon">A</div>
+                                <input type="text" class="form-control judge" id="student_id" name="student_id" placeholder="数字部分"
+                                       {% if student_id %}value="{{ student_id }}"{% endif %}
+                                       {% if reviewed or confirm or over %}
+                                       readonly="readonly"{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="classes" class="col-sm-2 control-label">班级:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control judge" id="classes" name="classes" placeholder="如:计电1601"
+                                   {% if classes %}value="{{ classes }}"{% endif %}{% if reviewed or confirm or over %}
+                                   readonly="readonly"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone" class="col-sm-2 control-label">手机:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control judge" id="telephone" name="telephone" placeholder="手机号码"
+                                   {% if telephone %}value="{{ telephone }}"{% endif %}
+                                   {% if reviewed or confirm or over %}
+                                   readonly="readonly"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="qq" class="col-sm-2 control-label">QQ:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control judge" id="qq" name="qq" placeholder="QQ号码"
+                                   {% if qq %}value="{{ qq }}"{% endif %}
+                                    {% if reviewed or confirm or over %} readonly="readonly"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button id="button_update" type="submit" value="submit" class="btn btn-default"
+                                    {% if reviewed or confirm or over %}disabled="disabled"{% endif %}
+                            >更新个人信息
+                            </button>
+                            <a class="btn btn-primary" style="float: right;"
+                                    {% if update or wait_review or reviewed or over %}disabled="disabled"{% else %}href="/accounts/signing/"{% endif %}>
+                                {% if confirm or over %}确认参加{% else %}立即报名{% endif %}
+                            </a>
+                            {% if wait_review %}<p style="margin-top: 10px;color: #CC0000;">更新个人信息需要再次点击报名按钮</p>{% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-striped" style="margin-top: 70px">
+                    <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th width="20%">讲课人</th>
+                        <th>讲课内容</th>
+                        <th colspan="3" style="text-align:center;">答疑人与出题人</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>10.1</td>
+                        <td>朱原熯</td>
+                        <td>ACM入门和C语言基础</td>
+                        <td>王作勋</td>
+                        <td>王思博</td>
+                        <td>李思政欣</td>
+                    </tr>
+
+                    <tr>
+                        <td>10.2</td>
+                        <td>闫绍兴</td>
+                        <td>条件和循环</td>
+                        <td>殷&#12288;珂</td>
+                        <td>罗金铸</td>
+                        <td>刘梓旭</td>
+                    </tr>
+
+                    <tr>
+                        <td>10.3</td>
+                        <td>赵海林</td>
+                        <td>数组和字符串</td>
+                        <td>赵成鑫</td>
+                        <td>曲&#12288;浩</td>
+                        <td>程&#12288;旭</td>
+                    </tr>
+                    <tr>
+                        <td>10.4</td>
+                        <td>王钰涵</td>
+                        <td>函数与结构体</td>
+                        <td>侯&#12288;亮</td>
+                        <td>曹&#12288;健</td>
+                        <td>王旭宇</td>
+                    </tr>
+
+                    <tr>
+                        <td>10.5</td>
+                        <td>曾庆宇</td>
+                        <td>算法入门（排序）</td>
+                        <td>张伟建</td>
+                        <td>汤敏睿</td>
+                        <td>　　　</td>
+                    </tr>
+
+                    <tr>
+                        <td>10.6</td>
+                        <td>NULL</td>
+                        <td>比赛</td>
+                        <td colspan="3">集训队全体队员</td>
+
+                    </tr>
+                    <tr>
+                        <th colspan="6">十一训练时间：8:30am--11:30am（讲课） 2:00pm--5:30pm（做题，5:00讲题）</th>
+                    </tr>
+                    <tr>
+                        <th colspan="6">10月6日比赛时间：8:30am--11:30am</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="list" aria-labelledby="add-tab">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>姓名</th>
+                    <th>班级</th>
+                    <th>学号</th>
+                    {% if perms.auth.change_user %}
+                        <th>手机号</th>
+                        <th>QQ号</th>
+                    {% endif %}
+                    <th>状态</th>
+                    {% if perms.auth.change_user %}
+                        <th>审核</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for row in user_list %}
+                    <tr>
+                    <td>1</td>
+                    <td>{{ row.real_name }}</td>
+                    <td>{{ row.classes }}</td>
+                    <td>A{{ row.student_id }}</td>
+                    {% if perms.auth.change_user %}
+                        <td>{{ row.telephone }}</td>
+                        <td>{{ row.qq }}</td>
+                    {% endif %}
+                    <td>
+                        <span class="label label-{{ row.status|sign_span }}">{{ row.status|sign_text }}</span>
+                    </td>
+                    {% if perms.auth.change_user %}
+                        <td>
+                            <a class="btn btn-primary %s" href="{% url 'accept' row.user_id %}">通过</a>
+                            <a class="btn btn-primary %s" href="{% url 'reject' row.user_id %}">驳回</a>
+                        </td>
+                    {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block otherjs %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".judge").on('change', function () {
+                var len = $(this).val().length;
+                if (len == 0) {
+
+                }
+            });
+            {% if refer %}
+                $("#list-tab").trigger("click");
+            {% endif %}
+        });
+        function set_error() {
+            var b = $("#button_update");
+            b.attr('disabled', 'disabled');
+        }
+        function set_ok() {
+            var b = $("#button_update");
+            b.removeAttr('disabled');
+        }
+    </script>
+{% endblock %}

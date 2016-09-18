@@ -8,6 +8,13 @@ from django.contrib.auth.models import User, Permission
 
 def index(req):
     if req.method == 'GET':
+        return render_to_response('sign_up_index.html', {
+            'path': req.path,
+        }, context_instance=RequestContext(req))
+
+
+def oj_index(req):
+    if req.method == 'GET':
         return render_to_response('index.html', {
             'path': req.path,
         }, context_instance=RequestContext(req))
